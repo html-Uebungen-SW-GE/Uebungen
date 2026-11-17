@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wer zahlt, wenn …?</title>
+<style>
+:root{--ink:#16213a;--soft:#4a5568;--bg:#f6f4ef;--card:#fffdf9;--line:#d9d4c7;--ok:#2e7d4f;--okbg:#e3f2e8;--no:#b23b2a;--nobg:#f8e3df;
+--c1:#3b5b92;--c2:#7a4fa3;--c3:#c8661b;--c4:#2f8a6e;--c5:#a0405a;--c6:#2b7fb8}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",Calibri,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:clamp(17px,1.35vw,24px);line-height:1.45}
+header{display:flex;align-items:center;justify-content:space-between;gap:1em;padding:.7em 1.4em;background:var(--ink);color:#fff}
+header h1{font-size:1.15em;margin:0;font-weight:700;letter-spacing:.02em}
+header .meta{font-size:.75em;opacity:.8}
+button{font:inherit;cursor:pointer}
+.home-btn{background:transparent;border:2px solid #fff;color:#fff;border-radius:.5em;padding:.25em .8em}
+main{max-width:1200px;margin:0 auto;padding:1.4em}
+.intro{font-size:1.05em;color:var(--soft);margin:.2em 0 1em}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(16em,1fr));gap:1em}
+.tile{border:none;text-align:left;color:#fff;border-radius:1em;padding:1.1em 1.2em;min-height:8.5em;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 3px 0 rgba(0,0,0,.15);transition:transform .15s}
+.tile:hover,.tile:focus-visible{transform:translateY(-3px)}
+.tile .nr{font-size:.8em;opacity:.85;font-weight:700;letter-spacing:.08em}
+.tile .nm{font-size:1.3em;font-weight:700;line-height:1.2}
+.tile .sub{font-size:.8em;opacity:.9}
+.tile.ov{background:#fff;color:var(--ink);border:3px dashed var(--line);box-shadow:none}
+.case{background:var(--card);border-radius:1em;border-top:.55em solid var(--cat);box-shadow:0 4px 18px rgba(22,33,58,.08);padding:1.3em 1.6em 1.5em}
+.crumbs{display:flex;justify-content:space-between;align-items:center;color:var(--cat);font-weight:700;font-size:.85em;letter-spacing:.05em;text-transform:uppercase}
+.dots span{display:inline-block;width:.7em;height:.7em;border-radius:50%;background:var(--line);margin-left:.35em}
+.dots span.on{background:var(--cat)}
+.story{display:flex;gap:1.1em;align-items:flex-start;margin:.8em 0 .6em}
+.avatar{flex:0 0 3.2em;height:3.2em;border-radius:50%;background:var(--cat);color:#fff;display:grid;place-items:center;font-size:1.35em;font-weight:700}
+.story h2{margin:0 0 .25em;font-size:1.35em}
+.story p{margin:0}
+.q{font-weight:700;font-size:1.12em;margin:1em 0 .6em}
+.opts{display:grid;gap:.55em}
+.opt{display:flex;gap:.8em;align-items:center;text-align:left;background:#fff;border:2px solid var(--line);border-radius:.7em;padding:.6em .9em;color:var(--ink)}
+.opt .lt{flex:0 0 1.9em;height:1.9em;border-radius:50%;background:var(--bg);display:grid;place-items:center;font-weight:700}
+.opt:hover:not(:disabled){border-color:var(--cat)}
+.opt:disabled{cursor:default}
+.opt.right{border-color:var(--ok);background:var(--okbg)}
+.opt.right .lt{background:var(--ok);color:#fff}
+.opt.wrong{border-color:var(--no);background:var(--nobg)}
+.opt.wrong .lt{background:var(--no);color:#fff}
+.reveal{display:none;margin-top:1em;border-radius:.8em;padding:1em 1.2em;background:#f1eee6}
+.reveal.show{display:block;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.verdict{font-weight:700;margin-bottom:.3em}
+.verdict.ok{color:var(--ok)}.verdict.no{color:var(--no)}
+.struct{display:flex;gap:.8em;margin-top:.8em;padding-top:.8em;border-top:1px solid var(--line)}
+.struct .tag{flex:0 0 auto;background:var(--cat);color:#fff;font-size:.72em;font-weight:700;letter-spacing:.06em;border-radius:.4em;padding:.25em .6em;height:fit-content;text-transform:uppercase}
+.src{font-size:.7em;color:var(--soft);margin-top:.6em}
+.nav{display:flex;justify-content:space-between;margin-top:1.2em;gap:1em}
+.nav button{background:var(--cat);color:#fff;border:none;border-radius:.6em;padding:.55em 1.2em;font-weight:700}
+.nav button.ghost{background:transparent;color:var(--cat);border:2px solid var(--cat)}
+.nav button:disabled{opacity:.35;cursor:default}
+table{width:100%;border-collapse:collapse;background:var(--card);border-radius:.8em;overflow:hidden;font-size:.82em}
+th,td{padding:.55em .7em;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{background:var(--ink);color:#fff}
+td:first-child{font-weight:700;border-left:.4em solid var(--rowc)}
+.note{font-size:.75em;color:var(--soft);margin-top:.8em}
+.hidden{display:none}
+@media (max-width:640px){.story{flex-direction:column}.avatar{flex-basis:auto;width:2.6em;height:2.6em}}
+</style>
+</head>
+<body>
+<header><h1>Wer zahlt, wenn …? Fallbeispiele zur sozialen Sicherung</h1><span class="meta">Klasse 10 Politik · Stand 17.11.2026</span><button class="home-btn hidden" id="homeBtn" onclick="home()">⌂ Start</button></header>
+<main id="app"></main>
+<script>
+const CATS=[
+ {nm:"Allgemeines",sub:"Wer zahlt? Nach welchem Prinzip?",col:"var(--c1)",cases:[
+  {who:"J",name:"Jonas, 17",story:"Jonas hat seine Ausbildung zum Kfz-Mechatroniker begonnen. Auf seiner ersten Gehaltsabrechnung stehen 1.000 € brutto – ausgezahlt wird deutlich weniger. „Wer hat sich da bedient?“, fragt er.",
+   q:"Wer zahlt die Beiträge zur Renten-, Kranken-, Pflege- und Arbeitslosenversicherung?",
+   opts:["Jonas und sein Arbeitgeber, jeweils etwa zur Hälfte","Nur Jonas, über Abzüge vom Lohn","Nur der Arbeitgeber, zusätzlich zum Lohn","Der Staat aus Steuergeldern"],
+   exp:"Die Beiträge werden paritätisch finanziert: Arbeitnehmer und Arbeitgeber zahlen je etwa die Hälfte. Zusammen sind es 2026 rund 42 % des Bruttolohns – auf Jonas entfallen also gut 21 %.",
+   tag:"Struktur",st:"Beitragssätze 2026: Rente 18,6 %, Arbeitslosigkeit 2,6 %, Krankheit 14,6 % plus Zusatzbeitrag (Ø 2,9 %), Pflege 3,6 % (Kinderlose ab 23 zahlen 0,6 % mehr). Ausnahme: Die Unfallversicherung zahlt der Arbeitgeber allein.",
+   src:"Quelle: lohn-info.de, Sozialversicherungsbeiträge 2026"},
+  {who:"F",name:"Frau Lange und Herr Becker",story:"Herr Becker verdient 5.000 € im Monat und zahlt deshalb deutlich mehr Krankenkassenbeitrag als Frau Lange mit 2.000 €. Als beide eine Blinddarmentzündung haben, bekommen sie im Krankenhaus genau dieselbe Behandlung.",
+   q:"Welches Prinzip steckt dahinter?",
+   opts:["Solidarprinzip","Äquivalenzprinzip","Subsidiaritätsprinzip","Fürsorgeprinzip"],
+   exp:"Beim Solidarprinzip zahlen alle nach ihrer Leistungsfähigkeit (Einkommen) und erhalten Leistungen nach ihrem Bedarf. Starke tragen Schwache mit.",
+   tag:"Prinzipien",st:"Äquivalenzprinzip: Leistung entspricht dem eingezahlten Beitrag (z. B. Höhe der Rente). Fürsorgeprinzip: Hilfe aus Steuern bei Bedürftigkeit (Grundsicherung). Subsidiarität: Erst hilft man sich selbst, dann die Familie, dann der Staat.",
+   src:""}
+ ]},
+ {nm:"Rentenversicherung",sub:"Generationenvertrag und Minijob",col:"var(--c2)",cases:[
+  {who:"G",name:"Oma Gisela, 74",story:"Oma Gisela hat 42 Jahre als Verkäuferin gearbeitet und bekommt jetzt jeden Monat ihre Rente. Ihr Enkel Paul meint: „Das ist doch einfach das Geld, das sie früher gespart hat.“",
+   q:"Woher kommt das Geld für Giselas Rente?",
+   opts:["Aus den Beiträgen der heute Beschäftigten, ergänzt durch einen Zuschuss aus Steuern","Aus ihren eigenen Beiträgen, die die Rentenversicherung für sie angespart hat","Ausschließlich aus Steuergeldern","Von einer privaten Versicherung, bei der sie Kundin war"],
+   exp:"Die gesetzliche Rente funktioniert im Umlageverfahren: Die Beiträge der heutigen Beschäftigten werden sofort an die heutigen Rentner ausgezahlt („Generationenvertrag“). Gisela hat mit ihren Beiträgen früher die Renten ihrer Elterngeneration finanziert.",
+   tag:"Struktur",st:"Träger: Deutsche Rentenversicherung. Beitrag 18,6 %. Der Bund zahlt jedes Jahr mehr als 100 Milliarden Euro Zuschuss. Problem: Es gibt immer mehr Rentner und vergleichsweise immer weniger Beitragszahler (demografischer Wandel).",
+   src:"Quelle: lohn-info.de (Beitragssatz 2026)"},
+  {who:"M",name:"Mia, 17",story:"Mia jobbt neben der Schule in einem Café und verdient 450 € im Monat. Auf ihrer Abrechnung taucht ein kleiner Abzug für die Rentenversicherung auf. „Ich bin doch Schülerin“, wundert sie sich.",
+   q:"Muss Mia als Minijobberin in die Rentenversicherung einzahlen?",
+   opts:["Ja, grundsätzlich schon – sie kann sich aber auf Antrag befreien lassen","Nein, Minijobs sind komplett beitragsfrei","Nur, wenn sie volljährig ist","Nein, nur ihr Arbeitgeber zahlt, sie hat keine Wahl"],
+   exp:"Minijobs sind rentenversicherungspflichtig. Mia zahlt einen kleinen Eigenanteil von 3,6 % ihres Lohns, den Rest übernimmt der Arbeitgeber pauschal. Sie kann sich befreien lassen – dann sammelt sie aber keine vollwertigen Rentenansprüche.",
+   tag:"Zahlen 2026",st:"Minijob-Grenze: 603 € im Monat (gekoppelt an den Mindestlohn von 13,90 €). 2027 steigt sie auf 633 €.",
+   src:"Quelle: lohn-info.de, Sozialversicherungsbeiträge 2026"}
+ ]},
+ {nm:"Arbeitslosenversicherung",sub:"Kündigung und Sperrzeit",col:"var(--c3)",cases:[
+  {who:"K",name:"Herr Krüger, 45",story:"Herr Krüger arbeitet seit acht Jahren in einer Druckerei in Recklinghausen. Die Firma schließt, er verliert seine Stelle. Er hat zwei Kinder.",
+   q:"Was bekommt Herr Krüger zuerst?",
+   opts:["Arbeitslosengeld von der Bundesagentur für Arbeit – 67 % seines letzten Nettolohns","Grundsicherung vom Jobcenter (563 € Regelsatz)","Gar nichts, er muss von seinen Ersparnissen leben","Seinen vollen Lohn, bis er einen neuen Job hat"],
+   exp:"Wer in den letzten 30 Monaten mindestens 12 Monate versichert war, bekommt Arbeitslosengeld: 60 % des pauschalierten Nettolohns, mit Kind 67 %. Es wird in der Regel bis zu 12 Monate gezahlt, für Ältere länger.",
+   tag:"Struktur",st:"Träger: Bundesagentur für Arbeit, Beitrag 2,6 %. Wer danach noch keine Arbeit hat, kann die steuerfinanzierte Grundsicherung beantragen. Sie hat am 1. Juli 2026 das Bürgergeld abgelöst (Fürsorgeprinzip, Regelsatz für Alleinstehende 563 €).",
+   src:"Quellen: lohn-info.de; Finanztip, 05.03.2026"},
+  {who:"S",name:"Sarah, 24",story:"Sarah hat keine Lust mehr auf ihren Job im Büro. Sie kündigt selbst, ohne schon eine neue Stelle zu haben, und meldet sich arbeitslos.",
+   q:"Was passiert mit ihrem Arbeitslosengeld?",
+   opts:["Sie bekommt eine Sperrzeit von bis zu zwölf Wochen","Sie bekommt sofort Arbeitslosengeld wie alle anderen","Sie verliert jeden Anspruch für immer","Ihr alter Arbeitgeber muss ihr Arbeitslosengeld zahlen"],
+   exp:"Wer seine Arbeitslosigkeit selbst herbeiführt, erhält in der Regel eine Sperrzeit von bis zu zwölf Wochen. Die Versichertengemeinschaft soll nicht für freiwillige Entscheidungen zahlen. Ausnahme: Es gibt einen wichtigen Grund, etwa Mobbing oder gesundheitliche Probleme.",
+   tag:"Prinzip",st:"Versicherungsprinzip: Leistungen gibt es für ein Risiko, gegen das man versichert ist – und dafür gelten Regeln, an die sich alle halten müssen.",
+   src:""}
+ ]},
+ {nm:"Krankenversicherung",sub:"Familie, gesetzlich oder privat",col:"var(--c4)",cases:[
+  {who:"E",name:"Emil, 15",story:"Emil hat beim Fußball eine Grippe aufgeschnappt und muss zum Arzt. Er verdient kein eigenes Geld. An der Rezeption soll er seine Versichertenkarte zeigen.",
+   q:"Wie ist Emil krankenversichert?",
+   opts:["Kostenlos über die Familienversicherung seiner Eltern","Er muss einen eigenen Beitrag zahlen","Gar nicht – seine Eltern zahlen die Rechnung privat","Über seine Schule"],
+   exp:"Kinder ohne eigenes Einkommen sind in der gesetzlichen Krankenversicherung beitragsfrei mitversichert: bis 18, ohne Arbeit bis 23, in Schule, Ausbildung oder Studium bis 25 Jahre.",
+   tag:"Struktur",st:"Träger: die Krankenkassen (z. B. AOK, TK, Barmer). Beitrag 14,6 % plus Zusatzbeitrag der Kasse (Ø 2,9 %). Rund 9 von 10 Menschen in Deutschland sind gesetzlich versichert. Beiträge richten sich nach dem Einkommen, Leistungen nach dem Bedarf.",
+   src:"Quelle: lohn-info.de, Sozialversicherungsbeiträge 2026"},
+  {who:"S",name:"Frau Schulte, 38",story:"Frau Schulte ist Ingenieurin in einem Chemieunternehmen und verdient 90.000 € im Jahr. Ein Kollege rät ihr: „Wechsel doch in die Private, da zahlst du weniger.“",
+   q:"Welche Möglichkeit hat Frau Schulte?",
+   opts:["Sie darf in die private Krankenversicherung wechseln, weil sie über der Versicherungspflichtgrenze verdient","Sie muss gesetzlich versichert bleiben","Sie muss sich privat versichern","Sie braucht ab diesem Einkommen gar keine Krankenversicherung mehr"],
+   exp:"Wer mehr als die Versicherungspflichtgrenze (2026: 77.400 € im Jahr) verdient, kann wählen. In der privaten Versicherung richtet sich der Beitrag nicht nach dem Einkommen, sondern nach Alter, Gesundheit und gewünschten Leistungen. Kinder müssen dort extra versichert werden.",
+   tag:"Zahlen 2026",st:"Beitragsbemessungsgrenze: Beiträge zur gesetzlichen Kranken- und Pflegeversicherung werden nur bis 5.812,50 € Monatseinkommen berechnet – wer mehr verdient, zahlt darauf keinen weiteren Beitrag.",
+   src:"Quelle: lohn-info.de, Sozialversicherungsbeiträge 2026"}
+ ]},
+ {nm:"Pflegeversicherung",sub:"Pflegegrad und Eigenanteil",col:"var(--c5)",cases:[
+  {who:"H",name:"Opa Heinz, 81",story:"Opa Heinz hatte einen Schlaganfall. Er kann sich nicht mehr allein waschen und anziehen. Seine Tochter möchte ihn zu Hause pflegen, weiß aber nicht, wie sie das bezahlen soll.",
+   q:"Was ist der erste Schritt?",
+   opts:["Ein Antrag bei der Pflegekasse – der Medizinische Dienst prüft und legt einen Pflegegrad fest","Das Krankenhaus entscheidet, wie viel Geld er bekommt","Die Familie muss alles selbst bezahlen","Die Rentenversicherung zahlt automatisch mehr Rente"],
+   exp:"Die Pflegekasse – sie gehört zur Krankenkasse – lässt den Pflegebedarf prüfen. Je nach Selbstständigkeit gibt es einen von fünf Pflegegraden. Davon hängt ab, wie viel Pflegegeld (für pflegende Angehörige) oder Sachleistungen (für einen Pflegedienst) gezahlt werden.",
+   tag:"Struktur",st:"Die Pflegeversicherung ist die jüngste Säule (seit 1995). Beitrag 3,6 %, Kinderlose ab 23 zahlen 0,6 % mehr. Die meisten Pflegebedürftigen werden zu Hause versorgt, oft von Angehörigen.",
+   src:"Quelle: lohn-info.de, Sozialversicherungsbeiträge 2026"},
+  {who:"I",name:"Oma Ilse, 86",story:"Oma Ilse zieht in ein Pflegeheim. Der Platz kostet monatlich rund 5.000 €. Ihr Enkel fragt: „Dafür gibt es doch die Pflegeversicherung, oder?“",
+   q:"Übernimmt die Pflegeversicherung die Heimkosten vollständig?",
+   opts:["Nein, nur einen Teil – den Rest müssen Ilse oder notfalls das Sozialamt zahlen","Ja, vollständig","Nein, im Heim zahlt sie gar nichts","Ja, aber nur, wenn die Kinder vorher Geld beisteuern"],
+   exp:"Die Pflegeversicherung ist eine „Teilkasko“-Versicherung: Sie zahlt einen festen Betrag je nach Pflegegrad. Der Eigenanteil beträgt oft mehrere tausend Euro im Monat. Reichen Rente und Erspartes nicht, springt das Sozialamt ein. Kinder müssen erst ab einem Jahreseinkommen von 100.000 € etwas beitragen.",
+   tag:"Diskussion",st:"Steigende Eigenanteile sind ein großes Streitthema: Soll die Pflegeversicherung mehr übernehmen – und wer soll das bezahlen?",
+   src:""}
+ ]},
+ {nm:"Unfallversicherung",sub:"Schulweg und Ferienjob",col:"var(--c6)",cases:[
+  {who:"L",name:"Leonie, 16",story:"Leonie fährt morgens mit dem Rad auf direktem Weg zur Schule. An einer Kreuzung rutscht sie auf nassem Laub aus und bricht sich das Handgelenk.",
+   q:"Wer zahlt Behandlung und Folgekosten?",
+   opts:["Die Unfallkasse NRW als gesetzliche Unfallversicherung","Ihre Krankenkasse","Ihre Eltern","Die Haftpflichtversicherung der Stadt"],
+   exp:"Schülerinnen und Schüler sind im Unterricht, bei Schulveranstaltungen und auf dem direkten Schulweg gesetzlich unfallversichert. Für Schulen in NRW ist die Unfallkasse NRW zuständig. Die Unfallversicherung zahlt oft mehr als die Krankenkasse, z. B. auch Reha oder eine Rente bei bleibenden Schäden.",
+   tag:"Struktur",st:"Die Beiträge zahlen für Beschäftigte allein die Arbeitgeber an die Berufsgenossenschaften, für Schüler und Kita-Kinder die öffentliche Hand. Beschäftigte zahlen nichts.",
+   src:""},
+  {who:"B",name:"Ben, 16",story:"Ben hat einen Ferienjob in einem Supermarkt. Auf dem Heimweg macht er einen Umweg zur Eisdiele in der Altstadt und stürzt dort mit dem Fahrrad.",
+   q:"Ist Ben gesetzlich unfallversichert?",
+   opts:["Nein, der private Umweg unterbricht den Versicherungsschutz","Ja, jeder Weg nach der Arbeit ist versichert","Ja, aber nur, weil er minderjährig ist","Nein, Ferienjobber sind grundsätzlich nicht versichert"],
+   exp:"Auch Ferienjobber sind über die Berufsgenossenschaft ihres Arbeitgebers gesetzlich unfallversichert – bei der Arbeit und auf dem direkten Weg. Ein privater Umweg wie der zur Eisdiele unterbricht den Schutz. Dann zahlt die Krankenkasse die Behandlung, aber keine zusätzlichen Leistungen.",
+   tag:"Ausnahmen",st:"Versichert bleiben Umwege, um Kinder zur Kita zu bringen oder für eine Fahrgemeinschaft.",
+   src:""}
+ ]}
+];
+const OV=[
+ ["Krankenversicherung","1883","Krankenkassen (z. B. AOK, TK)","14,6 % + Zusatzbeitrag (Ø 2,9 %)","Arbeitnehmer und Arbeitgeber je zur Hälfte","Arztbesuche, Krankenhaus, Medikamente, Krankengeld","var(--c4)"],
+ ["Unfallversicherung","1884","Berufsgenossenschaften, Unfallkassen","je nach Branche und Risiko","nur Arbeitgeber (bei Schülern: öffentliche Hand)","Arbeits-, Wege- und Schulunfälle, Berufskrankheiten, Reha, Unfallrente","var(--c6)"],
+ ["Rentenversicherung","1889","Deutsche Rentenversicherung","18,6 %","Arbeitnehmer und Arbeitgeber je zur Hälfte, dazu Bundeszuschuss","Altersrente, Erwerbsminderungsrente, Hinterbliebenenrente, Reha","var(--c2)"],
+ ["Arbeitslosenversicherung","1927","Bundesagentur für Arbeit","2,6 %","Arbeitnehmer und Arbeitgeber je zur Hälfte","Arbeitslosengeld, Vermittlung, Weiterbildung, Kurzarbeitergeld","var(--c3)"],
+ ["Pflegeversicherung","1995","Pflegekassen (bei den Krankenkassen)","3,6 % (Kinderlose ab 23: +0,6 %)","Arbeitnehmer und Arbeitgeber je zur Hälfte","Pflegegeld, Pflegedienst, Zuschuss zum Pflegeheim (Teilkasko)","var(--c5)"]
+];
+const L="ABCD";
+const app=document.getElementById("app"),homeBtn=document.getElementById("homeBtn");
+let state={cat:null,i:0};
+function mische(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function esc(s){return s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
+function home(){state.cat=null;homeBtn.classList.add("hidden");
+ app.innerHTML=`<p class="intro">Wählt eine Kategorie. In jedem Fall geht es um eine echte Alltagssituation: Erst stimmt ihr ab, dann löst ihr per Klick auf.</p><div class="tiles">`+
+ CATS.map((c,k)=>`<button class="tile" style="background:${c.col}" onclick="openCat(${k})"><span class="nr">KATEGORIE ${k+1}</span><span class="nm">${c.nm}</span><span class="sub">${c.sub}</span></button>`).join("")+
+ `<button class="tile ov" onclick="overview()"><span class="nr">ZUM SCHLUSS</span><span class="nm">Übersicht: Die fünf Säulen</span><span class="sub">Träger, Beiträge, Leistungen</span></button></div>`;window.scrollTo(0,0);}
+function openCat(k){state.cat=k;state.i=0;show();}
+function show(){const c=CATS[state.cat],f=c.cases[state.i];homeBtn.classList.remove("hidden");
+ const order=mische(f.opts.map((o,ix)=>({o,ix})));
+ app.innerHTML=`<div class="case" style="--cat:${c.col}">
+ <div class="crumbs"><span>${state.cat+1} · ${c.nm}</span><span class="dots">${c.cases.map((_,j)=>`<span class="${j===state.i?"on":""}"></span>`).join("")}</span></div>
+ <div class="story"><div class="avatar">${f.who}</div><div><h2>${esc(f.name)}</h2><p>${esc(f.story)}</p></div></div>
+ <div class="q">${esc(f.q)}</div>
+ <div class="opts">${order.map((x,j)=>`<button class="opt" data-ix="${x.ix}"><span class="lt">${L[j]}</span><span>${esc(x.o)}</span></button>`).join("")}</div>
+ <div class="reveal" id="rev"><div class="verdict" id="verd"></div><div>${esc(f.exp)}</div>
+ <div class="struct"><span class="tag">${f.tag}</span><span>${esc(f.st)}</span></div>${f.src?`<div class="src">${esc(f.src)}</div>`:""}</div>
+ <div class="nav"><button class="ghost" id="prev">← zurück</button><button class="ghost" id="solve">Auflösen</button><button id="next">${state.i<c.cases.length-1?"nächster Fall →":"nächste Kategorie →"}</button></div></div>`;
+ document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>answer(+b.dataset.ix));
+ document.getElementById("solve").onclick=()=>answer(null);
+ document.getElementById("prev").disabled=(state.cat===0&&state.i===0);
+ document.getElementById("prev").onclick=prev;document.getElementById("next").onclick=next;window.scrollTo(0,0);}
+function answer(ix){document.querySelectorAll(".opt").forEach(b=>{b.disabled=true;const k=+b.dataset.ix;if(k===0)b.classList.add("right");else if(k===ix)b.classList.add("wrong");});
+ const v=document.getElementById("verd");if(ix===null){v.textContent="Auflösung";v.className="verdict";}else if(ix===0){v.textContent="Richtig!";v.className="verdict ok";}else{v.textContent="Nicht ganz – richtig ist die grün markierte Antwort.";v.className="verdict no";}
+ document.getElementById("rev").classList.add("show");document.getElementById("solve").disabled=true;}
+function next(){const c=CATS[state.cat];if(state.i<c.cases.length-1){state.i++;show();}else if(state.cat<CATS.length-1){state.cat++;state.i=0;show();}else overview();}
+function prev(){if(state.i>0){state.i--;show();}else if(state.cat>0){state.cat--;state.i=CATS[state.cat].cases.length-1;show();}}
+function overview(){state.cat=null;homeBtn.classList.remove("hidden");
+ app.innerHTML=`<h2 style="margin-top:0">Die fünf Säulen der Sozialversicherung (Stand 2026)</h2><table><tr><th>Versicherung</th><th>seit</th><th>Träger</th><th>Beitragssatz</th><th>Wer zahlt?</th><th>Was ist abgesichert?</th></tr>`+
+ OV.map(r=>`<tr style="--rowc:${r[6]}">${r.slice(0,6).map(x=>`<td>${x}</td>`).join("")}</tr>`).join("")+
+ `</table><p class="note">Zusätzlich gibt es steuerfinanzierte Hilfen nach dem Fürsorgeprinzip, z. B. die Grundsicherung (seit 1. Juli 2026 statt Bürgergeld) und die Sozialhilfe. Grundlage ist das Sozialstaatsprinzip (Art. 20 Abs. 1 GG). Beitragsbemessungsgrenzen 2026: Kranken- und Pflegeversicherung 5.812,50 €, Renten- und Arbeitslosenversicherung 8.450 € pro Monat.<br>Quellen: lohn-info.de, Sozialversicherungsbeiträge 2026; Finanztip, „Bürgergeld aus“, 05.03.2026.</p>
+ <div class="nav" style="--cat:var(--ink)"><button class="ghost" onclick="openCat(${CATS.length-1});state.i=${CATS[CATS.length-1].cases.length-1};show()">← letzter Fall</button><button onclick="home()">Zur Startseite</button></div>`;window.scrollTo(0,0);}
+document.addEventListener("keydown",e=>{if(state.cat===null)return;if(e.key==="ArrowRight")next();if(e.key==="ArrowLeft")prev();});
+home();
+</script>
+</body>
+</html>

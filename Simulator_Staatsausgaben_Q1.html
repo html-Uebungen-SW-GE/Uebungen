@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulator: Was bewirken zusätzliche Staatsausgaben?</title>
+<style>
+  :root { --blau:#1F4E79; --hell:#EAF2FA; --gruen:#1E7B3A; --gelb:#B7791F; --rot:#B3261E; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Segoe UI", Calibri, Arial, sans-serif; background:#F7F9FC; color:#1b1b1b; line-height:1.45; }
+  header { background:var(--blau); color:#fff; padding:16px 24px; }
+  header h1 { margin:0; font-size:1.4rem; } header p { margin:4px 0 0; opacity:.9; font-size:.95rem; }
+  main { max-width:1080px; margin:0 auto; padding:18px 16px 50px; display:grid; grid-template-columns:340px 1fr; gap:18px; }
+  @media (max-width:860px) { main { grid-template-columns:1fr; } }
+  .panel { background:#fff; border:1px solid #dde3ea; border-radius:10px; padding:16px 18px; margin-bottom:16px; }
+  h2 { font-size:1.05rem; color:var(--blau); margin:0 0 10px; }
+  label { display:block; font-weight:600; margin-top:14px; font-size:.95rem; }
+  label small { display:block; font-weight:400; color:#555; font-size:.8rem; }
+  input[type=range] { width:100%; margin-top:6px; }
+  .wert { float:right; color:var(--blau); font-weight:700; }
+  .seg { display:flex; margin-top:6px; } .seg button { flex:1; font:inherit; padding:6px 4px; border:1px solid #9fb3c8; background:#fff; cursor:pointer; font-size:.9rem; }
+  .seg button:first-child { border-radius:6px 0 0 6px; } .seg button:last-child { border-radius:0 6px 6px 0; }
+  .seg button.an { background:var(--blau); color:#fff; border-color:var(--blau); }
+  .kern { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .kz { background:var(--hell); border-radius:8px; padding:10px; text-align:center; }
+  .kz b { display:block; font-size:1.35rem; color:var(--blau); } .kz span { font-size:.82rem; color:#333; }
+  .viereck { display:grid; grid-template-columns:1fr 1fr; gap:10px; position:relative; }
+  .ziel { border-radius:8px; padding:10px 12px; border:2px solid #ccc; background:#fff; }
+  .ziel h3 { margin:0 0 4px; font-size:.95rem; } .ziel .z { font-size:1.15rem; font-weight:700; } .ziel p { margin:4px 0 0; font-size:.82rem; color:#444; }
+  .ziel.gut { border-color:#7cc38f; background:#F2FAF4; } .ziel.gut .z { color:var(--gruen); }
+  .ziel.mittel { border-color:#e8c26a; background:#FFF9EC; } .ziel.mittel .z { color:var(--gelb); }
+  .ziel.schlecht { border-color:#ec9a93; background:#FDF1F0; } .ziel.schlecht .z { color:var(--rot); }
+  .schulden { margin-top:10px; border:2px dashed #ec9a93; border-radius:8px; padding:10px 12px; background:#FFF7F6; font-size:.92rem; }
+  .konflikt { margin-top:10px; padding:10px 12px; border-radius:8px; background:#FFF3CD; border:1px solid #f1d98a; font-size:.92rem; display:none; }
+  svg text { font-family:"Segoe UI", Calibri, Arial, sans-serif; }
+  .hinweis { font-size:.82rem; color:#555; }
+  ol.auftraege { padding-left:20px; margin:6px 0 0; font-size:.93rem; } ol.auftraege li { margin-bottom:6px; }
+  details { margin-top:8px; font-size:.88rem; } summary { cursor:pointer; color:var(--blau); font-weight:600; }
+  .legende { font-size:.8rem; color:#444; margin-top:4px; } .legende i { display:inline-block; width:12px; height:12px; vertical-align:-2px; margin:0 4px 0 10px; border-radius:2px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Simulator: Was bewirken zusätzliche Staatsausgaben?</h1>
+  <p>Q1 Sozialwissenschaften · Material M5 · Stark vereinfachtes Modell, keine Prognose</p>
+</header>
+<main>
+<div>
+  <div class="panel">
+    <h2>Stellschrauben</h2>
+    <label>Zusätzliche Staatsausgaben (schuldenfinanziert) <span class="wert" id="vG"></span>
+      <small>einmaliges Ausgabenprogramm in Mrd. Euro</small></label>
+    <input type="range" id="G" min="10" max="150" step="10" value="50">
+    <label>Wiederausgabequote <span class="wert" id="vC"></span>
+      <small>Anteil jedes zusätzlich verdienten Euros, der im Inland wieder ausgegeben wird</small></label>
+    <input type="range" id="C" min="0.2" max="0.9" step="0.05" value="0.5">
+    <label>Auslastung der Wirtschaft
+      <small>Wie stark sind Betriebe und Arbeitskräfte schon ausgelastet?</small></label>
+    <div class="seg" id="A"><button data-p="0.1" class="an">niedrig</button><button data-p="0.35">mittel</button><button data-p="0.7">hoch</button></div>
+    <label>Zinssatz für neue Staatsschulden <span class="wert" id="vI"></span></label>
+    <input type="range" id="I" min="0.5" max="5" step="0.5" value="3">
+  </div>
+  <div class="panel">
+    <h2>Versuche (Aufgabe 7)</h2>
+    <ol class="auftraege">
+      <li><b>A:</b> 50 Mrd. €, Quote 0,5, Auslastung niedrig. Wie groß ist der Gesamteffekt?</li>
+      <li><b>B:</b> Wie A, aber Auslastung hoch. Was ändert sich im Viereck?</li>
+      <li><b>C:</b> Wie A, Zinssatz 3 %. Vergleiche Wachstumsimpuls und Zinslast über sechs Jahre.</li>
+      <li><b>D:</b> Quote 0,8. Was bedeutet das für den Multiplikator?</li>
+    </ol>
+    <p><button onclick="setze(50,0.5,0.1,3)" style="font:inherit;padding:6px 10px;border-radius:6px;border:1px solid #9fb3c8;background:#fff;cursor:pointer">Auf Versuch A zurücksetzen</button></p>
+    <details><summary>So rechnet das Modell</summary>
+      <p>Der Staat gibt Geld aus, z. B. für Aufträge an Bauunternehmen. Das ist Einkommen für Unternehmen und Beschäftigte. Davon geben sie einen Teil wieder aus (Wiederausgabequote), was erneut Einkommen schafft – Runde für Runde. Gesamteffekt = Ausgaben × Multiplikator, Multiplikator = 1 : (1 − Quote).</p>
+      <p>Je höher die Auslastung, desto größer der Teil der Zusatznachfrage, der in Preissteigerungen statt in zusätzliche Produktion fließt (niedrig 10 %, mittel 35 %, hoch 70 %). Weitere Annahmen: BIP 4.470 Mrd. € (2025), rund 97.000 € Wirtschaftsleistung je Erwerbstätigem (nur die Hälfte der Mehrproduktion führt zu neuen Stellen, der Rest wird über Überstunden und bessere Auslastung erbracht), 25 % der Zusatznachfrage fließen in Importe, 40 % des Zusatzeinkommens kommen als Steuern und Abgaben zurück. Der Wachstumsimpuls wirkt zu 70 % im ersten und zu 30 % im zweiten Jahr.</p>
+      <p>In der Wirklichkeit ist der Multiplikator kleiner, weil Steuern, Sparen und Importe schon in der ersten Runde viel abziehen. Fachleute schätzen ihn für Deutschland meist deutlich niedriger, oft in der Größenordnung von 1.</p>
+    </details>
+  </div>
+</div>
+
+<div>
+  <div class="panel">
+    <h2>Ergebnis auf einen Blick</h2>
+    <div class="kern">
+      <div class="kz"><b id="kMult"></b><span>Multiplikator</span></div>
+      <div class="kz"><b id="kTotal"></b><span>zusätzliche Nachfrage insgesamt</span></div>
+      <div class="kz"><b id="kReal"></b><span>davon reale Mehrproduktion</span></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Der Multiplikator in Runden</h2>
+    <div id="runden"></div>
+    <div class="legende"><i style="background:#2E75B6"></i>Ausgaben in der jeweiligen Runde (Mrd. €)</div>
+  </div>
+
+  <div class="panel">
+    <h2>Das magische Viereck</h2>
+    <div class="viereck">
+      <div class="ziel" id="zP"><h3>Stabilität des Preisniveaus</h3><div class="z" id="zPw"></div><p id="zPt"></p></div>
+      <div class="ziel" id="zB"><h3>Hoher Beschäftigungsstand</h3><div class="z" id="zBw"></div><p id="zBt"></p></div>
+      <div class="ziel" id="zA"><h3>Außenwirtschaftliches Gleichgewicht</h3><div class="z" id="zAw"></div><p id="zAt"></p></div>
+      <div class="ziel" id="zW"><h3>Stetiges und angemessenes Wachstum</h3><div class="z" id="zWw"></div><p id="zWt"></p></div>
+    </div>
+    <div class="konflikt" id="konflikt"></div>
+    <div class="schulden" id="schulden"></div>
+  </div>
+
+  <div class="panel">
+    <h2>Strohfeuer? Wachstumsimpuls und Zinslast über sechs Jahre</h2>
+    <div id="zeit"></div>
+    <div class="legende"><i style="background:#2E75B6"></i>zusätzliche reale Wirtschaftsleistung im Jahr (Mrd. €)<i style="background:#B3261E"></i>Zinsen auf die neuen Schulden, aufsummiert (Mrd. €)</div>
+    <p class="hinweis">Annahme: Die Schulden werden in den sechs Jahren nicht getilgt.</p>
+  </div>
+</div>
+</main>
+
+<script>
+var BIP = 4470, JE_ERW = 97000, IMP = 0.25, ABG = 0.4;
+var st = { G: 50, c: 0.5, p: 0.1, i: 3 };
+function f(x, d) { return x.toLocaleString('de-DE', { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }); }
+function $(id) { return document.getElementById(id); }
+
+function setze(G, c, p, i) {
+  $('G').value = G; $('C').value = c; $('I').value = i; st.p = p;
+  document.querySelectorAll('#A button').forEach(function (b) { b.classList.toggle('an', +b.dataset.p === p); });
+  rechne();
+}
+['G', 'C', 'I'].forEach(function (id) { $(id).addEventListener('input', rechne); });
+document.querySelectorAll('#A button').forEach(function (b) {
+  b.onclick = function () { st.p = +b.dataset.p; document.querySelectorAll('#A button').forEach(function (x) { x.classList.remove('an'); }); b.classList.add('an'); rechne(); };
+});
+
+function balken(werte, farbe, hoehe, labels, linie) {
+  var W = 640, H = hoehe, pl = 44, pb = 26, pt = 14, n = werte.length;
+  var maxV = Math.max.apply(null, werte.concat(linie || [0])) * 1.12 || 1;
+  var bw = (W - pl - 10) / n, s = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" role="img">';
+  for (var g = 0; g <= 4; g++) {
+    var y = pt + (H - pt - pb) * (1 - g / 4), v = maxV * g / 4;
+    s += '<line x1="' + pl + '" x2="' + W + '" y1="' + y + '" y2="' + y + '" stroke="#e3e8ee"/><text x="' + (pl - 6) + '" y="' + (y + 4) + '" font-size="11" text-anchor="end" fill="#666">' + f(v) + '</text>';
+  }
+  werte.forEach(function (v, k) {
+    var h = (H - pt - pb) * v / maxV, x = pl + k * bw + bw * 0.18, y = H - pb - h;
+    s += '<rect x="' + x + '" y="' + y + '" width="' + (bw * 0.64) + '" height="' + Math.max(h, 0) + '" fill="' + farbe + '" rx="2"/>';
+    if (v > 0) s += '<text x="' + (x + bw * 0.32) + '" y="' + (y - 4) + '" font-size="11" text-anchor="middle" fill="#333">' + f(v, v < 10 ? 1 : 0) + '</text>';
+    s += '<text x="' + (x + bw * 0.32) + '" y="' + (H - 8) + '" font-size="11" text-anchor="middle" fill="#444">' + labels[k] + '</text>';
+  });
+  if (linie) {
+    var pts = linie.map(function (v, k) { return (pl + k * bw + bw * 0.5) + ',' + (H - pb - (H - pt - pb) * v / maxV); }).join(' ');
+    s += '<polyline points="' + pts + '" fill="none" stroke="#B3261E" stroke-width="3"/>';
+    linie.forEach(function (v, k) { var x = pl + k * bw + bw * 0.5, y = H - pb - (H - pt - pb) * v / maxV; s += '<circle cx="' + x + '" cy="' + y + '" r="4" fill="#B3261E"/><text x="' + (x + 8) + '" y="' + (y - 6) + '" font-size="11" fill="#B3261E">' + f(v, 1) + '</text>'; });
+  }
+  return s + '</svg>';
+}
+
+function ziel(id, klasse, wert, text) { $(id).className = 'ziel ' + klasse; $(id + 'w').textContent = wert; $(id + 't').textContent = text; }
+
+function rechne() {
+  st.G = +$('G').value; st.c = +$('C').value; st.i = +$('I').value;
+  $('vG').textContent = f(st.G) + ' Mrd. €'; $('vC').textContent = f(st.c, 2); $('vI').textContent = f(st.i, 1) + ' %';
+  var k = 1 / (1 - st.c), total = st.G * k, real = total * (1 - st.p), preis = total * st.p;
+  $('kMult').textContent = f(k, 2); $('kTotal').textContent = f(total) + ' Mrd. €'; $('kReal').textContent = f(real) + ' Mrd. €';
+
+  var runden = [], lab = [];
+  for (var n = 0; n < 8; n++) { runden.push(st.G * Math.pow(st.c, n)); lab.push(n === 0 ? 'Staat' : 'Runde ' + (n + 1)); }
+  $('runden').innerHTML = balken(runden, '#2E75B6', 210, lab);
+
+  var wachs = real / BIP * 100, infl = preis / BIP * 100, jobs = real * 1e9 / JE_ERW * 0.5, imp = total * IMP;
+  ziel('zW', wachs >= 0.3 ? 'gut' : 'mittel', '+' + f(wachs, 1) + ' % BIP', 'Einmaliger Impuls: verteilt auf zwei Jahre, danach fällt er wieder weg (nicht stetig).');
+  ziel('zB', jobs > 50000 ? 'gut' : 'mittel', '+' + f(Math.round(jobs / 1000)) + ' Tsd. Stellen (vorübergehend)', st.p >= 0.7 ? 'Bei hoher Auslastung fehlen Arbeitskräfte – der Effekt ist begrenzt.' : 'Zusätzliche Aufträge schaffen vorübergehend Arbeitsplätze.');
+  ziel('zP', infl < 0.3 ? 'gut' : (infl < 0.8 ? 'mittel' : 'schlecht'), '+' + f(infl, 1) + ' Prozentpunkte', infl < 0.3 ? 'Kaum zusätzlicher Preisdruck.' : 'Die Zusatznachfrage treibt die Preise; das 2-%-Ziel gerät unter Druck.');
+  ziel('zA', 'gut', '+' + f(imp) + ' Mrd. € Importe', 'Mehr Importe verringern den hohen Exportüberschuss leicht – hier nähert man sich dem Ziel an.');
+
+  var kon = $('konflikt');
+  if (infl >= 0.3) { kon.style.display = 'block'; kon.innerHTML = '<b>Zielkonflikt:</b> Wachstum und Beschäftigung steigen, aber die Preisstabilität leidet. Nicht alle Ziele lassen sich gleichzeitig erreichen – deshalb heißt das Viereck „magisch“.'; }
+  else { kon.style.display = 'none'; }
+
+  var rueck = total * ABG, zinsJahr = st.G * st.i / 100;
+  $('schulden').innerHTML = '<b>Staatsschulden (kein Ziel des Stabilitätsgesetzes, aber Folge):</b> +' + f(st.G) + ' Mrd. € neue Schulden · davon fließen im Modell rund ' + f(Math.min(rueck, st.G)) + ' Mrd. € als Steuern und Abgaben zurück' + (rueck >= st.G ? ' (im Modell vollständig – bei realistischem Multiplikator deutlich weniger)' : '') + ' · Zinsen: ' + f(zinsJahr, 1) + ' Mrd. € <u>jedes Jahr</u>.';
+
+  var jahre = [], zinsen = [], labJ = [], summe = 0;
+  for (var j = 1; j <= 6; j++) { jahre.push(j === 1 ? real * 0.7 : (j === 2 ? real * 0.3 : 0)); summe += zinsJahr; zinsen.push(summe); labJ.push('Jahr ' + j); }
+  $('zeit').innerHTML = balken(jahre, '#2E75B6', 240, labJ, zinsen);
+}
+rechne();
+</script>
+</body>
+</html>
