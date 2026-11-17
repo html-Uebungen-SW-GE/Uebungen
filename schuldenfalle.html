@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gefangen in der Schuldenfalle?</title>
+<style>
+:root{--ink:#17223b;--soft:#4b5567;--bg:#f5f3ee;--card:#fffdf9;--line:#dcd6c8;--acc:#1f4e79;--warm:#c8661b;--ok:#2e7d4f;--okbg:#e3f2e8;--no:#b23b2a;--nobg:#f8e3df;--afb1:#dedede;--afb2:#ffe082;--afb3:#c6dcee}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",Calibri,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:clamp(16px,1.15vw,20px);line-height:1.5}
+header{background:var(--ink);color:#fff;padding:.9em 1.3em}
+header h1{margin:0;font-size:1.35em}
+header p{margin:.2em 0 0;opacity:.85;font-size:.85em}
+nav{display:flex;flex-wrap:wrap;gap:.4em;padding:.7em 1.3em;background:#e9e4d8;position:sticky;top:0;z-index:5}
+nav button{font:inherit;font-size:.85em;border:2px solid var(--acc);background:#fff;color:var(--acc);border-radius:2em;padding:.25em .9em;cursor:pointer}
+nav button.on{background:var(--acc);color:#fff}
+main{max-width:1100px;margin:0 auto;padding:1.2em 1.3em 3em}
+section{display:none}section.on{display:block}
+h2{margin:.2em 0 .5em;font-size:1.4em}
+h3{margin:1em 0 .4em;font-size:1.1em}
+.card{background:var(--card);border-radius:.9em;box-shadow:0 3px 14px rgba(23,34,59,.07);padding:1.1em 1.3em;margin:.9em 0}
+.lead{font-size:1.1em;border-left:.35em solid var(--warm);padding-left:.8em}
+.task{border-radius:.7em;padding:.8em 1em;margin:.9em 0;border:2px solid #999}
+.task.a1{background:var(--afb1);border-color:#888}.task.a2{background:var(--afb2);border-color:#c80}.task.a3{background:var(--afb3);border-color:#3f7faa}
+.task b.n{margin-right:.4em}.task .afb{font-size:.8em;color:#555;font-style:italic;margin-left:.4em}
+.src{font-size:.75em;color:var(--soft);margin-top:.5em}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(18em,1fr));gap:.9em}
+.term{background:#fff;border:1px solid var(--line);border-radius:.7em;padding:.7em .9em}
+.term b{color:var(--acc)}
+.match{display:grid;gap:.5em}
+.match .row{display:grid;grid-template-columns:1fr minmax(12em,16em);gap:.6em;align-items:center;background:#fff;border:2px solid var(--line);border-radius:.6em;padding:.45em .7em}
+.match .row.right{border-color:var(--ok);background:var(--okbg)}.match .row.wrong{border-color:var(--no);background:var(--nobg)}
+select,input[type=number]{font:inherit;font-size:.9em;padding:.25em .4em;border-radius:.4em;border:1px solid #aaa;background:#fff;max-width:100%}
+.btn{font:inherit;cursor:pointer;background:var(--acc);color:#fff;border:none;border-radius:.5em;padding:.4em 1em;margin:.3em .3em 0 0}
+.btn.ghost{background:#fff;color:var(--acc);border:2px solid var(--acc)}
+.btn.warm{background:var(--warm)}
+svg text{font-family:inherit}
+.chart{width:100%;height:auto;display:block}
+.sliders{display:grid;grid-template-columns:repeat(auto-fit,minmax(15em,1fr));gap:.8em 1.2em}
+.sl label{display:flex;justify-content:space-between;font-weight:600}
+.sl input[type=range]{width:100%}
+.sl small{color:var(--soft)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(10em,1fr));gap:.7em;margin-top:.8em}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:.7em;padding:.6em .8em}
+.kpi .v{font-size:1.5em;font-weight:700}.kpi .l{font-size:.78em;color:var(--soft)}
+.verdict{margin-top:.8em;padding:.7em .9em;border-radius:.6em;font-weight:600}
+.verdict.good{background:var(--okbg);color:var(--ok)}.verdict.bad{background:var(--nobg);color:var(--no)}.verdict.mid{background:#fff4d6;color:#8a5a00}
+.experts{display:grid;grid-template-columns:repeat(auto-fit,minmax(11em,1fr));gap:.6em}
+.experts button{font:inherit;text-align:left;border:2px solid var(--line);background:#fff;border-radius:.7em;padding:.6em .8em;cursor:pointer}
+.experts button.on{border-color:var(--warm);background:#fff4ea}
+.experts .nr{display:block;font-size:.75em;color:var(--warm);font-weight:700;letter-spacing:.05em}
+.expert h3{margin-top:0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:.8em}
+.pc div{border-radius:.6em;padding:.6em .8em}
+.pc .pro{background:var(--okbg)}.pc .con{background:var(--nobg)}
+.pc ul{margin:.3em 0 0;padding-left:1.2em}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:.88em}
+th,td{border:1px solid var(--line);padding:.4em .5em;text-align:left;vertical-align:middle}
+th{background:var(--ink);color:#fff}
+td select{width:100%}
+td.sum{font-weight:700;text-align:center}
+.scale{display:flex;justify-content:space-between;font-size:.8em;color:var(--soft);margin-top:.2em}
+.pos input[type=range]{width:100%}
+@media (max-width:640px){.pc{grid-template-columns:1fr}.match .row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><h1>Gefangen in der Schuldenfalle? Staatsverschuldung und Handlungsspielraum</h1><p>Q1 Sozialwissenschaften · Stand 17.11.2026</p></header>
+<nav id="nav"></nav>
+<main>
+
+<section id="start">
+<h2>Worum geht es?</h2>
+<div class="card lead">2030 wird der Bund voraussichtlich rund 81 Milliarden Euro nur für Zinsen ausgeben – zwanzigmal so viel wie 2021 und mehr als für Investitionen. Jeder Euro für Zinsen fehlt für Schulen, Schienen oder Soziales.</div>
+<div class="card"><h3 style="margin-top:0">Leitfrage</h3>
+<p><b>Wie verengen steigende Schulden und Zinsen den Spielraum des Staates – und welche Wege führen aus der Schuldenfalle?</b></p>
+<h3>So arbeitet ihr</h3>
+<ol>
+<li><b>M1</b> Begriffe klären und im Zuordnungsquiz prüfen</li>
+<li><b>M2</b> Schuldenquoten im Vergleich auswerten</li>
+<li><b>M3</b> Den Bundeshaushalt untersuchen: Wie viel fließt in Zinsen?</li>
+<li><b>M4</b> Mit dem Schuldenrechner experimentieren: Wann wird es gefährlich?</li>
+<li><b>M5</b> Gruppenpuzzle zu sechs Wegen aus der Schuldenfalle und gemeinsame Bewertung</li>
+<li><b>Urteil</b> Positionieren und begründen</li>
+</ol>
+<p class="src">Grundlage: Keynes/Hayek und das Arbeitsblatt „Marktglaube“ (angebots- und nachfrageorientierte Wirtschaftspolitik).</p>
+<button class="btn" onclick="go('m1')">Los geht’s →</button></div>
+</section>
+
+<section id="m1">
+<h2>M1 · Die wichtigsten Begriffe</h2>
+<div class="grid2">
+<div class="term"><b>Schuldenstand</b><br>Summe aller Schulden des Staates zu einem Zeitpunkt (Bund, Länder, Gemeinden, Sozialversicherungen). Mitte 2026: rund 2,75 Billionen Euro, davon 1,9 Billionen beim Bund.</div>
+<div class="term"><b>Defizit (Neuverschuldung)</b><br>Der Betrag, um den die Ausgaben in einem Jahr die Einnahmen übersteigen. Ein Defizit erhöht den Schuldenstand.</div>
+<div class="term"><b>Schuldenquote</b><br>Schuldenstand im Verhältnis zur jährlichen Wirtschaftsleistung (BIP). Sie zeigt, wie tragfähig die Schulden sind – ähnlich wie man Kreditraten am Einkommen misst.</div>
+<div class="term"><b>Zins-Steuer-Quote</b><br>Anteil der Steuereinnahmen, der für Zinsen ausgegeben werden muss. Beim Bund: 10,5 % (2027) und laut Planung 18,6 % (2030).</div>
+<div class="term"><b>Primärsaldo</b><br>Haushaltssaldo ohne Zinsausgaben. Ist er positiv (Primärüberschuss), nimmt der Staat ohne Zinsen mehr ein, als er ausgibt.</div>
+<div class="term"><b>Maastricht-Kriterien und Schuldenbremse</b><br>EU-Regeln: Schuldenquote höchstens 60 %, Defizit höchstens 3 % des BIP. Die deutsche Schuldenbremse (Art. 115 GG) erlaubt dem Bund strukturell 0,35 % des BIP neue Kredite – mit Ausnahmen, z. B. für Verteidigung.</div>
+</div>
+<p class="src">Quellen: Destatis, Pressemitteilung Nr. 341 vom September 2026 (Schuldenstand 2. Quartal 2026); IW Köln, 11.11.2026 (Zins-Steuer-Quote).</p>
+<div class="task a1"><b class="n">Aufgabe 1</b>Ordnet die Erklärungen den Begriffen zu und prüft eure Lösung.<span class="afb">[AFB I]</span></div>
+<div class="match" id="match"></div>
+<button class="btn" onclick="checkMatch()">Prüfen</button><button class="btn ghost" onclick="buildMatch()">Neu mischen</button>
+<p id="matchRes"></p>
+</section>
+
+<section id="m2">
+<h2>M2 · Wer ist wie stark verschuldet?</h2>
+<div class="card"><h3 style="margin-top:0">Schuldenquoten 2025 (Staatsschulden in % des BIP)</h3>
+<div id="chartDebt"></div>
+<p class="src">Quellen: Eurostat, Pressemitteilung vom 22.04.2026 (EU-Staaten und Euroraum, Stand Ende 2025); IWF, Fiscal Monitor April 2026 (USA, Japan). Die rote Linie markiert die Maastricht-Grenze von 60 %.</p></div>
+<div class="card"><h3 style="margin-top:0">Deutschland im Zeitverlauf (gerundet)</h3>
+<table><tr><th>Jahr</th><th>2000</th><th>2010</th><th>2019</th><th>2021</th><th>2025</th></tr>
+<tr><td><b>Schuldenquote</b></td><td>rund 59 %</td><td>rund 82 %</td><td>knapp 60 %</td><td>rund 69 %</td><td>63,5 %</td></tr>
+<tr><td><b>Anlass</b></td><td>–</td><td>Finanzkrise, Bankenrettung</td><td>Schuldenbremse, niedrige Zinsen, Wachstum</td><td>Corona-Hilfen</td><td>Sondervermögen, Verteidigung</td></tr></table>
+<p class="src">Werte gerundet nach Eurostat/Destatis; 2025: Eurostat, 22.04.2026.</p></div>
+<div class="task a1"><b class="n">Aufgabe 2</b>Beschreibt die Position Deutschlands im internationalen Vergleich und die Entwicklung seit 2000.<span class="afb">[AFB I]</span></div>
+</section>
+
+<section id="m3">
+<h2>M3 · Wohin fließt das Geld? Der Bundeshaushalt</h2>
+<div class="card"><h3 style="margin-top:0">Von 100 Euro im Bundeshaushalt 2027 gehen an …</h3>
+<div id="chartBudget"></div>
+<p>Ausgaben 2027 insgesamt: rund <b>561 Mrd. Euro</b>. Davon werden etwa <b>123 Mrd. Euro über neue Kredite</b> finanziert; 84,6 Mrd. davon fallen unter die Ausnahme für Verteidigung und Sicherheit.</p>
+<p class="src">Quellen: echo24, Bericht zum Regierungsentwurf (Anteile je 100 Euro); Deutscher Bundestag, hib 939/2026 vom 13.11.2026 (Beschluss des Haushaltsausschusses). Die Schlussabstimmung im Bundestag steht noch aus.</p></div>
+<div class="card"><h3 style="margin-top:0">Zinsausgaben des Bundes in Mrd. Euro</h3>
+<div id="chartInterest"></div>
+<p>Laut Institut der deutschen Wirtschaft zahlt der Bund <b>ab 2028 mehr für Zinsen als für Investitionen</b>: 2030 stehen rund 81 Mrd. Euro Zinsen nur noch 49 Mrd. Euro Investitionen im Kernhaushalt gegenüber. Gründe sind der höhere Schuldenstand und gestiegene Renditen für Bundesanleihen.</p>
+<p class="src">Quellen: Deutscher Bundestag, hib 656/2026 vom 21.08.2026 (Finanzplan 2027–2030); IW Köln, 11.11.2026. 2021: rund 4 Mrd. (ein Zwanzigstel des Werts von 2030); 2026: Soll.</p></div>
+<div class="card"><h3 style="margin-top:0">Was heißt „Handlungsspielraum“?</h3>
+<p>Ein großer Teil des Haushalts ist <b>gebunden</b>: Zuschüsse zur Rente, Zinsen, Personal und gesetzliche Leistungen müssen gezahlt werden, egal welche Regierung im Amt ist. Frei gestalten lässt sich nur der Rest – etwa Investitionen, Förderprogramme oder neue Projekte. Steigen die Zinsen, schrumpft dieser freie Teil, wenn nicht gleichzeitig mehr eingenommen oder an anderer Stelle gespart wird.</p></div>
+<div class="task a2"><b class="n">Aufgabe 3</b>Erklärt mithilfe von M3, warum steigende Zinsausgaben den Handlungsspielraum künftiger Regierungen einschränken. Bezieht die Zins-Steuer-Quote (M1) ein.<span class="afb">[AFB II]</span></div>
+</section>
+
+<section id="m4">
+<h2>M4 · Der Schuldenrechner</h2>
+<div class="card"><p>Die Schuldenquote steigt nicht nur durch neue Kredite. Entscheidend ist das Verhältnis von <b>Zins (r)</b> und <b>Wachstum der Wirtschaftsleistung (g)</b>: Wächst das BIP schneller, als die Zinsen die Schulden wachsen lassen, sinkt die Quote fast von selbst. Liegt der Zins dauerhaft über dem Wachstum, droht die <b>Schuldenfalle</b> – man muss sich verschulden, um die Zinsen zu zahlen.</p>
+<div class="sliders">
+<div class="sl"><label>Schuldenquote heute <span id="vB"></span></label><input type="range" id="sB" min="20" max="220" step="0.5" value="63.5"><small>Deutschland Ende 2025: 63,5 %</small></div>
+<div class="sl"><label>Durchschnittlicher Zins (r) <span id="vR"></span></label><input type="range" id="sR" min="0" max="10" step="0.1" value="2.5"><small>Rendite zehnjähriger Bundesanleihen: rund 3,2 % (10.11.2026)</small></div>
+<div class="sl"><label>Nominales Wachstum des BIP (g) <span id="vG"></span></label><input type="range" id="sG" min="-4" max="8" step="0.1" value="4"><small>2026 etwa 1,3 % real plus 2,8 % Inflation</small></div>
+<div class="sl"><label>Primärsaldo pro Jahr <span id="vP"></span></label><input type="range" id="sP" min="-6" max="4" step="0.1" value="-1.5"><small>negativ = Defizit ohne Zinsen, positiv = Überschuss</small></div>
+</div>
+<div style="margin-top:.6em"><b>Szenarien:</b>
+<button class="btn ghost" onclick="scen(63.5,2.5,4,-1.5)">Deutschland heute (vereinfacht)</button>
+<button class="btn ghost" onclick="scen(63.5,4.5,2,-2)">Zinsen steigen, Wirtschaft lahmt</button>
+<button class="btn ghost" onclick="scen(63.5,2.5,4,1)">Sparkurs mit Wachstum</button>
+<button class="btn ghost" onclick="scen(140,7,-2,-4)">Griechenland um 2011 (vereinfacht)</button>
+<button class="btn ghost" onclick="scen(206,0.8,1.5,-3)">Japan (vereinfacht)</button></div>
+<div id="chartSim" style="margin-top:.8em"></div>
+<div class="kpis"><div class="kpi"><div class="v" id="k10"></div><div class="l">Schuldenquote nach 10 Jahren</div></div><div class="kpi"><div class="v" id="k20"></div><div class="l">Schuldenquote nach 20 Jahren</div></div><div class="kpi"><div class="v" id="kZ"></div><div class="l">Zinslast im 20. Jahr (in % des BIP)</div></div><div class="kpi"><div class="v" id="kRG"></div><div class="l">Zins minus Wachstum (r − g), in Prozentpunkten</div></div></div>
+<div class="verdict" id="verdict"></div>
+<p class="src">Modell: Schuldenquote im nächsten Jahr = Schuldenquote × (1 + r) / (1 + g) − Primärsaldo. Stark vereinfacht: Zinsen und Wachstum bleiben konstant, Rückwirkungen werden nicht berücksichtigt.</p></div>
+<div class="task a2"><b class="n">Aufgabe 4</b>Experimentiert mit dem Rechner. Ermittelt, (a) bei welcher Kombination von r und g die Quote trotz Defizit sinkt und (b) ab wann bei einem Defizit von 2 % die Quote dauerhaft steigt. Erklärt den Begriff „Schuldenfalle“ mit euren Ergebnissen.<span class="afb">[AFB II]</span></div>
+</section>
+
+<section id="m5">
+<h2>M5 · Wege aus der Schuldenfalle – Gruppenpuzzle</h2>
+<div class="card"><b>Ablauf:</b> (1) Jede Expertengruppe bearbeitet einen Weg. (2) In neuen, gemischten Gruppen stellt jede Person ihren Weg in zwei Minuten vor. (3) Gemeinsam füllt ihr die Bewertungsmatrix aus.</div>
+<div class="experts" id="expBtns"></div>
+<div class="card expert" id="expCard"></div>
+<div class="task a2"><b class="n">Aufgabe 5</b>Expertenphase: Erklärt euren Weg, ordnet ihn der angebots- oder der nachfrageorientierten Wirtschaftspolitik zu und bereitet einen Kurzvortrag (zwei Minuten) vor.<span class="afb">[AFB II]</span></div>
+<h3>Bewertungsmatrix</h3>
+<p style="font-size:.88em;color:var(--soft)">Bewertet jeden Weg pro Kriterium: 1 = schlecht, 2 = mittel, 3 = gut. Die Summe wird automatisch berechnet.</p>
+<div style="overflow-x:auto"><table id="matrix"></table></div>
+<button class="btn ghost" onclick="resetMatrix()">Matrix leeren</button>
+</section>
+
+<section id="urteil">
+<h2>Urteil</h2>
+<div class="card pos"><h3 style="margin-top:0">„Deutschland sollte vorrangig Schulden abbauen, statt weiter auf Kredit zu investieren.“</h3>
+<input type="range" min="0" max="4" step="1" value="2" id="posR"><div class="scale"><span>stimme gar nicht zu</span><span>eher nicht</span><span>unentschieden</span><span>eher ja</span><span>stimme voll zu</span></div>
+<p id="posT" style="font-weight:600"></p></div>
+<div class="task a3"><b class="n">Aufgabe 6</b>Beurteilt, welcher Weg oder welche Kombination von Wegen Deutschland am ehesten aus der drohenden Zinsfalle führt. Unterscheidet zwischen Sachurteil (Wirksamkeit, Folgen) und Werturteil (Gerechtigkeit, Freiheit künftiger Generationen) und bezieht die Positionen von Keynes und Hayek ein.<span class="afb">[AFB III]</span></div>
+<div class="card"><h3 style="margin-top:0">Satzbausteine</h3><ul><li>Für … spricht vor allem, dass …</li><li>Kritiker wenden ein, dass …</li><li>Aus Sicht der Angebotsorientierung / der Nachfrageorientierung …</li><li>Wägt man die Argumente ab, …</li><li>Mir ist dabei besonders wichtig, dass …, weil …</li></ul></div>
+</section>
+
+</main>
+<script>
+const SECS=[["start","Start"],["m1","M1 Begriffe"],["m2","M2 Vergleich"],["m3","M3 Haushalt"],["m4","M4 Rechner"],["m5","M5 Auswege"],["urteil","Urteil"]];
+function mische(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function go(id){document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id===id));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.id===id));window.scrollTo(0,0);if(id==="m2")drawDebt();if(id==="m3"){drawBudget();drawInterest();}if(id==="m4")sim();}
+document.getElementById("nav").innerHTML=SECS.map(s=>`<button data-id="${s[0]}" onclick="go('${s[0]}')">${s[1]}</button>`).join("");
+const fmt=(x,d=1)=>x.toLocaleString("de-DE",{minimumFractionDigits:d,maximumFractionDigits:d});
+
+// M1 Zuordnung
+const MATCH=[["Schuldenstand","Summe aller Schulden des Staates zu einem Zeitpunkt"],["Defizit","Ausgaben eines Jahres minus Einnahmen eines Jahres"],["Schuldenquote","Schulden im Verhältnis zur jährlichen Wirtschaftsleistung"],["Zins-Steuer-Quote","Anteil der Steuereinnahmen, der für Zinsen gebraucht wird"],["Primärsaldo","Haushaltssaldo ohne die Zinsausgaben"],["Schuldenbremse","Verfassungsregel, die neue Kredite des Bundes begrenzt"]];
+function buildMatch(){const defs=mische(MATCH.map(m=>m[1]));document.getElementById("match").innerHTML=mische(MATCH).map(m=>`<div class="row" data-k="${m[0]}"><span>${m[1]}</span><select><option value="">– Begriff wählen –</option>${mische(MATCH.map(x=>x[0])).map(t=>`<option>${t}</option>`).join("")}</select></div>`).join("");document.getElementById("matchRes").textContent="";}
+function checkMatch(){let ok=0;document.querySelectorAll("#match .row").forEach(r=>{const v=r.querySelector("select").value;r.classList.remove("right","wrong");if(!v)return;if(v===r.dataset.k){r.classList.add("right");ok++;}else r.classList.add("wrong");});document.getElementById("matchRes").textContent=`${ok} von ${MATCH.length} richtig.`;}
+buildMatch();
+
+// Diagramme
+function bars(el,data,opt){const W=900,rowH=opt.rowH||42,L=opt.left||210,H=data.length*rowH+30,max=opt.max;let s=`<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${opt.label}">`;
+ data.forEach((d,i)=>{const y=i*rowH+8,w=(W-L-90)*d[1]/max;s+=`<text x="${L-10}" y="${y+rowH/2}" text-anchor="end" font-size="17" fill="#17223b" dominant-baseline="middle">${d[0]}</text><rect x="${L}" y="${y+4}" width="${w}" height="${rowH-14}" rx="4" fill="${d[2]||"#1f4e79"}"/><text x="${L+w+8}" y="${y+rowH/2}" font-size="17" font-weight="700" fill="#17223b" dominant-baseline="middle">${opt.f(d[1])}</text>`;});
+ if(opt.line){const x=L+(W-L-90)*opt.line/max;s+=`<line x1="${x}" y1="0" x2="${x}" y2="${H-22}" stroke="#b23b2a" stroke-width="2.5" stroke-dasharray="6 4"/><text x="${x}" y="${H-4}" text-anchor="middle" font-size="15" fill="#b23b2a">${opt.lineLabel}</text>`;}
+ document.getElementById(el).innerHTML=s+"</svg>";}
+function drawDebt(){bars("chartDebt",[["Japan",206.5,"#7a8699"],["Griechenland",146.1],["Italien",137.1],["USA",123.9,"#7a8699"],["Frankreich",115.6],["Spanien",100.7],["Euroraum",87.8,"#9aa6b8"],["Deutschland",63.5,"#c8661b"]],{max:220,label:"Schuldenquoten 2025",f:v=>fmt(v)+" %",line:60,lineLabel:"60 % (Maastricht)"});}
+function drawBudget(){bars("chartBudget",[["Arbeit und Soziales",36],["Verteidigung",20],["Zinsen",7.5,"#c8661b"],["Verkehr",5],["Bildung und Familie",3],["alle übrigen Bereiche",28.5,"#9aa6b8"]],{max:40,label:"Bundeshaushalt 2027 je 100 Euro",f:v=>fmt(v,v%1?2:0)+" €",left:230});}
+function drawInterest(){const d=[["2021",4],["2026",30.3],["2027",41.9],["2028",55.2],["2029",68.1],["2030",80.7]],W=900,H=360,B=300,max=90,bw=90,gap=(W-80-d.length*bw)/(d.length-1);let s=`<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Zinsausgaben des Bundes">`;
+ const inv=49,yi=B-(B-30)*inv/max;s+=`<line x1="40" y1="${yi}" x2="${W-20}" y2="${yi}" stroke="#2e7d4f" stroke-width="2.5" stroke-dasharray="6 4"/><text x="44" y="${yi-8}" text-anchor="start" font-size="15" fill="#2e7d4f">Investitionen 2030: 49 Mrd.</text>`;
+ d.forEach((x,i)=>{const h=(B-30)*x[1]/max,X=40+i*(bw+gap);s+=`<rect x="${X}" y="${B-h}" width="${bw}" height="${h}" rx="4" fill="${i>1?"#c8661b":"#1f4e79"}" opacity="${i>2?.85:1}"/><text x="${X+bw/2}" y="${B-h-8}" text-anchor="middle" font-size="17" font-weight="700" fill="#17223b">${fmt(x[1])}</text><text x="${X+bw/2}" y="${B+24}" text-anchor="middle" font-size="16" fill="#17223b">${x[0]}</text>`;});
+ s+=`<text x="${W/2}" y="${H-6}" text-anchor="middle" font-size="14" fill="#4b5567">2028–2030: Finanzplanung</text></svg>`;document.getElementById("chartInterest").innerHTML=s;}
+
+// M4 Rechner
+const $=id=>document.getElementById(id);
+["sB","sR","sG","sP"].forEach(id=>$(id).addEventListener("input",sim));
+function scen(b,r,g,p){$("sB").value=b;$("sR").value=r;$("sG").value=g;$("sP").value=p;sim();}
+function sim(){const b0=+$("sB").value,r=+$("sR").value/100,g=+$("sG").value/100,p=+$("sP").value;
+ $("vB").textContent=fmt(b0)+" %";$("vR").textContent=fmt(r*100)+" %";$("vG").textContent=fmt(g*100)+" %";$("vP").textContent=(p>0?"+":"")+fmt(p)+" %";
+ const path=[b0];for(let t=1;t<=20;t++)path.push(path[t-1]*(1+r)/(1+g)-p);
+ const W=900,H=330,L=60,R=45,T=20,B=290,max=Math.max(100,Math.ceil(Math.max(...path)/50)*50),min=Math.min(0,Math.floor(Math.min(...path)/50)*50);
+ const X=t=>L+(W-L-R)*t/20,Y=v=>B-(B-T)*(v-min)/(max-min);
+ let s=`<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Entwicklung der Schuldenquote">`;
+ for(let v=min;v<=max;v+=50){s+=`<line x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}" stroke="#e2ddd0"/><text x="${L-8}" y="${Y(v)}" text-anchor="end" font-size="14" fill="#4b5567" dominant-baseline="middle">${v} %</text>`;}
+ s+=`<line x1="${L}" x2="${W-R}" y1="${Y(60)}" y2="${Y(60)}" stroke="#b23b2a" stroke-width="2" stroke-dasharray="6 4"/><text x="${W-R}" y="${Y(60)-6}" text-anchor="end" font-size="13" fill="#b23b2a">60 %</text>`;
+ [0,5,10,15,20].forEach(t=>s+=`<text x="${X(t)}" y="${B+22}" text-anchor="middle" font-size="14" fill="#4b5567">Jahr ${t}</text>`);
+ s+=`<polyline fill="none" stroke="#c8661b" stroke-width="4" points="${path.map((v,t)=>X(t)+","+Y(v)).join(" ")}"/>`;
+ s+=`<circle cx="${X(20)}" cy="${Y(path[20])}" r="6" fill="#c8661b"/></svg>`;$("chartSim").innerHTML=s;
+ $("k10").textContent=fmt(path[10])+" %";$("k20").textContent=fmt(path[20])+" %";$("kZ").textContent=fmt(path[19]*r)+" %";$("kRG").textContent=(r-g>0?"+":"")+fmt((r-g)*100)+" Pp.";
+ const v=$("verdict"),d=path[20]-b0;
+ if(d<-5){v.className="verdict good";v.textContent="Die Quote sinkt: Wachstum und Haushaltssaldo halten die Schulden im Griff.";}
+ else if(d<=5){v.className="verdict mid";v.textContent="Die Quote bleibt etwa stabil.";}
+ else if(r>g){v.className="verdict bad";v.textContent="Schuldenfalle: Der Zins liegt über dem Wachstum – die Quote steigt immer schneller, die Zinslast frisst den Spielraum.";}
+ else{v.className="verdict bad";v.textContent="Die Quote steigt, weil das Defizit zu groß ist – obwohl die Wirtschaft schneller wächst als die Zinsen.";}}
+
+// M5 Experten
+const EXP=[
+ {t:"Ausgaben kürzen",k:"Konsolidierung",idee:"Der Staat spart: Subventionen abbauen, Verwaltung verschlanken, Zuwächse bei Sozialausgaben begrenzen. Mit Primärüberschüssen sinkt die Schuldenquote.",bsp:"Deutschland senkte die Quote nach Einführung der Schuldenbremse (2009) von rund 82 % (2010) auf knapp 60 % (2019) – begünstigt durch Wachstum und Niedrigzinsen.",pro:["stärkt das Vertrauen der Anleger, hält Zinsen niedrig","entlastet künftige Generationen","entspricht angebotsorientiertem Denken: Staat schlank halten (Hayek)"],con:["dämpft die Nachfrage und kann die Krise verschärfen (Keynes)","Investitionsstau bei Schulen, Brücken, Schienen","in Griechenland schrumpfte die Wirtschaft nach harten Sparprogrammen um rund ein Viertel"]},
+ {t:"Steuern erhöhen",k:"Einnahmen steigern",idee:"Mehr Einnahmen durch höhere Steuern, z. B. einen höheren Spitzensteuersatz, eine Vermögensteuer oder eine höhere Mehrwertsteuer. Das Defizit sinkt, ohne Leistungen zu kürzen.",bsp:"Über die Wiedereinführung einer Vermögensteuer wird in Deutschland seit Jahren gestritten; erhoben wird sie seit 1997 nicht mehr.",pro:["wirkt schnell und planbar","Lasten können nach Leistungsfähigkeit verteilt werden","Leistungen des Staates bleiben erhalten"],con:["kann Investitionen und Arbeitsanreize bremsen (angebotsorientierte Kritik)","Unternehmen und Vermögende können abwandern","politisch schwer durchsetzbar, Mehrwertsteuer trifft Geringverdiener stark"]},
+ {t:"Herauswachsen durch Investitionen",k:"Wachstum",idee:"Der Staat investiert gezielt in Infrastruktur, Bildung und Forschung. Wächst das BIP schneller als die Schulden, sinkt die Quote – selbst wenn die Schulden absolut steigen.",bsp:"Die USA senkten ihre Schuldenquote nach 1945 von über 100 % vor allem durch kräftiges Wachstum (und Inflation). Deutschland setzt mit dem Sondervermögen von 500 Mrd. Euro auf Investitionen.",pro:["entspricht nachfrageorientiertem Denken: Staat stößt Wachstum an (Keynes)","Investitionen schaffen dauerhaft Wohlstand, auch für künftige Generationen","verbessert Standort und Produktivität"],con:["unsicher: Wirkt die Investition nicht, bleiben nur höhere Schulden","Planung und Genehmigungen dauern lange","steigende Zinsen können den Effekt aufzehren (r > g)"]},
+ {t:"Inflation und finanzielle Repression",k:"Entwertung",idee:"Steigen Preise und Einkommen, schrumpfen die alten Schulden im Verhältnis zum BIP. Bleiben die Zinsen dabei unter der Inflation („finanzielle Repression“), werden Schulden real entwertet.",bsp:"Nach der Inflationswelle 2022/23 sank die Schuldenquote vieler Euro-Staaten, weil das nominale BIP kräftig wuchs.",pro:["wirkt ohne sichtbare Kürzungen oder Steuererhöhungen","historisch oft genutzter Weg"],con:["Sparer und Menschen mit festen Einkommen verlieren Kaufkraft – eine versteckte Steuer","die Europäische Zentralbank ist unabhängig und der Preisstabilität verpflichtet","Anleger verlangen bald höhere Zinsen, Vertrauen geht verloren"]},
+ {t:"Regeln ändern",k:"Schuldenbremse reformieren oder verschärfen",idee:"Die einen wollen die Schuldenbremse lockern und Kredite für Investitionen erlauben („goldene Regel“), die anderen sie verschärfen und Ausnahmen streichen.",bsp:"2025 wurden Verteidigungsausgaben über 1 % des BIP von der Schuldenbremse ausgenommen und ein Sondervermögen geschaffen. Eine Reformkommission fand 2026 keine Einigung.",pro:["Lockerung: mehr Spielraum für Zukunftsinvestitionen","Verschärfung: verhindert Ausweichen in Sondertöpfe, schützt künftige Haushalte"],con:["Lockerung: Gefahr, dass auch Konsumausgaben auf Kredit finanziert werden","Verschärfung: kann notwendige Investitionen verhindern","Grundgesetzänderung braucht Zweidrittelmehrheit"]},
+ {t:"Schuldenschnitt",k:"Umschuldung",idee:"Gläubiger verzichten auf einen Teil ihrer Forderungen. Der Staat startet mit weniger Schulden neu.",bsp:"2012 verzichteten private Gläubiger Griechenlands auf rund 107 Mrd. Euro – etwa die Hälfte des Nennwerts ihrer Anleihen.",pro:["schnelle, spürbare Entlastung","Neustart möglich, wenn Schulden untragbar sind"],con:["Banken, Versicherungen und Rentenfonds verlieren Geld","Vertrauen sinkt, künftige Kredite werden teurer","für Deutschland unrealistisch und mit hohen Folgekosten verbunden"]}
+];
+let curExp=0;
+function showExp(i){curExp=i;document.querySelectorAll("#expBtns button").forEach((b,k)=>b.classList.toggle("on",k===i));const e=EXP[i];
+ $("expCard").innerHTML=`<h3>Weg ${i+1}: ${e.t} <span style="font-weight:400;color:var(--soft)">(${e.k})</span></h3><p><b>Die Idee:</b> ${e.idee}</p><p><b>Beispiel:</b> ${e.bsp}</p><div class="pc"><div class="pro"><b>Dafür spricht</b><ul>${e.pro.map(x=>`<li>${x}</li>`).join("")}</ul></div><div class="con"><b>Dagegen spricht</b><ul>${e.con.map(x=>`<li>${x}</li>`).join("")}</ul></div></div>`;}
+$("expBtns").innerHTML=EXP.map((e,i)=>`<button onclick="showExp(${i})"><span class="nr">WEG ${i+1}</span>${e.t}</button>`).join("");showExp(0);
+const KRIT=["kurzfristig wirksam","langfristig wirksam","sozial gerecht","generationengerecht","politisch durchsetzbar"];
+function store(k,v){try{localStorage.setItem(k,v)}catch(e){}}function load(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function buildMatrix(){let h=`<tr><th>Weg</th>${KRIT.map(k=>`<th>${k}</th>`).join("")}<th>Summe</th></tr>`;
+ EXP.forEach((e,i)=>{h+=`<tr><td><b>${e.t}</b></td>${KRIT.map((k,j)=>{const v=load(`m_${i}_${j}`)||"";return `<td><select data-i="${i}" data-j="${j}"><option value=""></option>${[1,2,3].map(n=>`<option${String(n)===v?" selected":""}>${n}</option>`).join("")}</select></td>`;}).join("")}<td class="sum" id="sum${i}"></td></tr>`;});
+ $("matrix").innerHTML=h;document.querySelectorAll("#matrix select").forEach(s=>s.onchange=()=>{store(`m_${s.dataset.i}_${s.dataset.j}`,s.value);sums();});sums();}
+function sums(){EXP.forEach((e,i)=>{let t=0,n=0;document.querySelectorAll(`#matrix select[data-i="${i}"]`).forEach(s=>{if(s.value){t+=+s.value;n++;}});$("sum"+i).textContent=n?t:"";});}
+function resetMatrix(){EXP.forEach((e,i)=>KRIT.forEach((k,j)=>store(`m_${i}_${j}`,"")));buildMatrix();}
+buildMatrix();
+const POS=["Du stimmst gar nicht zu.","Du stimmst eher nicht zu.","Du bist unentschieden.","Du stimmst eher zu.","Du stimmst voll zu."];
+$("posR").addEventListener("input",()=>$("posT").textContent=POS[+$("posR").value]+" Begründe deine Position in Aufgabe 6.");$("posT").textContent="Bewege den Regler auf deine Position.";
+go("start");
+</script>
+</body>
+</html>
