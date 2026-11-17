@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Keynes gegen Hayek – Digitale Übung</title>
+<style>
+  :root { --blau:#1F4E79; --hell:#EAF2FA; --gruen:#2E7D32; --rot:#C62828; --gelb:#FFE082; --grau:#f3f3f3; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: Georgia, "Times New Roman", serif; background:#fafafa; color:#222; }
+  header { background:var(--blau); color:#fff; padding:16px 20px; }
+  header h1 { margin:0; font-family: Calibri, Arial, sans-serif; font-size:1.4rem; }
+  header p { margin:4px 0 0; font-size:.9rem; opacity:.9; }
+  .wrap { max-width:960px; margin:0 auto; padding:16px; }
+  nav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+  nav button { font-family:Calibri, Arial, sans-serif; font-size:1rem; padding:8px 14px; border:2px solid var(--blau); background:#fff; color:var(--blau); border-radius:6px; cursor:pointer; }
+  nav button.aktiv { background:var(--blau); color:#fff; }
+  .punkte { font-family:Calibri, Arial, sans-serif; background:var(--hell); border:1px solid #9DB8D2; border-radius:6px; padding:8px 12px; margin-bottom:12px; }
+  .station { display:none; }
+  .station.aktiv { display:block; }
+  .station h2 { font-family:Calibri, Arial, sans-serif; color:var(--blau); margin:4px 0 6px; }
+  .auftrag { font-style:italic; color:#555; margin:0 0 12px; }
+  .karte { background:#fff; border:1px solid #ccc; border-left:6px solid #bbb; border-radius:6px; padding:10px 12px; margin-bottom:10px; }
+  .karte.richtig { border-left-color:var(--gruen); background:#F1F8F1; }
+  .karte.falsch { border-left-color:var(--rot); background:#FDF2F2; }
+  .karte .text { font-size:1.02rem; margin-bottom:8px; }
+  .knoepfe { display:flex; flex-wrap:wrap; gap:8px; }
+  .knoepfe button { font-family:Calibri, Arial, sans-serif; font-size:.95rem; padding:6px 12px; border:1px solid #888; background:var(--grau); border-radius:5px; cursor:pointer; }
+  .knoepfe button:hover:not(:disabled) { background:#e3e3e3; }
+  .knoepfe button:disabled { cursor:default; opacity:.75; }
+  .knoepfe button.gewaehlt-richtig { background:var(--gruen); color:#fff; border-color:var(--gruen); opacity:1; }
+  .knoepfe button.gewaehlt-falsch { background:var(--rot); color:#fff; border-color:var(--rot); opacity:1; }
+  .erklaerung { margin-top:8px; font-size:.92rem; color:#333; display:none; }
+  .erklaerung.zeigen { display:block; }
+  .neu { font-family:Calibri, Arial, sans-serif; margin-top:6px; padding:8px 14px; border:none; background:var(--blau); color:#fff; border-radius:6px; cursor:pointer; }
+  .hinweis { font-size:.85rem; color:#666; margin-top:20px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Keynes gegen Hayek – nachfrage- oder angebotsorientiert?</h1>
+  <p>Q1 Sozialwissenschaften · Digitale Übung zum Arbeitsblatt (M5) · Stand: 03.11.2026</p>
+</header>
+<div class="wrap">
+  <nav id="nav"></nav>
+  <div class="punkte" id="punkte"></div>
+  <div id="stationen"></div>
+  <button class="neu" id="neustart">Alles neu mischen und von vorn beginnen</button>
+  <p class="hinweis">Hinweis: Diese Datei zuerst herunterladen und dann im Browser öffnen. In IServ direkt angeklickt, funktioniert sie nicht. Bei jedem Öffnen werden Aufgaben und Antworten neu gemischt.</p>
+</div>
+<script>
+(function () {
+  "use strict";
+  var K = "Keynes (nachfrageorientiert)", A = "Hayek / angebotsorientiert";
+  var N = "nachfrageorientiert", AN = "angebotsorientiert", B = "beides / nicht eindeutig";
+
+  var STATIONEN = [
+    { titel: "1 Begriffe", auftrag: "Ordne jeden Begriff der passenden wirtschaftspolitischen Konzeption zu.", optionen: [K, A], items: [
+      ["Antizyklische Fiskalpolitik", K, "Keynes: Der Staat gibt in der Krise mehr aus und spart im Aufschwung – er steuert gegen den Konjunkturzyklus."],
+      ["„Deficit spending“", K, "Keynes nimmt in der Krise kreditfinanzierte Staatsausgaben in Kauf, um die Nachfrage zu stützen."],
+      ["Multiplikatoreffekt", K, "Jeder zusätzlich ausgegebene Euro erzeugt Einkommen, das wieder ausgegeben wird – Kernargument für staatliche Ausgabenprogramme."],
+      ["Sparparadoxon", K, "Sparen alle gleichzeitig mehr, sinkt die Nachfrage, die Einkommen fallen und am Ende wird sogar weniger gespart."],
+      ["Liquiditätsfalle", K, "Nach Keynes verpufft billiges Geld der Zentralbank in einer tiefen Krise, weil es gehortet statt ausgegeben wird – deshalb braucht es Staatsausgaben."],
+      ["„Animal spirits“", K, "Keynes: Investitionen hängen von Stimmungen und Erwartungen der Unternehmer ab – deshalb ist die Nachfrage instabil."],
+      ["Kaufkrafttheorie der Löhne", K, "Höhere Löhne stärken nach keynesianischer Sicht die Nachfrage und damit die Beschäftigung."],
+      ["Fehlinvestitionen durch künstlich niedrige Zinsen", A, "Hayek: Billiges Geld erzeugt einen Boom mit Projekten, für die es keine echten Ersparnisse gibt – der Abschwung folgt zwangsläufig."],
+      ["Preise und Zinsen als Informationssignale", A, "Hayek: Über Preise geben Millionen Menschen ihr Wissen weiter; der Staat kann dieses Wissen nicht besser bündeln."],
+      ["Deregulierung und Bürokratieabbau", A, "Angebotsorientierung: Weniger Regeln senken die Kosten der Unternehmen und schaffen Anreize zu investieren."],
+      ["Privatisierung von Staatsbetrieben", A, "Angebotsorientierung: Der Staat zieht sich aus der Wirtschaft zurück, Märkte sollen effizienter wirtschaften."],
+      ["Ausgeglichener Staatshaushalt", A, "Angebotsorientierung: Schulden verdrängen private Investitionen und belasten künftige Generationen."],
+      ["Senkung der Unternehmenssteuern", A, "Angebotsorientierung: Wenn sich Investieren lohnt, entstehen Wachstum und Arbeitsplätze."],
+      ["Produktivitätsorientierte, maßvolle Lohnpolitik", A, "Angebotsorientierung: Löhne sollen nicht schneller steigen als die Produktivität, damit Arbeitskosten wettbewerbsfähig bleiben."]
+    ]},
+    { titel: "2 Aussagen", auftrag: "Wer könnte das gesagt haben? Ordne die (sinngemäßen) Aussagen zu.", optionen: [K, A], items: [
+      ["„Wenn die Wirtschaft einbricht, darf man nicht einfach auf die Erholung warten.“", K, "Keynes hält das Warten auf die Selbstheilung der Märkte für verantwortungslos – die Krise kann lange andauern."],
+      ["„Auf lange Sicht sind wir alle tot.“", K, "Ein berühmtes Keynes-Zitat (1923): Politik muss jetzt handeln, statt auf langfristige Gleichgewichte zu hoffen."],
+      ["„Gerade in der Krise sollten die Menschen ihr Geld ausgeben, statt es zu sparen.“", K, "Sparparadoxon: Mehr Sparen verschärft nach Keynes die Krise."],
+      ["„Staatliche Bauprojekte schaffen Einkommen, das wieder ausgegeben wird.“", K, "Multiplikatoreffekt staatlicher Ausgaben."],
+      ["„Wer investieren will, muss vorher sparen.“", A, "Hayek: Nur echte Ersparnisse können Investitionen dauerhaft finanzieren, nicht neu geschaffenes Geld."],
+      ["„Nicht der Absturz, sondern der Boom verdient unsere Aufmerksamkeit – dort entstehen die Fehler.“", A, "Hayeks Konjunkturtheorie: Im kreditfinanzierten Boom werden die Fehlinvestitionen angelegt."],
+      ["„Billiger Kredit ist ein Gratisessen, das es in Wahrheit nicht gibt.“", A, "Hayek kritisiert, dass schuldenfinanzierte Programme die Kosten nur in die Zukunft verschieben."],
+      ["„Konjunkturprogramme verlängern die Krise, statt sie zu beenden.“", A, "Hayek: Der Abschwung bereinigt Fehlinvestitionen; staatliche Programme halten sie künstlich am Leben."]
+    ]},
+    { titel: "3 Maßnahmen 2025/26", auftrag: "Ordne die Maßnahmen der Bundesregierung (M4) zu. Manche lassen sich nicht eindeutig zuordnen.", optionen: [N, AN, B], items: [
+      ["Sondervermögen Infrastruktur: 500 Mrd. € Kredite über zwölf Jahre", B, "Kreditfinanzierte Staatsausgaben stärken kurzfristig die Nachfrage; bessere Infrastruktur verbessert langfristig die Bedingungen für Unternehmen."],
+      ["Verteidigungsausgaben über 1 % des BIP von der Schuldenbremse ausgenommen", N, "Wirkt als zusätzliche staatliche Nachfrage auf Kredit – begründet wird sie aber vor allem sicherheitspolitisch."],
+      ["„Investitionsbooster“: schnellere Abschreibungen, Körperschaftsteuer sinkt ab 2028", AN, "Steuerentlastung für Unternehmen und Anreiz zu investieren – klassisch angebotsorientiert."],
+      ["Mindestlohn steigt auf 13,90 € (2026) und 14,60 € (2027)", N, "Im Sinne der Kaufkrafttheorie nachfrageorientiert. Aus angebotsorientierter Sicht steigen aber die Arbeitskosten – die Maßnahme ist umstritten."],
+      ["Stromsteuer für das produzierende Gewerbe gesenkt", AN, "Senkt die Kosten der Unternehmen und verbessert die Wettbewerbsfähigkeit."],
+      ["Mehrwertsteuer auf Speisen in Restaurants von 19 auf 7 % gesenkt", AN, "Kostenentlastung einer Branche. Nur wenn die Preise sinken, stärkt sie auch die Nachfrage."],
+      ["„Aktivrente“: 2.000 € im Monat steuerfrei für Arbeit nach dem Rentenalter", AN, "Anreiz, mehr Arbeit anzubieten – setzt beim Arbeitsangebot und am Fachkräftemangel an."],
+      ["Flexiblere Arbeitszeiten und weniger Bürokratie (Forderung Reiche)", AN, "Deregulierung: bessere Bedingungen für Unternehmen statt staatlicher Nachfragesteuerung."]
+    ]},
+    { titel: "4 Quiz", auftrag: "Wähle jeweils die richtige Antwort.", quiz: true, items: [
+      { f: "Was bedeutet „antizyklische Fiskalpolitik“?", r: "Der Staat erhöht in der Krise seine Ausgaben und spart im Aufschwung.", x: ["Der Staat passt seine Ausgaben immer der Konjunktur an und spart in der Krise.", "Die Zentralbank senkt in jedem Konjunkturzyklus die Zinsen.", "Der Staat verzichtet grundsätzlich auf Eingriffe in die Wirtschaft."], e: "Antizyklisch heißt: gegen den Zyklus. In der Krise stützt der Staat die Nachfrage, im Boom bremst er und baut Schulden ab." },
+      { f: "Warum lehnte Hayek staatliche Konjunkturprogramme ab?", r: "Sie halten Fehlinvestitionen aus dem Boom künstlich am Leben und verlängern so die Krise.", x: ["Er hielt Arbeitslosigkeit für wirtschaftlich unbedeutend.", "Er wollte die Zinsen dauerhaft niedrig halten.", "Er hielt den Staat für zu arm, um Programme zu bezahlen."], e: "Für Hayek bereinigt der Abschwung die Fehler des kreditfinanzierten Booms; Programme verschleppen diese Anpassung." },
+      { f: "Was versteht man unter dem Multiplikatoreffekt?", r: "Eine zusätzliche Ausgabe erhöht das Einkommen um mehr als ihren eigenen Betrag, weil das Geld weiter ausgegeben wird.", x: ["Staatsschulden verdoppeln sich automatisch alle zehn Jahre.", "Höhere Steuern führen zu höheren Steuereinnahmen.", "Die Zentralbank vervielfacht die Geldmenge durch Zinssenkungen."], e: "Der Empfänger einer Staatsausgabe gibt einen Teil wieder aus, der nächste ebenso – so entsteht ein Vielfaches an Einkommen." },
+      { f: "Was ist mit „Stagflation“ gemeint, die in den 1970er-Jahren den Keynesianismus in Frage stellte?", r: "Gleichzeitig hohe Inflation und hohe Arbeitslosigkeit bei schwachem Wachstum.", x: ["Sinkende Preise bei steigender Beschäftigung.", "Ein langer Aufschwung ohne Inflation.", "Ein Rückgang der Staatsverschuldung trotz Krise."], e: "Nach keynesianischer Logik hätte mehr Nachfrage die Arbeitslosigkeit senken müssen – sie erhöhte aber vor allem die Inflation." },
+      { f: "Welche Politiker gelten als Vertreter einer angebotsorientierten Wirtschaftspolitik?", r: "Margaret Thatcher und Ronald Reagan", x: ["Franklin D. Roosevelt und Karl Schiller", "John F. Kennedy und Willy Brandt", "Konrad Adenauer und Charles de Gaulle"], e: "Thatcher (Großbritannien) und Reagan (USA) setzten in den 1980er-Jahren auf Steuersenkungen, Deregulierung und Privatisierung. Roosevelts „New Deal“ und Schillers Globalsteuerung gelten als keynesianisch." },
+      { f: "Was spricht aus angebotsorientierter Sicht gegen hohe Staatsschulden?", r: "Sie verdrängen private Investitionen und belasten künftige Generationen.", x: ["Sie senken automatisch die Inflation.", "Sie führen immer sofort zu Vollbeschäftigung.", "Sie erhöhen die Ersparnisse der Haushalte."], e: "Angebotsorientierte Ökonomen befürchten, dass der Staat Kapital bindet, das Unternehmen fehlt, und dass Zinsen und Tilgung spätere Haushalte einengen." }
+    ]}
+  ];
+
+  function mische(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+
+  var stand, aktiv = 0;
+  var nav = document.getElementById("nav"), box = document.getElementById("stationen"), pk = document.getElementById("punkte");
+
+  function zeigePunkte() {
+    var r = 0, g = 0, gesamt = 0;
+    stand.forEach(function (s) { r += s.richtig; g += s.beantwortet; gesamt += s.anzahl; });
+    pk.textContent = "Punkte: " + r + " von " + g + " beantworteten Aufgaben richtig  ·  bearbeitet: " + g + " / " + gesamt;
+  }
+
+  function karte(text, optionen, loesung, erkl, si) {
+    var d = document.createElement("div"); d.className = "karte";
+    var t = document.createElement("div"); t.className = "text"; t.textContent = text; d.appendChild(t);
+    var k = document.createElement("div"); k.className = "knoepfe"; d.appendChild(k);
+    var e = document.createElement("div"); e.className = "erklaerung"; d.appendChild(e);
+    mische(optionen).forEach(function (o) {
+      var b = document.createElement("button"); b.textContent = o;
+      b.addEventListener("click", function () {
+        var ok = o === loesung;
+        Array.prototype.forEach.call(k.children, function (x) { x.disabled = true; });
+        b.className = ok ? "gewaehlt-richtig" : "gewaehlt-falsch";
+        if (!ok) Array.prototype.forEach.call(k.children, function (x) { if (x.textContent === loesung) x.className = "gewaehlt-richtig"; });
+        d.classList.add(ok ? "richtig" : "falsch");
+        e.textContent = (ok ? "Richtig. " : "Leider falsch – richtig ist: " + loesung + ". ") + erkl;
+        e.classList.add("zeigen");
+        stand[si].beantwortet++; if (ok) stand[si].richtig++;
+        zeigePunkte();
+      });
+      k.appendChild(b);
+    });
+    return d;
+  }
+
+  function aufbauen() {
+    nav.innerHTML = ""; box.innerHTML = "";
+    stand = STATIONEN.map(function (s) { return { richtig: 0, beantwortet: 0, anzahl: s.items.length }; });
+    STATIONEN.forEach(function (s, si) {
+      var nb = document.createElement("button"); nb.textContent = s.titel;
+      nb.addEventListener("click", function () { aktiv = si; umschalten(); });
+      nav.appendChild(nb);
+      var sec = document.createElement("section"); sec.className = "station";
+      var h = document.createElement("h2"); h.textContent = "Station " + s.titel; sec.appendChild(h);
+      var a = document.createElement("p"); a.className = "auftrag"; a.textContent = s.auftrag; sec.appendChild(a);
+      mische(s.items).forEach(function (it) {
+        if (s.quiz) sec.appendChild(karte(it.f, [it.r].concat(it.x), it.r, it.e, si));
+        else sec.appendChild(karte(it[0], s.optionen, it[1], it[2], si));
+      });
+      box.appendChild(sec);
+    });
+    umschalten(); zeigePunkte();
+  }
+
+  function umschalten() {
+    Array.prototype.forEach.call(nav.children, function (b, i) { b.className = i === aktiv ? "aktiv" : ""; });
+    Array.prototype.forEach.call(box.children, function (s, i) { s.className = "station" + (i === aktiv ? " aktiv" : ""); });
+    window.scrollTo(0, 0);
+  }
+
+  document.getElementById("neustart").addEventListener("click", function () { aktiv = 0; aufbauen(); });
+  aufbauen();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fremder Freund – Digitale Übung</title>
+<style>
+  :root { --blau:#1F4E79; --hell:#EAF2FA; --gruen:#2E7D32; --rot:#C62828; --gelb:#FFE082; --grau:#f3f3f3; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: Georgia, "Times New Roman", serif; background:#fafafa; color:#222; }
+  header { background:var(--blau); color:#fff; padding:16px 20px; }
+  header h1 { margin:0; font-family: Calibri, Arial, sans-serif; font-size:1.4rem; }
+  header p { margin:4px 0 0; font-size:.9rem; opacity:.9; }
+  .wrap { max-width:960px; margin:0 auto; padding:16px; }
+  nav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+  nav button { font-family:Calibri, Arial, sans-serif; font-size:1rem; padding:8px 14px; border:2px solid var(--blau); background:#fff; color:var(--blau); border-radius:6px; cursor:pointer; }
+  nav button.aktiv { background:var(--blau); color:#fff; }
+  .punkte { font-family:Calibri, Arial, sans-serif; background:var(--hell); border:1px solid #9DB8D2; border-radius:6px; padding:8px 12px; margin-bottom:12px; }
+  .station { display:none; }
+  .station.aktiv { display:block; }
+  .station h2 { font-family:Calibri, Arial, sans-serif; color:var(--blau); margin:4px 0 6px; }
+  .auftrag { font-style:italic; color:#555; margin:0 0 12px; }
+  .karte { background:#fff; border:1px solid #ccc; border-left:6px solid #bbb; border-radius:6px; padding:10px 12px; margin-bottom:10px; }
+  .karte.richtig { border-left-color:var(--gruen); background:#F1F8F1; }
+  .karte.falsch { border-left-color:var(--rot); background:#FDF2F2; }
+  .karte .text { font-size:1.02rem; margin-bottom:8px; }
+  .knoepfe { display:flex; flex-wrap:wrap; gap:8px; }
+  .knoepfe button { font-family:Calibri, Arial, sans-serif; font-size:.95rem; padding:6px 12px; border:1px solid #888; background:var(--grau); border-radius:5px; cursor:pointer; }
+  .knoepfe button:hover:not(:disabled) { background:#e3e3e3; }
+  .knoepfe button:disabled { cursor:default; opacity:.75; }
+  .knoepfe button.gewaehlt-richtig { background:var(--gruen); color:#fff; border-color:var(--gruen); opacity:1; }
+  .knoepfe button.gewaehlt-falsch { background:var(--rot); color:#fff; border-color:var(--rot); opacity:1; }
+  .erklaerung { margin-top:8px; font-size:.92rem; color:#333; display:none; }
+  .erklaerung.zeigen { display:block; }
+  .neu { font-family:Calibri, Arial, sans-serif; margin-top:6px; padding:8px 14px; border:none; background:var(--blau); color:#fff; border-radius:6px; cursor:pointer; }
+  .hinweis { font-size:.85rem; color:#666; margin-top:20px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>„Fremder Freund“ – Radikalisierung erkennen</h1>
+  <p>Klasse 8 Politik · Digitale Übung zum Arbeitsblatt (M5) · Stand: 08.11.2026</p>
+</header>
+<div class="wrap">
+  <nav id="nav"></nav>
+  <div class="punkte" id="punkte"></div>
+  <div id="stationen"></div>
+  <button class="neu" id="neustart">Alles neu mischen und von vorn beginnen</button>
+  <p class="hinweis">Hinweis: Diese Datei zuerst herunterladen und dann im Browser öffnen. In IServ direkt angeklickt, funktioniert sie nicht. Bei jedem Öffnen werden Aufgaben und Antworten neu gemischt.</p>
+</div>
+<script>
+(function () {
+  "use strict";
+  var REL = "gelebte Religion", ISL = "Islamismus (Extremismus)";
+  var WS = "Warnsignal", KW = "kein Warnsignal (allein)";
+  var S = ["Stufe 0: Unzufriedenheit", "Stufe 1: Suche nach Antworten", "Stufe 2: Feindbild", "Stufe 3: Abschottung", "Stufe 4: Schwarz-Weiß-Denken"];
+
+  var STATIONEN = [
+    { titel: "1 Islam oder Islamismus?", auftrag: "Ist das gelebte Religion oder islamistischer Extremismus?", optionen: [REL, ISL], items: [
+      ["Fünfmal am Tag beten", REL, "Das Gebet gehört zum religiösen Leben vieler Muslime und ist durch die Religionsfreiheit (Art. 4 GG) geschützt."],
+      ["Im Ramadan tagsüber fasten", REL, "Das Fasten ist eine religiöse Pflicht im Islam – kein Zeichen von Extremismus."],
+      ["Keinen Alkohol trinken", REL, "Viele Muslime verzichten aus religiösen Gründen auf Alkohol. Das ist eine persönliche Entscheidung."],
+      ["Ein Kopftuch tragen", REL, "Das Kopftuch ist Ausdruck religiöser Überzeugung und durch die Religionsfreiheit geschützt."],
+      ["Die Demokratie durch einen Staat nach religiösen Gesetzen ersetzen wollen", ISL, "Wer die freiheitliche demokratische Grundordnung abschaffen will, ist extremistisch."],
+      ["Andersgläubige und „falsche“ Muslime als Feinde ansehen", ISL, "Freund-Feind-Denken ist ein typisches Merkmal des Extremismus."],
+      ["Anschläge im Namen der Religion rechtfertigen", ISL, "Die Befürwortung von Gewalt kennzeichnet den dschihadistischen Islamismus."],
+      ["Behaupten, nur die eigene Gruppe kenne die einzig wahre Auslegung, und alle anderen bekämpfen wollen", ISL, "Absolutheitsanspruch und Kampf gegen Andersdenkende sind Merkmale des Extremismus."]
+    ]},
+    { titel: "2 Radikalisierungstreppe", auftrag: "Auf welche Stufe der Radikalisierungstreppe passt die Beschreibung am besten?", optionen: S, items: [
+      ["Mia fühlt sich in der Schule ausgegrenzt und von niemandem verstanden.", S[0], "Gefühl von Ungerechtigkeit und fehlender Anerkennung – der Ausgangspunkt (Stufe 0)."],
+      ["Leon findet in einer Online-Gruppe Menschen, die ihm Halt geben und einfache Antworten auf seine Fragen haben.", S[1], "Kontakt zu einer Gruppe, die Zugehörigkeit und Erklärungen bietet (Stufe 1)."],
+      ["Für Jonas sind „die Politiker“ und „die Ausländer“ schuld an allem, was in seinem Leben schiefläuft.", S[2], "Ein Feindbild entsteht: Schuld haben immer „die anderen“ (Stufe 2)."],
+      ["Yunes trifft seine alten Freunde nicht mehr und bricht den Kontakt zu seinen Eltern ab.", S[3], "Abschottung: Die Gruppe wird wichtiger als Freunde und Familie (Stufe 3)."],
+      ["Für Sarah gibt es nur noch „uns“ und „die“ – und gegen „die“ sei Gewalt erlaubt.", S[4], "Schwarz-Weiß-Denken: Gewalt erscheint als gerechtfertigt (Stufe 4) – kurz vor der Tat."]
+    ]},
+    { titel: "3 Warnsignal?", auftrag: "Ist das für sich genommen ein Warnsignal für Radikalisierung?", optionen: [WS, KW], items: [
+      ["Ein Freund lässt sich einen Bart wachsen.", KW, "Ein Bart ist eine Frage von Stil oder Religion – kein Warnsignal."],
+      ["Eine Freundin geht freitags in die Moschee.", KW, "Religiöses Leben ist kein Hinweis auf Extremismus."],
+      ["Ein Mitschüler interessiert sich stark für den Nahostkonflikt.", KW, "Politisches Interesse allein ist kein Warnsignal – entscheidend ist, wie jemand denkt und handelt."],
+      ["Ein Freund teilt Videos, in denen Attentäter als Helden gefeiert werden.", WS, "Gewaltverherrlichung ist ein deutliches Warnsignal."],
+      ["Eine Freundin bricht alle Kontakte ab und sagt, ihr wahrer Freundeskreis sei jetzt nur noch eine Chatgruppe.", WS, "Rückzug und Abschottung in eine Gruppe sind typische Warnsignale."],
+      ["Ein Mitschüler sagt, alle, die nicht so denken wie er, seien Feinde.", WS, "Freund-Feind-Denken ist ein Warnsignal – egal ob religiös oder politisch begründet."]
+    ]},
+    { titel: "4 Quiz", auftrag: "Wähle jeweils die richtige Antwort.", quiz: true, items: [
+      { f: "Wie viele Islamisten zählte der Verfassungsschutz 2025 in Deutschland (Verfassungsschutzbericht, vorgestellt im Juni 2026)?", r: "rund 28.600", x: ["rund 2.800", "rund 280.000", "rund 2,8 Millionen"], e: "28.645 Personen, davon 9.110 gewaltorientiert – bei rund 5,3 bis 5,6 Millionen Muslimen in Deutschland." },
+      { f: "Welche Extremismusform bezeichnet der Verfassungsschutzbericht 2025 als größte Gefahr für die Demokratie?", r: "Rechtsextremismus", x: ["Islamismus", "Linksextremismus", "Reichsbürger"], e: "Das rechtsextremistische Personenpotenzial wuchs auf 58.700 Personen. Alle Formen werben aber gezielt um Jugendliche." },
+      { f: "Über welche Wege radikalisieren sich Jugendliche laut Verfassungsschutz heute zunehmend?", r: "Über soziale Medien und Spieleplattformen wie TikTok, Instagram oder Roblox", x: ["Fast nur über Bücher und Zeitungen", "Vor allem über das Fernsehen", "Ausschließlich über persönliche Treffen"], e: "Extremisten nutzen kurze Videos und Chatgruppen; Radikalisierung kann dadurch sehr schnell gehen." },
+      { f: "Was ist „Wegweiser“?", r: "Ein Präventionsprogramm des Landes NRW mit Beratungsstellen und anonymem Online-Chat", x: ["Eine islamistische Gruppe im Film", "Eine App der Polizei zum Melden von Mitschülern", "Ein Schulfach in NRW"], e: "Wegweiser berät junge Menschen, die sich der islamistischen Szene zuwenden, und ihr Umfeld – auch Freunde und Lehrkräfte." },
+      { f: "Was zeigt das Modell der Radikalisierungstreppe?", r: "Radikalisierung verläuft in Stufen – die meisten bleiben unten stehen oder kehren um.", x: ["Jeder Unzufriedene wird automatisch zum Terroristen.", "Radikalisierung geschieht immer über Nacht.", "Nur Muslime können sich radikalisieren."], e: "Nach Moghaddam (2005) werden die Möglichkeiten auf jeder Stufe enger; früh Hilfe zu holen macht die Umkehr leichter." },
+      { f: "Wie endet der Film „Fremder Freund“?", r: "Offen – der Film zeigt nicht eindeutig, was aus Yunes geworden ist.", x: ["Yunes wird verhaftet und verurteilt.", "Yunes kehrt zurück und entschuldigt sich bei Chris.", "Chris folgt Yunes nach Pakistan."], e: "Am Ende erscheint Yunes Chris nur noch als Vision. Ob er ein Terrorist geworden ist, bleibt offen." }
+    ]}
+  ];
+
+  function mische(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+
+  var stand, aktiv = 0;
+  var nav = document.getElementById("nav"), box = document.getElementById("stationen"), pk = document.getElementById("punkte");
+
+  function zeigePunkte() {
+    var r = 0, g = 0, gesamt = 0;
+    stand.forEach(function (s) { r += s.richtig; g += s.beantwortet; gesamt += s.anzahl; });
+    pk.textContent = "Punkte: " + r + " von " + g + " beantworteten Aufgaben richtig  ·  bearbeitet: " + g + " / " + gesamt;
+  }
+
+  function karte(text, optionen, loesung, erkl, si) {
+    var d = document.createElement("div"); d.className = "karte";
+    var t = document.createElement("div"); t.className = "text"; t.textContent = text; d.appendChild(t);
+    var k = document.createElement("div"); k.className = "knoepfe"; d.appendChild(k);
+    var e = document.createElement("div"); e.className = "erklaerung"; d.appendChild(e);
+    mische(optionen).forEach(function (o) {
+      var b = document.createElement("button"); b.textContent = o;
+      b.addEventListener("click", function () {
+        var ok = o === loesung;
+        Array.prototype.forEach.call(k.children, function (x) { x.disabled = true; });
+        b.className = ok ? "gewaehlt-richtig" : "gewaehlt-falsch";
+        if (!ok) Array.prototype.forEach.call(k.children, function (x) { if (x.textContent === loesung) x.className = "gewaehlt-richtig"; });
+        d.classList.add(ok ? "richtig" : "falsch");
+        e.textContent = (ok ? "Richtig. " : "Leider falsch – richtig ist: " + loesung + ". ") + erkl;
+        e.classList.add("zeigen");
+        stand[si].beantwortet++; if (ok) stand[si].richtig++;
+        zeigePunkte();
+      });
+      k.appendChild(b);
+    });
+    return d;
+  }
+
+  function aufbauen() {
+    nav.innerHTML = ""; box.innerHTML = "";
+    stand = STATIONEN.map(function (s) { return { richtig: 0, beantwortet: 0, anzahl: s.items.length }; });
+    STATIONEN.forEach(function (s, si) {
+      var nb = document.createElement("button"); nb.textContent = s.titel;
+      nb.addEventListener("click", function () { aktiv = si; umschalten(); });
+      nav.appendChild(nb);
+      var sec = document.createElement("section"); sec.className = "station";
+      var h = document.createElement("h2"); h.textContent = "Station " + s.titel; sec.appendChild(h);
+      var a = document.createElement("p"); a.className = "auftrag"; a.textContent = s.auftrag; sec.appendChild(a);
+      mische(s.items).forEach(function (it) {
+        if (s.quiz) sec.appendChild(karte(it.f, [it.r].concat(it.x), it.r, it.e, si));
+        else sec.appendChild(karte(it[0], s.optionen, it[1], it[2], si));
+      });
+      box.appendChild(sec);
+    });
+    umschalten(); zeigePunkte();
+  }
+
+  function umschalten() {
+    Array.prototype.forEach.call(nav.children, function (b, i) { b.className = i === aktiv ? "aktiv" : ""; });
+    Array.prototype.forEach.call(box.children, function (s, i) { s.className = "station" + (i === aktiv ? " aktiv" : ""); });
+    window.scrollTo(0, 0);
+  }
+
+  document.getElementById("neustart").addEventListener("click", function () { aktiv = 0; aufbauen(); });
+  aufbauen();
+})();
+</script>
+</body>
+</html>

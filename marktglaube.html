@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marktglaube – Digitale Übung</title>
+<style>
+  :root { --blau:#1F4E79; --hell:#EAF2FA; --gruen:#2E7D32; --rot:#C62828; --gelb:#FFE082; --grau:#f3f3f3; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: Georgia, "Times New Roman", serif; background:#fafafa; color:#222; }
+  header { background:var(--blau); color:#fff; padding:16px 20px; }
+  header h1 { margin:0; font-family: Calibri, Arial, sans-serif; font-size:1.4rem; }
+  header p { margin:4px 0 0; font-size:.9rem; opacity:.9; }
+  .wrap { max-width:960px; margin:0 auto; padding:16px; }
+  nav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+  nav button { font-family:Calibri, Arial, sans-serif; font-size:1rem; padding:8px 14px; border:2px solid var(--blau); background:#fff; color:var(--blau); border-radius:6px; cursor:pointer; }
+  nav button.aktiv { background:var(--blau); color:#fff; }
+  .punkte { font-family:Calibri, Arial, sans-serif; background:var(--hell); border:1px solid #9DB8D2; border-radius:6px; padding:8px 12px; margin-bottom:12px; }
+  .station { display:none; }
+  .station.aktiv { display:block; }
+  .station h2 { font-family:Calibri, Arial, sans-serif; color:var(--blau); margin:4px 0 6px; }
+  .auftrag { font-style:italic; color:#555; margin:0 0 12px; }
+  .karte { background:#fff; border:1px solid #ccc; border-left:6px solid #bbb; border-radius:6px; padding:10px 12px; margin-bottom:10px; }
+  .karte.richtig { border-left-color:var(--gruen); background:#F1F8F1; }
+  .karte.falsch { border-left-color:var(--rot); background:#FDF2F2; }
+  .karte .text { font-size:1.02rem; margin-bottom:8px; }
+  .knoepfe { display:flex; flex-wrap:wrap; gap:8px; }
+  .knoepfe button { font-family:Calibri, Arial, sans-serif; font-size:.95rem; padding:6px 12px; border:1px solid #888; background:var(--grau); border-radius:5px; cursor:pointer; }
+  .knoepfe button:hover:not(:disabled) { background:#e3e3e3; }
+  .knoepfe button:disabled { cursor:default; opacity:.75; }
+  .knoepfe button.gewaehlt-richtig { background:var(--gruen); color:#fff; border-color:var(--gruen); opacity:1; }
+  .knoepfe button.gewaehlt-falsch { background:var(--rot); color:#fff; border-color:var(--rot); opacity:1; }
+  .erklaerung { margin-top:8px; font-size:.92rem; color:#333; display:none; }
+  .erklaerung.zeigen { display:block; }
+  .neu { font-family:Calibri, Arial, sans-serif; margin-top:6px; padding:8px 14px; border:none; background:var(--blau); color:#fff; border-radius:6px; cursor:pointer; }
+  .hinweis { font-size:.85rem; color:#666; margin-top:20px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Marktversagen, Staatsversagen, Marktglaube</h1>
+  <p>Q1 Sozialwissenschaften · Digitale Übung zum Arbeitsblatt (M3) · Stand: 15.11.2026</p>
+</header>
+<div class="wrap">
+  <nav id="nav"></nav>
+  <div class="punkte" id="punkte"></div>
+  <div id="stationen"></div>
+  <button class="neu" id="neustart">Alles neu mischen und von vorn beginnen</button>
+  <p class="hinweis">Hinweis: Diese Datei zuerst herunterladen und dann im Browser öffnen. In IServ direkt angeklickt, funktioniert sie nicht. Bei jedem Öffnen werden Aufgaben und Antworten neu gemischt.</p>
+</div>
+<script>
+(function () {
+  "use strict";
+  var OG = "öffentliches Gut", EX = "externer Effekt", AI = "asymmetrische Information", MO = "Monopol";
+  var KE = "Kessler (Text A)", ES = "Eichenberger/Stadelmann (Text B)", KY = "Keynes";
+  var MG = "Marktglaube", AW = "Abwägung Markt/Staat", SV = "Staatsvertrauen";
+
+  var STATIONEN = [
+    { titel: "1 Marktversagen", auftrag: "Welche Form des Marktversagens zeigt das Beispiel?", optionen: [OG, EX, AI, MO], items: [
+      ["Ein Deich schützt eine ganze Stadt vor Hochwasser – auch alle, die nichts dazu bezahlt haben.", OG, "Niemand kann von der Nutzung ausgeschlossen werden. Deshalb gibt es Trittbrettfahrer, und privat wird zu wenig angeboten."],
+      ["Straßenbeleuchtung in einem Wohngebiet", OG, "Alle profitieren, niemand kann ausgeschlossen werden – ein klassisches öffentliches Gut."],
+      ["Eine Fabrik leitet Abwasser in einen Fluss; die Fischer flussabwärts fangen weniger.", EX, "Die Kosten der Verschmutzung tragen Unbeteiligte, sie stecken nicht im Preis der Produkte."],
+      ["Der Lärm eines Flughafens senkt den Wert der Häuser in der Umgebung.", EX, "Ein negativer externer Effekt: Kosten entstehen bei Dritten, nicht bei Fluggesellschaften oder Passagieren."],
+      ["Der Gebrauchtwagenhändler weiß von einem Unfallschaden, der Käufer nicht.", AI, "Eine Marktseite weiß deutlich mehr als die andere – das kann den Markt für gute Gebrauchtwagen zerstören."],
+      ["Eine Versicherung kann nicht erkennen, wie vorsichtig ihre Kunden leben.", AI, "Die Versicherten wissen mehr über ihr Risiko als die Versicherung."],
+      ["Ein zweites Schienennetz neben dem bestehenden würde sich nie lohnen.", MO, "Ein natürliches Monopol: Ein einziger Anbieter kann das Netz am günstigsten betreiben."],
+      ["Ein Anbieter hat keine Konkurrenz und kann seine Preise frei festsetzen.", MO, "Ohne Wettbewerb fehlt der Druck, Preise zu senken oder Qualität zu verbessern."]
+    ]},
+    { titel: "2 Wer sagt das?", auftrag: "Wem lässt sich die (sinngemäße) Aussage am ehesten zuordnen?", optionen: [KE, ES, KY], items: [
+      ["Der Begriff Marktversagen ist inhaltsleer, denn der Markt ist kein handelndes Wesen.", KE, "Kessler sieht den Markt als Ergebnis freiwilliger Entscheidungen, das nicht „versagen“ kann."],
+      ["Schädliche Monopole entstehen durch staatliche Bevorzugung, etwa durch Subventionen oder Zölle.", KE, "Für Kessler sind Monopole ein Staats-, kein Marktversagen."],
+      ["Gegen Informationsprobleme helfen Garantien, Bewertungen und Rückgaberechte – der Staat wird nicht gebraucht.", KE, "Kessler vertraut auf Mechanismen des Marktes selbst."],
+      ["Marktversagen gibt es – aber in der Politik oft noch stärker als in der Wirtschaft.", ES, "Eichenberger und Stadelmann wenden das Konzept auf Wirtschaft und Politik gleichermaßen an."],
+      ["Wähler können an der Urne fast kostenlos protestieren, statt sich gründlich zu informieren.", ES, "Expressives Wählen: Der einzelne Wähler hat kaum Einfluss und daher wenig Anreiz, sich zu informieren."],
+      ["Mehr Wettbewerb zwischen Parteien, Regionen und Gremien macht die Politik besser.", ES, "Die Autoren setzen auf politischen Wettbewerb in fünf Dimensionen."],
+      ["In der Krise findet der Markt nicht von selbst zur Vollbeschäftigung zurück; der Staat muss die Nachfrage stützen.", KY, "Gesamtwirtschaftliches Marktversagen aus Sicht der nachfrageorientierten Wirtschaftspolitik."],
+      ["Wenn alle gleichzeitig sparen, sinkt die Nachfrage und die Krise verschärft sich.", KY, "Das Sparparadoxon ist ein Kernargument von Keynes."]
+    ]},
+    { titel: "3 Marktglaube?", auftrag: "Welche Grundhaltung zeigt die Aussage?", optionen: [MG, AW, SV], items: [
+      ["Jede staatliche Regel greift in die Freiheit ein und schadet dem Wohlstand.", MG, "Staatliche Eingriffe werden grundsätzlich abgelehnt – typisch für Marktglauben."],
+      ["Monopole sind unproblematisch, solange die Kunden sie freiwillig wählen.", MG, "Das Marktergebnis wird als richtig angesehen, weil es freiwillig entstanden ist (vgl. Kessler)."],
+      ["Der Staat sollte nur eingreifen, wenn er ein Problem nachweislich besser lösen kann als der Markt.", AW, "Markt- und Staatsversagen werden gegeneinander abgewogen (vgl. Eichenberger/Stadelmann)."],
+      ["Gegen den Klimawandel hilft ein CO\u2082-Preis, weil die Kosten der Emissionen sonst niemand trägt.", AW, "Der Staat korrigiert einen externen Effekt, nutzt dafür aber den Preismechanismus des Marktes."],
+      ["Der Markt kann soziale und ökologische Probleme grundsätzlich nicht lösen; der Staat muss steuern.", SV, "Hier wird dem Staat grundsätzlich mehr zugetraut als dem Markt – das Gegenstück zum Marktglauben."],
+      ["Preise für Strom und Mieten sollte der Staat festlegen.", SV, "Staatliche Preisfestsetzung ersetzt den Markt in einem zentralen Bereich."]
+    ]},
+    { titel: "4 Quiz", auftrag: "Wähle jeweils die richtige Antwort.", quiz: true, items: [
+      { f: "Was ist ein „Trittbrettfahrer“?", r: "Jemand, der ein Gut nutzt, ohne sich an den Kosten zu beteiligen", x: ["Jemand, der als Erster in einen neuen Markt einsteigt", "Ein Unternehmen, das die Preise der Konkurrenz kopiert", "Ein Politiker, der mit der Mehrheit stimmt"], e: "Weil man von öffentlichen Gütern nicht ausgeschlossen werden kann, lohnt es sich, nicht zu zahlen – deshalb werden sie privat zu wenig angeboten." },
+      { f: "Was untersucht die Neue Politische Ökonomie (Public Choice)?", r: "Politik so, als wäre sie ein Markt, auf dem Politiker und Wähler ihren Eigennutzen verfolgen", x: ["Die Geschichte der politischen Parteien", "Wie Zentralbanken Zinsen festlegen", "Wie Unternehmen Werbung planen"], e: "Darauf beruht die Argumentation von Eichenberger und Stadelmann: Auch der „Markt für Politik“ kann versagen." },
+      { f: "Was bezeichnet Hayeks Begriff der „spontanen Ordnung“?", r: "Eine Ordnung, die aus unzähligen freiwilligen Entscheidungen entsteht, ohne dass sie jemand plant", x: ["Eine Wirtschaftsordnung, die der Staat kurzfristig festlegt", "Ein plötzlicher Börsencrash", "Eine Reihenfolge, in der Gesetze beschlossen werden"], e: "Auf diese Idee berufen sich marktliberale Autoren wie Kessler." },
+      { f: "Warum ist das Stromnetz ein Beispiel für ein natürliches Monopol?", r: "Weil ein zweites Netz so teuer wäre, dass ein einziger Anbieter am günstigsten ist", x: ["Weil Strom aus der Natur kommt", "Weil der Staat Konkurrenz verbietet", "Weil alle Kunden denselben Tarif wählen"], e: "Natürliche Monopole entstehen aus den Kosten selbst – ein Argument gegen Kesslers These, Monopole seien immer staatlich verursacht." },
+      { f: "Wie wird der Begriff „Marktglaube“ meist verwendet?", r: "Kritisch, für die Überzeugung, freie Märkte führten fast immer zu den besten Ergebnissen", x: ["Als neutrale Bezeichnung für jede Form von Marktwirtschaft", "Als Fachbegriff für die Arbeit der Zentralbank", "Als Lob für sparsame Haushalte"], e: "Vertreter der Haltung selbst sprechen eher vom Vertrauen in die spontane Ordnung des Marktes." },
+      { f: "Welche Haltung entspricht der nachfrageorientierten Wirtschaftspolitik?", r: "Märkte können gesamtwirtschaftlich versagen, deshalb soll der Staat in Krisen die Nachfrage stützen", x: ["Der Staat soll sich vollständig aus der Wirtschaft zurückziehen", "Nur Steuersenkungen für Unternehmen schaffen Wachstum", "Marktversagen gibt es nicht"], e: "Keynes betonte das Marktversagen in der Krise; angebotsorientierte Ökonomen betonen dagegen das Staatsversagen." }
+    ]}
+  ];
+
+  function mische(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+
+  var stand, aktiv = 0;
+  var nav = document.getElementById("nav"), box = document.getElementById("stationen"), pk = document.getElementById("punkte");
+
+  function zeigePunkte() {
+    var r = 0, g = 0, gesamt = 0;
+    stand.forEach(function (s) { r += s.richtig; g += s.beantwortet; gesamt += s.anzahl; });
+    pk.textContent = "Punkte: " + r + " von " + g + " beantworteten Aufgaben richtig  ·  bearbeitet: " + g + " / " + gesamt;
+  }
+
+  function karte(text, optionen, loesung, erkl, si) {
+    var d = document.createElement("div"); d.className = "karte";
+    var t = document.createElement("div"); t.className = "text"; t.textContent = text; d.appendChild(t);
+    var k = document.createElement("div"); k.className = "knoepfe"; d.appendChild(k);
+    var e = document.createElement("div"); e.className = "erklaerung"; d.appendChild(e);
+    mische(optionen).forEach(function (o) {
+      var b = document.createElement("button"); b.textContent = o;
+      b.addEventListener("click", function () {
+        var ok = o === loesung;
+        Array.prototype.forEach.call(k.children, function (x) { x.disabled = true; });
+        b.className = ok ? "gewaehlt-richtig" : "gewaehlt-falsch";
+        if (!ok) Array.prototype.forEach.call(k.children, function (x) { if (x.textContent === loesung) x.className = "gewaehlt-richtig"; });
+        d.classList.add(ok ? "richtig" : "falsch");
+        e.textContent = (ok ? "Richtig. " : "Leider falsch – richtig ist: " + loesung + ". ") + erkl;
+        e.classList.add("zeigen");
+        stand[si].beantwortet++; if (ok) stand[si].richtig++;
+        zeigePunkte();
+      });
+      k.appendChild(b);
+    });
+    return d;
+  }
+
+  function aufbauen() {
+    nav.innerHTML = ""; box.innerHTML = "";
+    stand = STATIONEN.map(function (s) { return { richtig: 0, beantwortet: 0, anzahl: s.items.length }; });
+    STATIONEN.forEach(function (s, si) {
+      var nb = document.createElement("button"); nb.textContent = s.titel;
+      nb.addEventListener("click", function () { aktiv = si; umschalten(); });
+      nav.appendChild(nb);
+      var sec = document.createElement("section"); sec.className = "station";
+      var h = document.createElement("h2"); h.textContent = "Station " + s.titel; sec.appendChild(h);
+      var a = document.createElement("p"); a.className = "auftrag"; a.textContent = s.auftrag; sec.appendChild(a);
+      mische(s.items).forEach(function (it) {
+        if (s.quiz) sec.appendChild(karte(it.f, [it.r].concat(it.x), it.r, it.e, si));
+        else sec.appendChild(karte(it[0], s.optionen, it[1], it[2], si));
+      });
+      box.appendChild(sec);
+    });
+    umschalten(); zeigePunkte();
+  }
+
+  function umschalten() {
+    Array.prototype.forEach.call(nav.children, function (b, i) { b.className = i === aktiv ? "aktiv" : ""; });
+    Array.prototype.forEach.call(box.children, function (s, i) { s.className = "station" + (i === aktiv ? " aktiv" : ""); });
+    window.scrollTo(0, 0);
+  }
+
+  document.getElementById("neustart").addEventListener("click", function () { aktiv = 0; aufbauen(); });
+  aufbauen();
+})();
+</script>
+</body>
+</html>

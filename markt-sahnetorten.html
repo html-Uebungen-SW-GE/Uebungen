@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wie funktioniert ein Markt? – Digitale Übung zum Sahnetortenspiel</title>
+<style>
+  :root { --blau:#1F4E79; --hell:#EAF2FA; --gruen:#1E7B3A; --gruenh:#E3F3E7; --rot:#B3261E; --roth:#FBE9E7; --grau:#F3F4F6; --gelb:#FFF8E1; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Segoe UI", Calibri, Arial, sans-serif; background:#F7F9FC; color:#1b1b1b; line-height:1.5; font-size:17px; }
+  header { background:var(--blau); color:#fff; padding:18px 24px; }
+  header h1 { margin:0; font-size:1.5rem; }
+  header p { margin:4px 0 0; opacity:.9; }
+  .bar { position:sticky; top:0; z-index:5; background:#fff; border-bottom:1px solid #dde3ea; padding:10px 24px; display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+  .bar nav a { color:var(--blau); text-decoration:none; font-weight:600; margin-right:10px; font-size:.95rem; }
+  .score { margin-left:auto; font-weight:700; color:var(--blau); }
+  main { max-width:960px; margin:0 auto; padding:20px 16px 60px; }
+  section { background:#fff; border:1px solid #dde3ea; border-radius:10px; padding:20px 22px; margin-bottom:22px; }
+  h2 { margin:0 0 6px; color:var(--blau); font-size:1.25rem; }
+  .auftrag { background:var(--hell); border-left:4px solid var(--blau); padding:8px 12px; margin:8px 0 16px; border-radius:4px; }
+  button { font:inherit; cursor:pointer; border-radius:6px; border:1px solid #9fb3c8; background:#fff; padding:7px 12px; }
+  button:hover { background:var(--hell); }
+  button:disabled { cursor:default; opacity:.55; }
+  button.primary { background:var(--blau); color:#fff; border-color:var(--blau); font-weight:600; }
+  .karte { border:1px solid #dde3ea; border-radius:8px; padding:10px 12px; margin-bottom:10px; background:#fff; }
+  .karte .text { margin-bottom:8px; }
+  .karte .btns { display:flex; gap:6px; flex-wrap:wrap; }
+  .karte.richtig { border-color:#9bd3a9; background:#F4FBF6; }
+  .karte.falsch { border-color:#f0b1aa; background:#FEF6F5; }
+  .btns button.gew-ok { background:var(--gruen); color:#fff; border-color:var(--gruen); opacity:1; }
+  .btns button.gew-no { background:var(--rot); color:#fff; border-color:var(--rot); opacity:1; }
+  .fb { margin-top:8px; padding:8px 12px; border-radius:6px; font-size:.95rem; display:none; }
+  .fb.ok { display:block; background:var(--gruenh); border:1px solid #9bd3a9; color:#124d24; }
+  .fb.no { display:block; background:var(--roth); border:1px solid #f0b1aa; color:#6e1510; }
+  .fb.info { display:block; background:var(--gelb); border:1px solid #f1d98a; color:#5b4600; }
+  .rechnen td { padding:4px 8px; }
+  .rechnen input { font:inherit; width:120px; padding:4px 6px; border:1px solid #9fb3c8; border-radius:5px; }
+  .regler { display:grid; grid-template-columns:150px 1fr 110px; gap:10px; align-items:center; margin:8px 0; }
+  .regler input[type=range] { width:100%; }
+  .regler output { font-weight:700; color:var(--blau); }
+  .zahlen { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:12px 0; }
+  .zahlen div { background:var(--grau); border-radius:8px; padding:8px; text-align:center; }
+  .zahlen b { display:block; font-size:1.3rem; color:var(--blau); }
+  .modell { font-size:.9rem; background:var(--grau); border-radius:6px; padding:10px 14px; margin-top:12px; }
+  .luecke select { font:inherit; padding:3px 6px; border:1px solid #9fb3c8; border-radius:5px; margin:0 3px; }
+  .luecke p { margin:10px 0; }
+  .ende { text-align:center; font-weight:600; color:var(--blau); }
+  @media (max-width:700px) { .zahlen { grid-template-columns:1fr 1fr; } .regler { grid-template-columns:1fr; } }
+  footer { text-align:center; color:#777; font-size:.85rem; padding:10px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Wie funktioniert ein Markt?</h1>
+  <p>Digitale Übung zum Planspiel „Der Markt für Sahnetorten“ · Klasse 7 Politik/Wirtschaft</p>
+</header>
+<div class="bar">
+  <nav><a href="#s1">1 Begriffe</a><a href="#s2">2 Was passiert, wenn …?</a><a href="#s3">3 Gewinn rechnen</a><a href="#s4">4 Allein auf dem Markt</a><a href="#s5">5 Merksätze</a></nav>
+  <span class="score" id="score">Punkte: 0 / 0</span>
+  <button onclick="location.reload()">Neu starten</button>
+</div>
+
+<main>
+<section id="s1">
+  <h2>Station 1: Die wichtigsten Begriffe</h2>
+  <div class="auftrag">Welcher Begriff passt zur Erklärung? Klicke auf die richtige Antwort.</div>
+  <div id="liste1"></div>
+</section>
+
+<section id="s2">
+  <h2>Station 2: Was passiert, wenn …?</h2>
+  <div class="auftrag">Denke an das Sahnetortenspiel. Was passiert in diesen Fällen?</div>
+  <div id="liste2"></div>
+</section>
+
+<section id="s3">
+  <h2>Station 3: Gewinn oder Verlust?</h2>
+  <div class="auftrag">Rechne wie auf eurem Spielblatt. Fixkosten: 2.000 € pro Spielperiode. Variable Kosten: 500 € für jede <b>produzierte</b> Kiste. Gib nur Zahlen ein (ohne Punkt und ohne €). Einen Verlust schreibst du mit Minus, z. B. -3000.</div>
+  <div id="liste3"></div>
+</section>
+
+<section id="s4">
+  <h2>Station 4: Gedankenexperiment – Was wäre, wenn ihr allein auf dem Markt wärt?</h2>
+  <div class="auftrag">Stell dir vor, es gibt keine anderen Gruppen. Nur dein Unternehmen verkauft Sahnetorten. Wähle eine Spielperiode, deinen Preis und deine Menge. Finde heraus, womit du den größten Gewinn machst.</div>
+  <div class="regler"><label for="per">Spielperiode</label><input type="range" id="per" min="1" max="4" step="1" value="2"><output id="perOut"></output></div>
+  <div class="regler"><label for="preis">Preis je Kiste</label><input type="range" id="preis" min="500" max="3000" step="100" value="1500"><output id="preisOut"></output></div>
+  <div class="regler"><label for="menge">produzierte Kisten</label><input type="range" id="menge" min="0" max="20" step="1" value="10"><output id="mengeOut"></output></div>
+  <p id="verhalten" style="font-style:italic;color:#333"></p>
+  <div class="zahlen">
+    <div>Käufer kaufen<b id="zVerkauft"></b></div>
+    <div>Umsatz<b id="zUmsatz"></b></div>
+    <div>Kosten<b id="zKosten"></b></div>
+    <div>Gewinn / Verlust<b id="zGewinn"></b></div>
+  </div>
+  <svg id="balken" viewBox="0 0 600 150" style="width:100%;max-width:640px"></svg>
+  <p><button class="primary" id="pruefen4">Habe ich den größten Gewinn gefunden?</button></p>
+  <div class="fb" id="fb4"></div>
+  <div id="frage4" style="margin-top:14px"></div>
+  <div class="modell"><b>So rechnet das Modell (vereinfacht, keine echte Prognose):</b> Für jede Spielperiode gibt es eine Tabelle, wie viele Kisten die Käufer bei einem Preis höchstens kaufen – je höher der Preis, desto weniger. Verkauft wird die kleinere Zahl: deine Menge oder das, was die Käufer bei deinem Preis höchstens nehmen. Kosten = 2.000 € + produzierte Kisten × 500 €. Gewinn = Umsatz − Kosten. Im echten Spiel gab es vier Gruppen, die sich die Käufer teilen mussten.</div>
+</section>
+
+<section id="s5">
+  <h2>Station 5: Merksätze zum Markt</h2>
+  <div class="auftrag">Wähle in jedem Satz das passende Wort. Klicke dann auf „Überprüfen“.</div>
+  <div class="luecke" id="luecke"></div>
+  <p><button class="primary" id="pruefen5">Überprüfen</button></p>
+  <div class="fb" id="fb5"></div>
+  <p class="ende" id="ende"></p>
+</section>
+</main>
+<footer>Übung zum Planspiel „Der Markt für Sahnetorten“ · Politik/Wirtschaft Klasse 7</footer>
+
+<script>
+var punkte = 0, max = 0;
+function score(d, n) { punkte += d; max += n; document.getElementById('score').textContent = 'Punkte: ' + punkte + ' / ' + max; }
+function euro(x) { return (x < 0 ? '−' : '') + Math.abs(x).toLocaleString('de-DE') + ' €'; }
+// Fisher-Yates: Reihenfolge der Fragen und der Antwortmöglichkeiten bei jedem Laden neu mischen
+function mische(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+function karten(id, daten, optionenStandard) {
+  var box = document.getElementById(id);
+  mische(daten).forEach(function (d) {
+    score(0, 1);
+    var k = document.createElement('div'); k.className = 'karte';
+    k.innerHTML = '<div class="text">' + d.t + '</div><div class="btns"></div><div class="fb"></div>';
+    var btns = k.querySelector('.btns'), fb = k.querySelector('.fb');
+    var opts = mische(d.o || optionenStandard);
+    opts.forEach(function (o) {
+      var b = document.createElement('button'); b.textContent = o;
+      b.onclick = function () {
+        var ok = o === d.a;
+        btns.querySelectorAll('button').forEach(function (x) { x.disabled = true; });
+        b.className = ok ? 'gew-ok' : 'gew-no';
+        k.classList.add(ok ? 'richtig' : 'falsch');
+        fb.className = 'fb ' + (ok ? 'ok' : 'no');
+        fb.innerHTML = (ok ? '<b>Richtig.</b> ' : '<b>Leider nicht.</b> Richtig ist: <b>' + d.a + '</b>. ') + d.e;
+        if (ok) score(1, 0);
+      };
+      btns.appendChild(b);
+    });
+    box.appendChild(k);
+  });
+}
+
+// ── Station 1 ──
+var begriffe = ['Angebot', 'Nachfrage', 'Markt', 'Marktpreis', 'Konkurrenz', 'Fixkosten', 'variable Kosten', 'Gewinn'];
+karten('liste1', [
+  { t: 'Die Waren, die Verkäufer (Anbieter) verkaufen wollen – im Spiel: die Kisten Sahnetorten, die eure Gruppe produziert hat.', a: 'Angebot', e: 'Das Angebot kommt von den Anbietern, also von euren Unternehmen.' },
+  { t: 'Die Waren, die Käufer haben wollen und auch bezahlen können – im Spiel: was Herr Bracht als Käufer abnimmt.', a: 'Nachfrage', e: 'Die Nachfrage kommt von den Käufern (Nachfragern).' },
+  { t: 'Der Ort, an dem Angebot und Nachfrage zusammentreffen. Das kann ein Wochenmarkt, ein Geschäft oder ein Online-Shop sein.', a: 'Markt', e: 'Auf dem Markt treffen sich Anbieter und Nachfrager.' },
+  { t: 'Der Preis, zu dem eine Ware tatsächlich gekauft und verkauft wird.', a: 'Marktpreis', e: 'Der Marktpreis entsteht durch Angebot und Nachfrage.' },
+  { t: 'Mehrere Anbieter wollen dieselbe Ware an dieselben Käufer verkaufen und versuchen, besser zu sein als die anderen.', a: 'Konkurrenz', e: 'Im Spiel standen vier Gruppen in Konkurrenz zueinander.' },
+  { t: 'Kosten, die immer gleich hoch sind – egal, wie viel man produziert. Im Spiel: 2.000 € für Strom, Löhne usw.', a: 'Fixkosten', e: 'Fixkosten fallen auch an, wenn man nichts verkauft.' },
+  { t: 'Kosten, die steigen, je mehr man produziert. Im Spiel: 500 € für jede Kiste.', a: 'variable Kosten', e: 'Variable Kosten hängen von der produzierten Menge ab.' },
+  { t: 'Das, was übrig bleibt, wenn man vom Umsatz alle Kosten abzieht (wenn das Ergebnis positiv ist).', a: 'Gewinn', e: 'Gewinn = Umsatz − Kosten. Ist das Ergebnis negativ, spricht man von Verlust.' }
+].map(function (d) { d.o = begriffe; return d; }));
+
+// ── Station 2 ──
+karten('liste2', [
+  { t: 'Eure Gruppe verlangt deutlich mehr als alle anderen Gruppen. Was passiert wahrscheinlich?', o: ['Ihr verkauft viel, weil teure Torten besser sind.', 'Ihr verkauft wenig oder nichts, weil die Käufer zuerst bei den günstigeren Gruppen kaufen.', 'Der Preis spielt keine Rolle.'], a: 'Ihr verkauft wenig oder nichts, weil die Käufer zuerst bei den günstigeren Gruppen kaufen.', e: 'Bei Konkurrenz kaufen die Käufer dort, wo es günstiger ist.', mischen: true },
+  { t: 'Die Käufer wollen plötzlich viel mehr Sahnetorten (wie in der 2. Spielperiode). Was können die Anbieter tun?', o: ['Höhere Preise verlangen und mehr verkaufen.', 'Die Preise senken müssen.', 'Weniger produzieren.'], a: 'Höhere Preise verlangen und mehr verkaufen.', e: 'Steigt die Nachfrage, können die Anbieter höhere Preise durchsetzen.', mischen: true },
+  { t: 'Alle Gruppen produzieren viele Kisten, aber die Käufer wollen nur wenige (wie in der 4. Spielperiode). Was passiert mit den Preisen?', o: ['Sie steigen.', 'Sie sinken, weil die Anbieter um die wenigen Käufer kämpfen.', 'Sie bleiben gleich.'], a: 'Sie sinken, weil die Anbieter um die wenigen Käufer kämpfen.', e: 'Ist das Angebot größer als die Nachfrage, sinken die Preise.', mischen: true },
+  { t: 'Eure Gruppe produziert 20 Kisten, verkauft aber nur 8. Was bedeutet das für euer Ergebnis?', o: ['Nichts – nur verkaufte Kisten kosten Geld.', 'Auch die 12 unverkauften Kisten kosten je 500 €. Das macht schnell Verlust.', 'Die übrigen Kisten bekommt ihr bezahlt.'], a: 'Auch die 12 unverkauften Kisten kosten je 500 €. Das macht schnell Verlust.', e: 'Variable Kosten entstehen für jede produzierte Kiste – egal, ob sie verkauft wird.', mischen: true },
+  { t: 'Ein Unternehmen macht mehrere Perioden hintereinander Verlust. Was würde es in der Wirklichkeit wohl tun?', o: ['Einfach weitermachen wie bisher.', 'Weniger produzieren, die Preise anpassen oder den Markt ganz verlassen.', 'Die Preise stark erhöhen.'], a: 'Weniger produzieren, die Preise anpassen oder den Markt ganz verlassen.', e: 'Wer auf Dauer Verlust macht, muss etwas ändern – sonst geht das Unternehmen pleite.', mischen: true },
+  { t: 'Eine Gruppe scheidet aus dem Markt aus. Was bedeutet das für die anderen Gruppen?', o: ['Es gibt weniger Konkurrenz. Die übrigen Gruppen können mehr verkaufen oder höhere Preise verlangen.', 'Die übrigen Gruppen verkaufen weniger.', 'Es ändert sich nichts.'], a: 'Es gibt weniger Konkurrenz. Die übrigen Gruppen können mehr verkaufen oder höhere Preise verlangen.', e: 'Weniger Anbieter bedeuten weniger Konkurrenz.', mischen: true }
+], null);
+
+// ── Station 3 ──
+var aufgaben3 = [
+  { t: 'Die „Tortenwerkstatt“ produziert 15 Kisten und verkauft 12 Kisten zu je 1.200 €.', f: [['Umsatz', 14400], ['Gesamtkosten', 9500], ['Gewinn oder Verlust', 4900]], r: 'Umsatz: 12 × 1.200 € = 14.400 €. Kosten: 2.000 € + 15 × 500 € = 9.500 €. Gewinn: 14.400 € − 9.500 € = 4.900 €.' },
+  { t: 'Die „Sahnehäubchen GmbH“ produziert 20 Kisten, verkauft aber nur 8 Kisten zu je 900 €.', f: [['Umsatz', 7200], ['Gesamtkosten', 12000], ['Gewinn oder Verlust', -4800]], r: 'Umsatz: 8 × 900 € = 7.200 €. Kosten: 2.000 € + 20 × 500 € = 12.000 €. Ergebnis: 7.200 € − 12.000 € = −4.800 € (Verlust).' },
+  { t: 'Die „Konditorei Lena & Tim“ produziert 10 Kisten und verkauft alle. Ab welchem Preis je Kiste macht sie keinen Verlust mehr?', f: [['Gesamtkosten', 7000], ['Mindestpreis je Kiste', 700]], r: 'Kosten: 2.000 € + 10 × 500 € = 7.000 €. Verteilt auf 10 Kisten: 7.000 € : 10 = 700 € je Kiste.' }
+];
+(function () {
+  var box = document.getElementById('liste3');
+  aufgaben3.forEach(function (a, ai) {
+    score(0, a.f.length);
+    var k = document.createElement('div'); k.className = 'karte';
+    var h = '<div class="text"><b>Fall ' + (ai + 1) + ':</b> ' + a.t + '</div><table class="rechnen">';
+    a.f.forEach(function (f, fi) { h += '<tr><td>' + f[0] + ':</td><td><input type="text" inputmode="numeric" id="r' + ai + '_' + fi + '"> €</td><td id="m' + ai + '_' + fi + '"></td></tr>'; });
+    h += '</table><button class="primary">Prüfen</button><div class="fb"></div>';
+    k.innerHTML = h;
+    var geprueft = false;
+    k.querySelector('button').onclick = function () {
+      var richtig = 0;
+      a.f.forEach(function (f, fi) {
+        var roh = document.getElementById('r' + ai + '_' + fi).value.replace(/[.\s€]/g, '').replace('−', '-').replace(',', '.');
+        var ok = roh !== '' && Number(roh) === f[1];
+        var m = document.getElementById('m' + ai + '_' + fi);
+        m.textContent = ok ? '✓' : '✗'; m.style.color = ok ? '#1E7B3A' : '#B3261E'; m.style.fontWeight = '700';
+        if (ok) richtig++;
+      });
+      if (!geprueft) { score(richtig, 0); geprueft = true; }
+      var fb = k.querySelector('.fb');
+      fb.className = 'fb ' + (richtig === a.f.length ? 'ok' : 'no');
+      fb.innerHTML = (richtig === a.f.length ? '<b>Alles richtig!</b> ' : '<b>' + richtig + ' von ' + a.f.length + ' richtig.</b> Gewertet wird dein erster Versuch. ') + 'Rechenweg: ' + a.r;
+    };
+    box.appendChild(k);
+  });
+})();
+
+// ── Station 4: Simulator ──
+var PER = [
+  { text: 'Die Reaktion der Käufer auf unterschiedliche Preise ist nicht bekannt.', stufen: [[1000, 40], [1500, 32], [2000, 24], [2500, 12], [3000, 4]] },
+  { text: 'Die Käufer zeigen großes Interesse an Sahnetorten; höhere Preise werden eher akzeptiert.', stufen: [[1500, 60], [2000, 50], [2500, 40], [3000, 28]] },
+  { text: 'Das Interesse an Sahnetorten stagniert; höhere Preise werden weniger akzeptiert.', stufen: [[1000, 50], [1500, 38], [2000, 24], [2500, 10], [3000, 0]] },
+  { text: 'Das Interesse an Sahnetorten geht stark zurück; höhere Preise werden noch weniger akzeptiert.', stufen: [[800, 40], [1200, 28], [1600, 14], [2000, 4], [3000, 0]] }
+];
+function hoechst(per, preis) { var s = PER[per].stufen; for (var i = 0; i < s.length; i++) if (preis <= s[i][0]) return s[i][1]; return 0; }
+function rechne(per, preis, menge) { var v = Math.min(menge, hoechst(per, preis)); var u = v * preis, k = 2000 + menge * 500; return { v: v, u: u, k: k, g: u - k }; }
+function bester(per) { var b = null; for (var p = 500; p <= 3000; p += 100) for (var m = 0; m <= 20; m++) { var r = rechne(per, p, m); if (!b || r.g > b.g) b = { p: p, m: m, g: r.g }; } return b; }
+var erfolg4 = {};
+function sim() {
+  var per = Number(document.getElementById('per').value) - 1, preis = Number(document.getElementById('preis').value), menge = Number(document.getElementById('menge').value);
+  document.getElementById('perOut').textContent = (per + 1) + '. Periode';
+  document.getElementById('preisOut').textContent = euro(preis);
+  document.getElementById('mengeOut').textContent = menge + ' Kisten';
+  document.getElementById('verhalten').textContent = 'Verhalten der Käufer: ' + PER[per].text;
+  var r = rechne(per, preis, menge);
+  document.getElementById('zVerkauft').textContent = r.v + ' von ' + menge;
+  document.getElementById('zUmsatz').textContent = euro(r.u);
+  document.getElementById('zKosten').textContent = euro(r.k);
+  var zg = document.getElementById('zGewinn'); zg.textContent = euro(r.g); zg.style.color = r.g >= 0 ? '#1E7B3A' : '#B3261E';
+  var maxW = 60000, sk = function (x) { return Math.min(440, Math.abs(x) / maxW * 440); };
+  var s = '';
+  [['Umsatz', r.u, '#2E75B6'], ['Kosten', r.k, '#C55A11'], [r.g >= 0 ? 'Gewinn' : 'Verlust', r.g, r.g >= 0 ? '#1E7B3A' : '#B3261E']].forEach(function (z, i) {
+    var y = 12 + i * 45;
+    s += '<text x="0" y="' + (y + 20) + '" font-size="15" fill="#333">' + z[0] + '</text>';
+    s += '<rect x="90" y="' + y + '" width="' + Math.max(2, sk(z[1])) + '" height="28" fill="' + z[2] + '" rx="3"/>';
+    s += '<text x="' + (98 + sk(z[1])) + '" y="' + (y + 20) + '" font-size="15" font-weight="700" fill="#333">' + euro(z[1]) + '</text>';
+  });
+  document.getElementById('balken').innerHTML = s;
+  document.getElementById('fb4').className = 'fb';
+}
+['per', 'preis', 'menge'].forEach(function (id) { document.getElementById(id).addEventListener('input', sim); });
+score(0, 2);
+document.getElementById('pruefen4').onclick = function () {
+  var per = Number(document.getElementById('per').value) - 1, preis = Number(document.getElementById('preis').value), menge = Number(document.getElementById('menge').value);
+  var r = rechne(per, preis, menge), b = bester(per), fb = document.getElementById('fb4');
+  if (r.g >= b.g) {
+    fb.className = 'fb ok';
+    fb.innerHTML = '<b>Super!</b> Mehr Gewinn ist in der ' + (per + 1) + '. Periode nicht möglich: ' + euro(b.g) + '.' + (r.v < menge ? '' : ' Du hast genau so viel produziert, wie du verkaufen kannst.');
+    if (!erfolg4[per] && Object.keys(erfolg4).length < 2) { erfolg4[per] = true; score(1, 0); fb.innerHTML += ' (+1 Punkt; Punkte gibt es für zwei verschiedene Perioden.)'; }
+  } else {
+    fb.className = 'fb info';
+    var tipp = r.v < menge ? 'Tipp: Du produzierst mehr Kisten, als die Käufer bei diesem Preis nehmen. Unverkaufte Kisten kosten Geld!' : (menge < hoechst(per, preis) && menge < 20 ? 'Tipp: Die Käufer würden bei diesem Preis noch mehr Kisten nehmen.' : 'Tipp: Probiere einen anderen Preis aus.');
+    fb.innerHTML = 'Es geht noch besser. ' + tipp;
+  }
+};
+sim();
+karten('frage4', [{ t: '<b>Nachgedacht:</b> Allein auf dem Markt kannst du oft sehr hohe Preise verlangen. Warum war das im Spiel meistens nicht möglich?', o: ['Weil die Käufer im Spiel kein Geld hatten.', 'Weil es Konkurrenz gab: Die Käufer haben zuerst bei den günstigeren Gruppen gekauft.', 'Weil hohe Preise verboten waren.'], a: 'Weil es Konkurrenz gab: Die Käufer haben zuerst bei den günstigeren Gruppen gekauft.', e: 'Konkurrenz sorgt dafür, dass Anbieter ihre Preise nicht beliebig erhöhen können. Davon profitieren die Käufer.', mischen: true }]);
+
+// ── Station 5: Lückentext ──
+var luecken = [
+  { vor: 'Auf einem Markt treffen', opts: ['Angebot und Nachfrage', 'Kosten und Gewinn', 'Schule und Staat'], a: 'Angebot und Nachfrage', nach: 'aufeinander.' },
+  { vor: 'Ist die Nachfrage größer als das Angebot, dann', opts: ['steigen', 'sinken', 'bleiben gleich'], a: 'steigen', nach: 'die Preise meistens.' },
+  { vor: 'Ist das Angebot größer als die Nachfrage, dann', opts: ['steigen', 'sinken', 'verschwinden'], a: 'sinken', nach: 'die Preise meistens.' },
+  { vor: 'Je höher der Preis ist, desto', opts: ['weniger', 'mehr', 'genauso viel'], a: 'weniger', nach: 'kaufen die Käufer meistens.' },
+  { vor: 'Weil es', opts: ['Konkurrenz', 'Fixkosten', 'Werbung'], a: 'Konkurrenz', nach: 'gibt, können Anbieter ihre Preise nicht beliebig erhöhen.' },
+  { vor: 'Ein Unternehmen macht nur dann Gewinn, wenn der Umsatz', opts: ['größer', 'kleiner', 'genauso groß'], a: 'größer', nach: 'ist als die Kosten.' }
+];
+(function () {
+  var box = document.getElementById('luecke'), h = '';
+  luecken.forEach(function (l, i) {
+    var o = mische(l.opts);
+    h += '<p>' + (i + 1) + '. ' + l.vor + ' <select id="l' + i + '"><option value="">…</option>' + o.map(function (x) { return '<option>' + x + '</option>'; }).join('') + '</select> ' + l.nach + ' <span id="lm' + i + '"></span></p>';
+  });
+  box.innerHTML = h; score(0, luecken.length);
+  var geprueft = false;
+  document.getElementById('pruefen5').onclick = function () {
+    var r = 0, leer = 0;
+    luecken.forEach(function (l, i) {
+      var v = document.getElementById('l' + i).value, m = document.getElementById('lm' + i);
+      if (!v) { leer++; m.textContent = ''; return; }
+      var ok = v === l.a; if (ok) r++;
+      m.textContent = ok ? '✓' : '✗'; m.style.color = ok ? '#1E7B3A' : '#B3261E'; m.style.fontWeight = '700';
+    });
+    var fb = document.getElementById('fb5');
+    if (leer) { fb.className = 'fb info'; fb.textContent = 'Bitte fülle zuerst alle Lücken aus.'; return; }
+    if (!geprueft) { score(r, 0); geprueft = true; }
+    fb.className = 'fb ' + (r === luecken.length ? 'ok' : 'no');
+    fb.innerHTML = r === luecken.length ? '<b>Alles richtig!</b> Schreibe die Merksätze in dein Heft.' : r + ' von ' + luecken.length + ' richtig. Korrigiere die markierten Sätze. (Gewertet wird dein erster Versuch.)';
+    document.getElementById('ende').textContent = 'Dein Ergebnis: ' + punkte + ' von ' + max + ' Punkten.';
+  };
+})();
+</script>
+</body>
+</html>

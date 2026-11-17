@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soziale Marktwirtschaft – Digitale Übung</title>
+<style>
+  :root { --blau:#1F4E79; --hell:#EAF2FA; --gruen:#2E7D32; --rot:#C62828; --gelb:#FFE082; --grau:#f3f3f3; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: Georgia, "Times New Roman", serif; background:#fafafa; color:#222; }
+  header { background:var(--blau); color:#fff; padding:16px 20px; }
+  header h1 { margin:0; font-family: Calibri, Arial, sans-serif; font-size:1.4rem; }
+  header p { margin:4px 0 0; font-size:.9rem; opacity:.9; }
+  .wrap { max-width:960px; margin:0 auto; padding:16px; }
+  nav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+  nav button { font-family:Calibri, Arial, sans-serif; font-size:1rem; padding:8px 14px; border:2px solid var(--blau); background:#fff; color:var(--blau); border-radius:6px; cursor:pointer; }
+  nav button.aktiv { background:var(--blau); color:#fff; }
+  .punkte { font-family:Calibri, Arial, sans-serif; background:var(--hell); border:1px solid #9DB8D2; border-radius:6px; padding:8px 12px; margin-bottom:12px; }
+  .station { display:none; }
+  .station.aktiv { display:block; }
+  .station h2 { font-family:Calibri, Arial, sans-serif; color:var(--blau); margin:4px 0 6px; }
+  .auftrag { font-style:italic; color:#555; margin:0 0 12px; }
+  .karte { background:#fff; border:1px solid #ccc; border-left:6px solid #bbb; border-radius:6px; padding:10px 12px; margin-bottom:10px; }
+  .karte.richtig { border-left-color:var(--gruen); background:#F1F8F1; }
+  .karte.falsch { border-left-color:var(--rot); background:#FDF2F2; }
+  .karte .text { font-size:1.02rem; margin-bottom:8px; }
+  .knoepfe { display:flex; flex-wrap:wrap; gap:8px; }
+  .knoepfe button { font-family:Calibri, Arial, sans-serif; font-size:.95rem; padding:6px 12px; border:1px solid #888; background:var(--grau); border-radius:5px; cursor:pointer; }
+  .knoepfe button:hover:not(:disabled) { background:#e3e3e3; }
+  .knoepfe button:disabled { cursor:default; opacity:.75; }
+  .knoepfe button.gewaehlt-richtig { background:var(--gruen); color:#fff; border-color:var(--gruen); opacity:1; }
+  .knoepfe button.gewaehlt-falsch { background:var(--rot); color:#fff; border-color:var(--rot); opacity:1; }
+  .erklaerung { margin-top:8px; font-size:.92rem; color:#333; display:none; }
+  .erklaerung.zeigen { display:block; }
+  .neu { font-family:Calibri, Arial, sans-serif; margin-top:6px; padding:8px 14px; border:none; background:var(--blau); color:#fff; border-radius:6px; cursor:pointer; }
+  .hinweis { font-size:.85rem; color:#666; margin-top:20px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Soziale Marktwirtschaft – Freiheit des Marktes und sozialer Ausgleich</h1>
+  <p>EF Sozialwissenschaften · Digitale Übung zum Arbeitsblatt (M7) · Stand: 04.11.2026</p>
+</header>
+<div class="wrap">
+  <nav id="nav"></nav>
+  <div class="punkte" id="punkte"></div>
+  <div id="stationen"></div>
+  <button class="neu" id="neustart">Alles neu mischen und von vorn beginnen</button>
+  <p class="hinweis">Hinweis: Diese Datei zuerst herunterladen und dann im Browser öffnen. In IServ direkt angeklickt, funktioniert sie nicht. Bei jedem Öffnen werden Aufgaben und Antworten neu gemischt.</p>
+</div>
+<script>
+(function () {
+  "use strict";
+  var FM = "freie Marktwirtschaft", ZV = "Zentralverwaltungswirtschaft", SM = "soziale Marktwirtschaft";
+  var MA = "Freiheit des Marktes", SA = "sozialer Ausgleich", BD = "beides";
+
+  var STATIONEN = [
+    { titel: "1 Ordnungen", auftrag: "Zu welcher Wirtschaftsordnung passt das Merkmal am besten?", optionen: [FM, ZV, SM], items: [
+      ["Eine staatliche Planbehörde legt fest, was produziert wird und was es kostet.", ZV, "Typisch für die Zentralverwaltungswirtschaft, z. B. in der DDR."],
+      ["Die Produktionsmittel gehören dem Staat bzw. dem „Volk“.", ZV, "In der Zentralverwaltungswirtschaft gibt es kaum Privateigentum an Fabriken, Boden oder Maschinen."],
+      ["Der Staat hält sich nach dem Grundsatz „laissez faire“ aus der Wirtschaft heraus.", FM, "Die freie Marktwirtschaft des 19. Jahrhunderts beschränkte den Staat auf Sicherheit und Recht („Nachtwächterstaat“)."],
+      ["Gegen Krankheit, Unfall oder Alter muss jeder selbst vorsorgen; Kartelle sind erlaubt.", FM, "Ohne Sozialversicherung und Kartellverbot – so sah es in der Industrialisierung aus (soziale Frage)."],
+      ["Preise bilden sich frei, aber ein Kartellamt schützt den Wettbewerb.", SM, "Ordoliberale Idee: Der Staat setzt eine Wettbewerbsordnung, mischt sich aber nicht in die Preise ein."],
+      ["Privateigentum ist garantiert, sein Gebrauch soll aber auch dem Allgemeinwohl dienen.", SM, "Art. 14 GG: „Eigentum verpflichtet.“"],
+      ["Eine Sozialversicherung sichert Beschäftigte gegen Krankheit, Arbeitslosigkeit und Alter ab.", SM, "Sozialer Ausgleich ist der zweite Grundpfeiler der sozialen Marktwirtschaft."],
+      ["Ein Volkswirtschaftsplan gibt den Betrieben Produktionsziele für mehrere Jahre vor.", ZV, "Fünfjahrpläne waren das Steuerungsinstrument der Planwirtschaft."]
+    ]},
+    { titel: "2 Grundgesetz", auftrag: "Welches Prinzip steht bei diesem Artikel im Vordergrund?", optionen: [MA, SA, BD], items: [
+      ["Art. 2 Abs. 1: freie Entfaltung der Persönlichkeit (auch Vertragsfreiheit)", MA, "Die allgemeine Handlungsfreiheit schützt auch die wirtschaftliche Freiheit, z. B. Verträge zu schließen."],
+      ["Art. 12 Abs. 1: freie Wahl von Beruf, Arbeitsplatz und Ausbildungsstätte", MA, "Berufs- und Gewerbefreiheit sind Grundlagen einer Marktwirtschaft."],
+      ["Art. 14 Abs. 1: Eigentum und Erbrecht werden gewährleistet", MA, "Privateigentum an Produktionsmitteln ist Voraussetzung des Marktes."],
+      ["Art. 14 Abs. 2: „Eigentum verpflichtet.“", SA, "Die Sozialbindung des Eigentums erlaubt z. B. Mieterschutz."],
+      ["Art. 20 Abs. 1: „sozialer Bundesstaat“", SA, "Das Sozialstaatsprinzip verpflichtet den Staat zu sozialer Sicherung."],
+      ["Art. 15: Vergesellschaftung gegen Entschädigung möglich", SA, "Zeigt, dass das Grundgesetz keine bestimmte Wirtschaftsordnung festschreibt; angewandt wurde der Artikel bisher nie."],
+      ["Art. 9 Abs. 3: Koalitionsfreiheit (Gewerkschaften, Arbeitgeberverbände)", BD, "Die Tarifpartner handeln frei ohne den Staat (Freiheit) – und die Gewerkschaften bilden ein Gegengewicht zugunsten der Beschäftigten (Ausgleich)."]
+    ]},
+    { titel: "3 Fälle", auftrag: "Welches Prinzip zeigt sich in dem Fall vor allem?", optionen: [MA, SA, BD], items: [
+      ["Lena eröffnet ein Café und legt Angebot und Preise selbst fest.", MA, "Gewerbe- und Vertragsfreiheit – freie Preisbildung."],
+      ["Das Bundeskartellamt untersagt eine Fusion, weil ein Unternehmen den Markt beherrschen würde.", MA, "Der Staat schützt den Wettbewerb und damit die Freiheit des Marktes – ein Kern des Ordoliberalismus."],
+      ["Der Mindestlohn steigt 2026 auf 13,90 € pro Stunde.", SA, "Sozialer Ausgleich durch eine Lohnuntergrenze – zugleich ein Eingriff in die Preisbildung am Arbeitsmarkt."],
+      ["Die Mietpreisbremse begrenzt bis 2029 die Miete bei Neuvermietungen in angespannten Märkten.", SA, "Sozialbindung des Eigentums; ein direkter und umstrittener Eingriff in die Preisbildung."],
+      ["Die Grundsicherung sichert Hilfebedürftigen den Lebensunterhalt.", SA, "Fürsorgeprinzip des Sozialstaats (Art. 20 GG)."],
+      ["Gewerkschaft und Arbeitgeberverband handeln ohne den Staat einen Tarifvertrag aus.", BD, "Tarifautonomie: Freiheit der Sozialpartner und Gegengewicht der Arbeitnehmer zugleich."],
+      ["Kündigungen in Betrieben mit mehr als zehn Beschäftigten müssen sozial gerechtfertigt sein.", SA, "Der Kündigungsschutz begrenzt die Vertragsfreiheit zugunsten der Beschäftigten."]
+    ]},
+    { titel: "4 Quiz", auftrag: "Wähle jeweils die richtige Antwort.", quiz: true, items: [
+      { f: "Wer prägte 1947 den Begriff „Soziale Marktwirtschaft“?", r: "Alfred Müller-Armack", x: ["Ludwig Erhard", "Walter Eucken", "Konrad Adenauer"], e: "Der Ökonom Alfred Müller-Armack prägte den Begriff; Ludwig Erhard setzte die Idee politisch um." },
+      { f: "Was geschah im Juni 1948 in den westlichen Besatzungszonen?", r: "Währungsreform und Aufhebung der meisten Preisbindungen durch das Leitsätzegesetz", x: ["Gründung der Bundesrepublik und Verabschiedung des Grundgesetzes", "Einführung der dynamischen Rente", "Verabschiedung des Kartellgesetzes"], e: "Am 20. Juni 1948 kam die D-Mark, am 24. Juni das Leitsätzegesetz. Grundgesetz und Bundesrepublik folgten 1949, Kartellgesetz und Rentenreform 1957." },
+      { f: "Was forderten Walter Eucken und die Freiburger Schule (Ordoliberalismus)?", r: "Einen starken Staat, der eine Wettbewerbsordnung setzt, aber nicht in die Preise eingreift", x: ["Einen Staat, der alle wichtigen Preise festlegt", "Den vollständigen Rückzug des Staates aus der Wirtschaft", "Die Verstaatlichung aller Großunternehmen"], e: "Für Eucken muss der Staat Monopole und Kartelle verhindern, die Preisbildung aber dem Markt überlassen." },
+      { f: "Was sagt das Grundgesetz über die Wirtschaftsordnung?", r: "Es schreibt keine bestimmte Wirtschaftsordnung vor, setzt aber mit Grundrechten und Sozialstaatsprinzip einen Rahmen.", x: ["Es legt in Art. 1 die soziale Marktwirtschaft fest.", "Es verbietet jede Form von Gemeineigentum.", "Es schreibt eine freie Marktwirtschaft ohne Sozialstaat vor."], e: "Das Grundgesetz ist wirtschaftspolitisch offen. Ausdrücklich genannt wurde die soziale Marktwirtschaft 1990 im Staatsvertrag mit der DDR." },
+      { f: "Welcher Titel eines Buches von Ludwig Erhard (1957) wurde zum Leitspruch der Wirtschaftswunderjahre?", r: "„Wohlstand für alle“", x: ["„Eigentum verpflichtet“", "„Freiheit statt Sozialismus“", "„Mehr Demokratie wagen“"], e: "„Wohlstand für alle“ (1957) beschreibt Erhards Ziel, über Wettbewerb breiten Wohlstand zu schaffen." },
+      { f: "Welche Aussage trifft auf das INSM-Marktwirtschaftsbarometer 2026 zu?", r: "Die Mehrheit sieht sich als marktwirtschaftlich, wünscht sich aber in vielen Bereichen staatliche Eingriffe.", x: ["Die Mehrheit fordert die Abschaffung der Marktwirtschaft.", "Die Mehrheit lehnt jede staatliche Preisregulierung ab.", "Die Umfrage wurde von Gewerkschaften in Auftrag gegeben."], e: "60 % sehen sich als marktwirtschaftlich orientiert; zugleich wollen viele z. B. regulierte Strompreise. Auftraggeber ist die arbeitgeberfinanzierte INSM." }
+    ]}
+  ];
+
+  function mische(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+
+  var stand, aktiv = 0;
+  var nav = document.getElementById("nav"), box = document.getElementById("stationen"), pk = document.getElementById("punkte");
+
+  function zeigePunkte() {
+    var r = 0, g = 0, gesamt = 0;
+    stand.forEach(function (s) { r += s.richtig; g += s.beantwortet; gesamt += s.anzahl; });
+    pk.textContent = "Punkte: " + r + " von " + g + " beantworteten Aufgaben richtig  ·  bearbeitet: " + g + " / " + gesamt;
+  }
+
+  function karte(text, optionen, loesung, erkl, si) {
+    var d = document.createElement("div"); d.className = "karte";
+    var t = document.createElement("div"); t.className = "text"; t.textContent = text; d.appendChild(t);
+    var k = document.createElement("div"); k.className = "knoepfe"; d.appendChild(k);
+    var e = document.createElement("div"); e.className = "erklaerung"; d.appendChild(e);
+    mische(optionen).forEach(function (o) {
+      var b = document.createElement("button"); b.textContent = o;
+      b.addEventListener("click", function () {
+        var ok = o === loesung;
+        Array.prototype.forEach.call(k.children, function (x) { x.disabled = true; });
+        b.className = ok ? "gewaehlt-richtig" : "gewaehlt-falsch";
+        if (!ok) Array.prototype.forEach.call(k.children, function (x) { if (x.textContent === loesung) x.className = "gewaehlt-richtig"; });
+        d.classList.add(ok ? "richtig" : "falsch");
+        e.textContent = (ok ? "Richtig. " : "Leider falsch – richtig ist: " + loesung + ". ") + erkl;
+        e.classList.add("zeigen");
+        stand[si].beantwortet++; if (ok) stand[si].richtig++;
+        zeigePunkte();
+      });
+      k.appendChild(b);
+    });
+    return d;
+  }
+
+  function aufbauen() {
+    nav.innerHTML = ""; box.innerHTML = "";
+    stand = STATIONEN.map(function (s) { return { richtig: 0, beantwortet: 0, anzahl: s.items.length }; });
+    STATIONEN.forEach(function (s, si) {
+      var nb = document.createElement("button"); nb.textContent = s.titel;
+      nb.addEventListener("click", function () { aktiv = si; umschalten(); });
+      nav.appendChild(nb);
+      var sec = document.createElement("section"); sec.className = "station";
+      var h = document.createElement("h2"); h.textContent = "Station " + s.titel; sec.appendChild(h);
+      var a = document.createElement("p"); a.className = "auftrag"; a.textContent = s.auftrag; sec.appendChild(a);
+      mische(s.items).forEach(function (it) {
+        if (s.quiz) sec.appendChild(karte(it.f, [it.r].concat(it.x), it.r, it.e, si));
+        else sec.appendChild(karte(it[0], s.optionen, it[1], it[2], si));
+      });
+      box.appendChild(sec);
+    });
+    umschalten(); zeigePunkte();
+  }
+
+  function umschalten() {
+    Array.prototype.forEach.call(nav.children, function (b, i) { b.className = i === aktiv ? "aktiv" : ""; });
+    Array.prototype.forEach.call(box.children, function (s, i) { s.className = "station" + (i === aktiv ? " aktiv" : ""); });
+    window.scrollTo(0, 0);
+  }
+
+  document.getElementById("neustart").addEventListener("click", function () { aktiv = 0; aufbauen(); });
+  aufbauen();
+})();
+</script>
+</body>
+</html>

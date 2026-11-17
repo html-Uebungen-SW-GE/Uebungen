@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wie wird der Landtag in NRW gewählt? – Digitale Übung</title>
+<style>
+  :root { --blau:#1F4E79; --hell:#EAF2FA; --gruen:#1E7B3A; --gruenh:#E3F3E7; --rot:#B3261E; --roth:#FBE9E7; --grau:#F3F4F6; --gelb:#FFE082; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family: "Segoe UI", Calibri, Arial, sans-serif; background:#F7F9FC; color:#1b1b1b; line-height:1.45; }
+  header { background:var(--blau); color:#fff; padding:18px 24px; }
+  header h1 { margin:0; font-size:1.45rem; }
+  header p { margin:4px 0 0; opacity:.9; }
+  .bar { position:sticky; top:0; z-index:5; background:#fff; border-bottom:1px solid #dde3ea; padding:10px 24px; display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
+  .bar nav a { color:var(--blau); text-decoration:none; font-weight:600; margin-right:12px; font-size:.95rem; }
+  .score { margin-left:auto; font-weight:700; color:var(--blau); }
+  main { max-width:960px; margin:0 auto; padding:20px 16px 60px; }
+  section { background:#fff; border:1px solid #dde3ea; border-radius:10px; padding:20px 22px; margin-bottom:22px; }
+  h2 { margin:0 0 6px; color:var(--blau); font-size:1.2rem; }
+  .auftrag { background:var(--hell); border-left:4px solid var(--blau); padding:8px 12px; margin:8px 0 16px; border-radius:4px; }
+  button { font:inherit; cursor:pointer; border-radius:6px; border:1px solid #9fb3c8; background:#fff; padding:7px 12px; }
+  button:hover { background:var(--hell); }
+  button.primary { background:var(--blau); color:#fff; border-color:var(--blau); font-weight:600; }
+  button.primary:hover { background:#163a5a; }
+  button:disabled { cursor:default; opacity:.55; }
+  .fb { margin-top:8px; padding:8px 12px; border-radius:6px; font-size:.95rem; display:none; }
+  .fb.ok { display:block; background:var(--gruenh); border:1px solid #9bd3a9; color:#124d24; }
+  .fb.no { display:block; background:var(--roth); border:1px solid #f0b1aa; color:#6e1510; }
+  .fb.info { display:block; background:#FFF8E1; border:1px solid #f1d98a; color:#5b4600; }
+
+  /* Stimmzettel */
+  .zettel { display:grid; grid-template-columns:1fr 1fr; gap:0; border:2px solid #333; max-width:640px; background:#fff; }
+  .zettel .kopf { grid-column:1 / 3; text-align:center; padding:8px; border-bottom:2px solid #333; font-weight:700; }
+  .spalte { padding:0; }
+  .spalte + .spalte { border-left:2px solid #333; }
+  .spalte h3 { margin:0; padding:8px; font-size:1rem; text-align:center; background:#f0f0f0; border-bottom:1px solid #333; }
+  .spalte h3 small { display:block; font-weight:400; font-size:.8rem; }
+  .zeile { display:flex; align-items:center; gap:10px; padding:10px; border-bottom:1px solid #bbb; cursor:pointer; user-select:none; min-height:58px; }
+  .zeile:last-child { border-bottom:none; }
+  .kreis { width:30px; height:30px; border:2px solid #333; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:700; color:#c44b00; }
+  .zeile.an .kreis::after { content:"\2715"; }
+  .zeile span small { display:block; color:#555; font-size:.82rem; }
+
+  /* Karten */
+  .karte { border:1px solid #dde3ea; border-radius:8px; padding:10px 12px; margin-bottom:10px; background:#fff; }
+  .karte .text { margin-bottom:8px; }
+  .karte .btns { display:flex; gap:6px; flex-wrap:wrap; }
+  .karte.richtig { border-color:#9bd3a9; background:#F4FBF6; }
+  .karte.falsch { border-color:#f0b1aa; background:#FEF6F5; }
+  .btns button.gew-ok { background:var(--gruen); color:#fff; border-color:var(--gruen); }
+  .btns button.gew-no { background:var(--rot); color:#fff; border-color:var(--rot); }
+
+  table.schritte { width:100%; border-collapse:collapse; }
+  table.schritte td { border:1px solid #dde3ea; padding:8px; vertical-align:middle; }
+  table.schritte select { font:inherit; padding:5px; border-radius:5px; }
+  td.mark { width:34px; text-align:center; font-weight:700; }
+  .grundsatz-leiste { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-bottom:14px; }
+  .grundsatz-leiste div { background:var(--grau); border-radius:6px; padding:6px 8px; font-size:.85rem; }
+  .grundsatz-leiste b { display:block; color:var(--blau); }
+  @media (max-width:700px) { .grundsatz-leiste { grid-template-columns:1fr 1fr; } .zettel { grid-template-columns:1fr; } .spalte + .spalte { border-left:none; border-top:2px solid #333; } .zettel .kopf { grid-column:1; } }
+  footer { text-align:center; color:#777; font-size:.85rem; padding:10px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Wie wird der Landtag in NRW gewählt?</h1>
+  <p>Digitale Übung zu Teil 1 · Klasse 8 Politik · Landtagswahl am 25. April 2027</p>
+</header>
+<div class="bar">
+  <nav>
+    <a href="#s1">1 Stimmzettel</a><a href="#s2">2 Wer darf wählen?</a><a href="#s3">3 Erst- oder Zweitstimme?</a><a href="#s4">4 Fünf Schritte</a><a href="#s5">5 Wahlgrundsätze</a>
+  </nav>
+  <span class="score" id="score">Punkte: 0 / 0</span>
+  <button onclick="location.reload()">Neu starten</button>
+</div>
+
+<main>
+<!-- STATION 1 -->
+<section id="s1">
+  <h2>Station 1: Den Stimmzettel ausfüllen</h2>
+  <div class="auftrag">Fülle den Stimmzettel aus, indem du auf die Kreise klickst. Wirf ihn anschließend in die Urne. Probiere ruhig auch aus, was passiert, wenn du zu viele oder gar keine Kreuze setzt.</div>
+  <div class="zettel">
+    <div class="kopf">Stimmzettel für die Wahl zum Landtag Nordrhein-Westfalen<br><small style="font-weight:400">Sie haben 2 Stimmen</small></div>
+    <div class="spalte" data-spalte="erst">
+      <h3>Erststimme<small>für die Wahl einer Person im Wahlkreis</small></h3>
+      <div class="zeile"><span class="kreis"></span><span>Kandidatin Müller<small>Partei A</small></span></div>
+      <div class="zeile"><span class="kreis"></span><span>Kandidat Schulz<small>Partei B</small></span></div>
+      <div class="zeile"><span class="kreis"></span><span>Kandidat Wagner<small>Partei C</small></span></div>
+      <div class="zeile"><span class="kreis"></span><span>Kandidatin Hoffmann<small>Partei D</small></span></div>
+      <div class="zeile"><span class="kreis"></span><span>Kandidat Krüger<small>parteilos</small></span></div>
+    </div>
+    <div class="spalte" data-spalte="zweit">
+      <h3>Zweitstimme<small>für die Wahl einer Landesliste (Partei)</small></h3>
+      <div class="zeile"><span class="kreis"></span><span>Partei A</span></div>
+      <div class="zeile"><span class="kreis"></span><span>Partei B</span></div>
+      <div class="zeile"><span class="kreis"></span><span>Partei C</span></div>
+      <div class="zeile"><span class="kreis"></span><span>Partei D</span></div>
+    </div>
+  </div>
+  <p><button class="primary" id="urne">Stimmzettel in die Urne werfen</button> <button id="zettelLeer">Neuer Stimmzettel</button></p>
+  <div class="fb" id="fb1"></div>
+</section>
+
+<!-- STATION 2 -->
+<section id="s2">
+  <h2>Station 2: Wer darf 2027 wählen – und wer gewählt werden?</h2>
+  <div class="auftrag">Entscheide mithilfe von M1. Tipp: Wählen darf man in NRW ab 16 Jahren, gewählt werden (kandidieren) erst ab 18 Jahren.</div>
+  <div id="liste2"></div>
+</section>
+
+<!-- STATION 3 -->
+<section id="s3">
+  <h2>Station 3: Erststimme oder Zweitstimme?</h2>
+  <div class="auftrag">Zu welcher Stimme passt die Aussage? Nutze M2 und M3.</div>
+  <div id="liste3"></div>
+</section>
+
+<!-- STATION 4 -->
+<section id="s4">
+  <h2>Station 4: Vom Stimmzettel zur Sitzverteilung</h2>
+  <div class="auftrag">Ordne jeder Erklärung den passenden Schritt (1–5) aus der Grafik M3 zu. Klicke dann auf „Überprüfen“.</div>
+  <table class="schritte" id="tab4"></table>
+  <p><button class="primary" id="pruefen4">Überprüfen</button></p>
+  <div class="fb" id="fb4"></div>
+</section>
+
+<!-- STATION 5 -->
+<section id="s5">
+  <h2>Station 5: Welcher Wahlgrundsatz wird verletzt?</h2>
+  <div class="auftrag">Lies die Fälle und wähle den verletzten Wahlgrundsatz. Achtung: In einem Fall liegt kein Verstoß vor.</div>
+  <div class="grundsatz-leiste">
+    <div><b>allgemein</b>Alle Bürger dürfen wählen, wenn sie die allgemeinen Voraussetzungen erfüllen.</div>
+    <div><b>unmittelbar</b>Die Stimmen gehen direkt in die Sitzverteilung ein, ohne Zwischeninstanz.</div>
+    <div><b>frei</b>Kein Zwang und keine unzulässige Beeinflussung.</div>
+    <div><b>gleich</b>Alle haben gleich viele Stimmen mit gleichem Gewicht.</div>
+    <div><b>geheim</b>Niemand darf feststellen können, wie jemand gewählt hat.</div>
+  </div>
+  <div id="liste5"></div>
+</section>
+</main>
+<footer>Übung zum Arbeitsblatt „Am Sonntag ins Wahllokal: Ist das analoge Wahlverfahren überholt?“</footer>
+
+<script>
+var punkte = 0, max = 0;
+function score(delta, neu) { punkte += delta; max += neu; document.getElementById('score').textContent = 'Punkte: ' + punkte + ' / ' + max; }
+function zeige(el, cls, html) { el.className = 'fb ' + cls; el.innerHTML = html; }
+
+// ---------- Station 1 ----------
+document.querySelectorAll('.zeile').forEach(function (z) { z.addEventListener('click', function () { z.classList.toggle('an'); }); });
+document.getElementById('zettelLeer').onclick = function () {
+  document.querySelectorAll('.zeile.an').forEach(function (z) { z.classList.remove('an'); });
+  document.getElementById('fb1').className = 'fb';
+};
+document.getElementById('urne').onclick = function () {
+  function auswerten(sp) {
+    var an = document.querySelectorAll('.spalte[data-spalte="' + sp + '"] .zeile.an');
+    return { n: an.length, name: an.length ? an[0].querySelector('span:last-child').firstChild.textContent.trim() : '' };
+  }
+  var e = auswerten('erst'), z = auswerten('zweit'), t = [], alleOk = true;
+  if (e.n === 1) t.push('<b>Erststimme gültig:</b> Du hast <i>' + e.name + '</i> gewählt. Wer im Wahlkreis die meisten Erststimmen bekommt, zieht direkt in den Landtag ein (einfache Mehrheit).');
+  else if (e.n === 0) { t.push('<b>Erststimme nicht abgegeben:</b> Deine Erststimme verfällt. Die Zweitstimme bleibt trotzdem gültig, denn jede Stimme wird einzeln bewertet.'); alleOk = false; }
+  else { t.push('<b>Erststimme ungültig:</b> Du hast ' + e.n + ' Kreuze gesetzt. Pro Spalte ist nur ein Kreuz erlaubt, sonst kann die Stimme nicht gezählt werden.'); alleOk = false; }
+  if (z.n === 1) t.push('<b>Zweitstimme gültig:</b> Du hast <i>' + z.name + '</i> gewählt. Die Zweitstimme entscheidet, wie viele Sitze eine Partei insgesamt im Landtag bekommt – vorausgesetzt, sie schafft die 5-%-Hürde.');
+  else if (z.n === 0) { t.push('<b>Zweitstimme nicht abgegeben:</b> Deine Zweitstimme verfällt. Dabei ist sie die wichtigere Stimme für die Sitzverteilung!'); alleOk = false; }
+  else { t.push('<b>Zweitstimme ungültig:</b> Du hast ' + z.n + ' Kreuze gesetzt. Pro Spalte ist nur ein Kreuz erlaubt.'); alleOk = false; }
+  if (e.n === 1 && z.n === 1) {
+    var pe = document.querySelector('.spalte[data-spalte="erst"] .zeile.an small').textContent.trim();
+    if (pe !== z.name) t.push('<b>Stimmensplitting:</b> Du hast Erst- und Zweitstimme unterschiedlichen Parteien gegeben. Das ist erlaubt!');
+    else t.push('Du kannst Erst- und Zweitstimme übrigens auch unterschiedlichen Parteien geben (Stimmensplitting).');
+  }
+  zeige(document.getElementById('fb1'), alleOk ? 'ok' : 'info', t.join('<br>'));
+};
+
+// ---------- Karten-Helfer ----------
+function karten(containerId, daten, optionen) {
+  var box = document.getElementById(containerId);
+  daten.forEach(function (d) {
+    score(0, 1);
+    var k = document.createElement('div'); k.className = 'karte';
+    k.innerHTML = '<div class="text">' + d.t + '</div><div class="btns"></div><div class="fb"></div>';
+    var btns = k.querySelector('.btns'), fb = k.querySelector('.fb');
+    optionen.forEach(function (o) {
+      var b = document.createElement('button'); b.textContent = o;
+      b.onclick = function () {
+        var richtig = (o === d.a);
+        btns.querySelectorAll('button').forEach(function (x) { x.disabled = true; });
+        b.className = richtig ? 'gew-ok' : 'gew-no';
+        k.classList.add(richtig ? 'richtig' : 'falsch');
+        zeige(fb, richtig ? 'ok' : 'no', (richtig ? '<b>Richtig.</b> ' : '<b>Leider nicht.</b> Richtig ist: <b>' + d.a + '</b>. ') + d.e);
+        if (richtig) score(1, 0);
+      };
+      btns.appendChild(b);
+    });
+    box.appendChild(k);
+  });
+}
+
+// ---------- Station 2 ----------
+karten('liste2', [
+  { t: 'Lena ist 16 Jahre alt, Deutsche und wohnt seit ihrer Geburt in Köln. Darf sie 2027 wählen?', a: 'ja', e: 'Seit der Verfassungsänderung von 2025 dürfen in NRW schon 16-Jährige den Landtag wählen – 2027 zum ersten Mal.' },
+  { t: 'Tim ist 17 Jahre alt, Deutscher und wohnt in Münster. Darf er für den Landtag kandidieren?', a: 'nein', e: 'Wählen darf Tim, aber gewählt werden (passives Wahlrecht) kann man erst ab 18 Jahren.' },
+  { t: 'Herr Becker (45, Deutscher) ist eine Woche vor der Wahl von Hessen nach Bonn gezogen. Darf er wählen?', a: 'nein', e: 'Man muss mindestens seit dem 16. Tag vor der Wahl in NRW wohnen.' },
+  { t: 'Frau Schmitz (82, Deutsche) wohnt seit 50 Jahren in Essen, liegt aber am Wahltag im Krankenhaus. Darf sie wählen?', a: 'ja', e: 'Sie erfüllt alle Voraussetzungen. Sie kann zum Beispiel vorher per Briefwahl abstimmen.' }
+], ['ja', 'nein']);
+
+// ---------- Station 3 ----------
+karten('liste3', [
+  { t: 'Mit dieser Stimme wähle ich eine Person aus meinem Wahlkreis.', a: 'Erststimme', e: 'Mit der Erststimme wird ein Wahlkreiskandidat gewählt.' },
+  { t: 'Mit dieser Stimme wähle ich die Liste einer Partei.', a: 'Zweitstimme', e: 'Mit der Zweitstimme wählt man eine Parteiliste.' },
+  { t: 'Diese Stimme ist maßgeblich dafür, wie viele Sitze eine Partei insgesamt bekommt.', a: 'Zweitstimme', e: 'Das Gesamtverhältnis der Parteien im Landtag richtet sich nach der Zweitstimme.' },
+  { t: 'Wer mit dieser Stimme die meisten Stimmen im Wahlkreis bekommt, zieht in jedem Fall in den Landtag ein.', a: 'Erststimme', e: 'Direkt gewählte Kandidaten ziehen immer ein (einfache Mehrheit).' },
+  { t: 'Für diese Stimme gilt die 5-%-Hürde.', a: 'Zweitstimme', e: 'Nur Parteien mit mindestens 5 % der Zweitstimmen kommen in den Landtag.' },
+  { t: 'In NRW gibt es 128 Gewinner dieser Stimme.', a: 'Erststimme', e: 'In jedem der 128 Wahlkreise wird eine Person direkt gewählt.' },
+  { t: 'Mit dieser Stimme kann man auch einen parteilosen Kandidaten wählen.', a: 'Erststimme', e: 'Auf der Erststimmen-Seite können auch Einzelbewerber ohne Partei stehen.' },
+  { t: 'Wenn eine Partei mehr Direktmandate gewinnt, als ihr nach dieser Stimme zustehen, entstehen Überhangmandate.', a: 'Zweitstimme', e: 'Überhangmandate entstehen, wenn die Zahl der Direktmandate den Zweitstimmenanteil übersteigt; die anderen Parteien erhalten Ausgleichsmandate.' }
+], ['Erststimme', 'Zweitstimme']);
+
+// ---------- Station 4 ----------
+var schritte = [
+  { s: 1, t: 'Auf dem Stimmzettel setzt man ein Kreuz für einen Kandidaten und ein Kreuz für eine Partei.' },
+  { s: 2, t: 'Im Wahlkreis gewinnt die Person mit den meisten Erststimmen und zieht in den Landtag ein.' },
+  { s: 3, t: 'Aus den Zweitstimmen wird berechnet, welchen Anteil jede Partei erhalten hat.' },
+  { s: 4, t: 'Aus dem Zweitstimmenanteil ergibt sich, wie viele Sitze (Mandate) eine Partei insgesamt bekommt.' },
+  { s: 5, t: 'Die Sitze einer Partei werden zuerst mit ihren direkt gewählten Kandidaten besetzt, der Rest über die Parteiliste.' }
+];
+var gemischt = schritte.slice().sort(function () { return Math.random() - 0.5; });
+var tab = document.getElementById('tab4');
+score(0, 5);
+gemischt.forEach(function (d, i) {
+  var tr = document.createElement('tr');
+  tr.innerHTML = '<td>' + d.t + '</td><td style="width:120px"><select data-s="' + d.s + '"><option value="">Schritt …</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></td><td class="mark"></td>';
+  tab.appendChild(tr);
+});
+var geprueft4 = false;
+document.getElementById('pruefen4').onclick = function () {
+  var r = 0, leer = 0;
+  tab.querySelectorAll('select').forEach(function (s) {
+    var m = s.parentNode.nextSibling;
+    if (!s.value) { leer++; m.textContent = ''; return; }
+    if (s.value === s.dataset.s) { r++; m.textContent = '✓'; m.style.color = '#1E7B3A'; }
+    else { m.textContent = '✗'; m.style.color = '#B3261E'; }
+  });
+  var fb = document.getElementById('fb4');
+  if (leer) { zeige(fb, 'info', 'Bitte ordne zuerst alle fünf Erklärungen einem Schritt zu.'); return; }
+  if (!geprueft4) { score(r, 0); geprueft4 = true; }
+  zeige(fb, r === 5 ? 'ok' : 'no', r === 5 ? '<b>Alles richtig!</b> Du hast den Weg vom Stimmzettel zur Sitzverteilung verstanden.' : r + ' von 5 richtig. Schau dir die Grafik M3 und Text M2 noch einmal an und korrigiere die markierten Zeilen. (Gewertet wird dein erster Versuch.)');
+};
+
+// ---------- Station 5 ----------
+karten('liste5', [
+  { t: 'Herr K. fotografiert seinen ausgefüllten Stimmzettel in der Kabine und schickt das Foto seinem Chef, der das verlangt hat.', a: 'geheim', e: 'Es wird feststellbar, wie Herr K. gewählt hat. Zusätzlich ist auch die freie Wahl betroffen, weil der Chef Druck ausübt.' },
+  { t: 'In einem Staat dürfen nur Menschen wählen, die im Jahr mehr als 20.000 Euro Steuern zahlen.', a: 'allgemein', e: 'Eine Gruppe wird aus wirtschaftlichen Gründen von der Wahl ausgeschlossen.' },
+  { t: 'Die Bürger wählen zunächst Wahlmänner. Diese bestimmen danach, wer in das Parlament einzieht.', a: 'unmittelbar', e: 'Zwischen Wähler und Parlament steht eine Zwischeninstanz.' },
+  { t: 'Vor dem Wahllokal stehen Polizisten und erklären: „Wer nicht Partei X wählt, bekommt Ärger.“', a: 'frei', e: 'Die Stimme wird unter staatlichem Zwang abgegeben.' },
+  { t: 'Die Stimmen von Unternehmern zählen doppelt, weil sie Arbeitsplätze schaffen.', a: 'gleich', e: 'Alle Stimmen müssen das gleiche Gewicht haben.' },
+  { t: 'Jonas ist 15 Jahre alt und darf bei der Landtagswahl 2027 nicht wählen, seine 16-jährige Schwester schon.', a: 'kein Verstoß', e: 'Das Mindestalter ist eine allgemeine Voraussetzung, die für alle gleich gilt. Der Grundsatz „allgemein“ gilt nur für Menschen, die diese Voraussetzungen erfüllen.' }
+], ['allgemein', 'unmittelbar', 'frei', 'gleich', 'geheim', 'kein Verstoß']);
+</script>
+</body>
+</html>

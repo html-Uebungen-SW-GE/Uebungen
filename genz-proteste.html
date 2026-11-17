@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Protest, Straftat oder Extremismus? – Digitale Übung</title>
+<style>
+  :root { --blau:#1F4E79; --hell:#EAF2FA; --gruen:#1E7B3A; --gruenh:#E3F3E7; --rot:#B3261E; --roth:#FBE9E7; --grau:#F3F4F6; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Segoe UI", Calibri, Arial, sans-serif; background:#F7F9FC; color:#1b1b1b; line-height:1.45; }
+  header { background:var(--blau); color:#fff; padding:18px 24px; }
+  header h1 { margin:0; font-size:1.45rem; }
+  header p { margin:4px 0 0; opacity:.9; }
+  .bar { position:sticky; top:0; z-index:5; background:#fff; border-bottom:1px solid #dde3ea; padding:10px 24px; display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
+  .bar nav a { color:var(--blau); text-decoration:none; font-weight:600; margin-right:12px; font-size:.95rem; }
+  .score { margin-left:auto; font-weight:700; color:var(--blau); }
+  main { max-width:960px; margin:0 auto; padding:20px 16px 60px; }
+  section { background:#fff; border:1px solid #dde3ea; border-radius:10px; padding:20px 22px; margin-bottom:22px; }
+  h2 { margin:0 0 6px; color:var(--blau); font-size:1.2rem; }
+  .auftrag { background:var(--hell); border-left:4px solid var(--blau); padding:8px 12px; margin:8px 0 16px; border-radius:4px; }
+  .legende { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:14px; }
+  .legende div { background:var(--grau); border-radius:6px; padding:6px 8px; font-size:.88rem; }
+  .legende b { display:block; color:var(--blau); }
+  button { font:inherit; cursor:pointer; border-radius:6px; border:1px solid #9fb3c8; background:#fff; padding:7px 12px; }
+  button:hover { background:var(--hell); }
+  button:disabled { cursor:default; opacity:.55; }
+  .karte { border:1px solid #dde3ea; border-radius:8px; padding:10px 12px; margin-bottom:10px; background:#fff; }
+  .karte .text { margin-bottom:8px; }
+  .karte .btns { display:flex; gap:6px; flex-wrap:wrap; }
+  .karte.richtig { border-color:#9bd3a9; background:#F4FBF6; }
+  .karte.falsch { border-color:#f0b1aa; background:#FEF6F5; }
+  .btns button.gew-ok { background:var(--gruen); color:#fff; border-color:var(--gruen); opacity:1; }
+  .btns button.gew-no { background:var(--rot); color:#fff; border-color:var(--rot); opacity:1; }
+  .fb { margin-top:8px; padding:8px 12px; border-radius:6px; font-size:.95rem; display:none; }
+  .fb.ok { display:block; background:var(--gruenh); border:1px solid #9bd3a9; color:#124d24; }
+  .fb.no { display:block; background:var(--roth); border:1px solid #f0b1aa; color:#6e1510; }
+  .wer { font-size:.85rem; color:#555; font-weight:600; display:block; margin-bottom:2px; }
+  .ende { text-align:center; font-weight:600; color:var(--blau); }
+  @media (max-width:700px) { .legende { grid-template-columns:1fr; } }
+  footer { text-align:center; color:#777; font-size:.85rem; padding:10px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Protest, Straftat oder Extremismus?</h1>
+  <p>Digitale Übung (M4) · Klasse 8 Politik · Proteste in Frankreich und Gen-Z-Proteste vom 31. Oktober 2026</p>
+</header>
+<div class="bar">
+  <nav><a href="#s1">1 Frankreich oder Deutschland?</a><a href="#s2">2 Fälle einordnen</a><a href="#s3">3 Beobachtung oder Bewertung?</a></nav>
+  <span class="score" id="score">Punkte: 0 / 0</span>
+  <button onclick="location.reload()">Neu starten</button>
+</div>
+
+<main>
+<section id="s1">
+  <h2>Station 1: Frankreich, Deutschland oder beide?</h2>
+  <div class="auftrag">Zu welchem Land passt die Aussage? Nutze M1 und M2.</div>
+  <div id="liste1"></div>
+</section>
+
+<section id="s2">
+  <h2>Station 2: Erlaubter Protest, Straftat oder Extremismus?</h2>
+  <div class="auftrag">Ordne jeden Fall ein. Nutze den Merke-Kasten und das letzte Arbeitsblatt (M2, M3). Manchmal sind zwei Antworten richtig – dann zählt jede der beiden.</div>
+  <div class="legende">
+    <div><b>erlaubter Protest</b>friedlich, ohne Waffen, mit demokratischen Mitteln (Art. 8 GG)</div>
+    <div><b>Straftat</b>verboten, aber kein politisches Ziel erkennbar</div>
+    <div><b>Extremismus</b>will die Grundordnung abschaffen oder befürwortet Gewalt als Mittel der Politik</div>
+  </div>
+  <div id="liste2"></div>
+</section>
+
+<section id="s3">
+  <h2>Station 3: Beobachtung oder Bewertung?</h2>
+  <div class="auftrag">Beruht die Aussage aus M3 auf einer Beobachtung – oder ist sie eine Vermutung bzw. Bewertung?</div>
+  <div id="liste3"></div>
+  <p class="ende" id="ende"></p>
+</section>
+</main>
+<footer>Übung zum Arbeitsblatt „Friedlicher Protest und Krawalle: Wo endet die Demonstrationsfreiheit – und wo beginnt Extremismus?“ · Stand der Angaben: 01.11.2026</footer>
+
+<script>
+var punkte = 0, max = 0, beantwortet = 0;
+function score(delta, neu) { punkte += delta; max += neu; document.getElementById('score').textContent = 'Punkte: ' + punkte + ' / ' + max; }
+function karten(containerId, daten, optionen) {
+  var box = document.getElementById(containerId);
+  daten.forEach(function (d) {
+    score(0, 1);
+    var ok = Array.isArray(d.a) ? d.a : [d.a];
+    var k = document.createElement('div'); k.className = 'karte';
+    k.innerHTML = '<div class="text">' + (d.w ? '<span class="wer">' + d.w + '</span>' : '') + d.t + '</div><div class="btns"></div><div class="fb"></div>';
+    var btns = k.querySelector('.btns'), fb = k.querySelector('.fb');
+    optionen.forEach(function (o) {
+      var b = document.createElement('button'); b.textContent = o;
+      b.onclick = function () {
+        var richtig = ok.indexOf(o) >= 0;
+        btns.querySelectorAll('button').forEach(function (x) { x.disabled = true; });
+        b.className = richtig ? 'gew-ok' : 'gew-no';
+        k.classList.add(richtig ? 'richtig' : 'falsch');
+        fb.className = 'fb ' + (richtig ? 'ok' : 'no');
+        fb.innerHTML = (richtig ? '<b>Richtig.</b> ' : '<b>Leider nicht.</b> Richtig ist: <b>' + ok.join(' oder ') + '</b>. ') + d.e;
+        if (richtig) score(1, 0);
+        beantwortet++;
+        if (beantwortet === max) document.getElementById('ende').textContent = 'Geschafft! Du hast ' + punkte + ' von ' + max + ' Punkten erreicht.';
+      };
+      btns.appendChild(b);
+    });
+    box.appendChild(k);
+  });
+}
+
+karten('liste1', [
+  { t: 'Die Proteste begannen schon Anfang Oktober 2026 an Schulen.', a: 'Frankreich', e: 'In Frankreich gehen Schüler und Studenten seit Anfang Oktober auf die Straße (M1).' },
+  { t: 'Die Demonstrierenden lehnen die Einführung einer Wehrpflicht ab.', a: 'Deutschland', e: '„Gen Z regelt“ fordert unter anderem: keine Wehrpflicht (M2).' },
+  { t: 'Aufgerufen wurde nicht von Gewerkschaften, sondern über soziale Medien.', a: 'beide', e: 'In beiden Ländern kam der Aufruf von jungen Menschen über soziale Medien wie TikTok (M1, M2).' },
+  { t: 'Rund 1.500 Geschäfte wurden an einem Tag geplündert oder beschädigt.', a: 'Frankreich', e: 'Das geschah vor allem am 17. Oktober in Frankreich. Das Ausmaß der Gewalt war dort deutlich größer als in Deutschland (M1).' },
+  { t: 'Tagsüber blieben die meisten Demonstrationen friedlich, später kam es zu Gewalt.', a: 'beide', e: 'In beiden Ländern protestierte die Mehrheit friedlich; Gewalt ging von einer Minderheit aus (M1, M2).' },
+  { t: 'Laut Polizei hatte die Mehrheit der Randalierer gar nicht an der Demonstration teilgenommen.', a: 'Deutschland', e: 'Das berichtete die Polizei in Frankfurt (M2).' }
+], ['Frankreich', 'Deutschland', 'beide']);
+
+karten('liste2', [
+  { t: 'Lena (15) demonstriert mit einem Schild „Bildung statt Wehrpflicht“.', a: 'erlaubter Protest', e: 'Friedliche Meinungsäußerung auf einer Versammlung ist durch Art. 8 GG geschützt.' },
+  { t: 'Nach der Demo schlagen Jugendliche ein Schaufenster ein und nehmen Turnschuhe mit.', a: 'Straftat', e: 'Sachbeschädigung und Diebstahl – aber kein politisches Ziel erkennbar. Nicht jede Straftat ist extremistisch.' },
+  { t: 'Vermummte werfen Steine auf Polizisten und rufen: „Nieder mit dem System – Krieg dem Staat!“', a: ['Extremismus', 'Straftat'], e: 'Es ist eine Straftat (Landfriedensbruch, Körperverletzung). Gewalt als Mittel der Politik und der Staat als Feind sind zugleich Merkmale des Linksextremismus.' },
+  { t: 'Tim ruft durch ein Megafon: „Die Regierung hat versagt – wir wollen Neuwahlen!“', a: 'erlaubter Protest', e: 'Scharfe Kritik und die Forderung nach Neuwahlen sind demokratische Mittel.' },
+  { t: 'Ein Schüler zündet in der Menschenmenge einen Böller, um „Stimmung zu machen“.', a: 'Straftat', e: 'Das gefährdet andere Menschen und ist verboten (z. B. Körperverletzung, Verstoß gegen das Versammlungsgesetz). Ein politisches Ziel ist nicht erkennbar.' },
+  { t: 'Auf einem Plakat wird gefordert, den Staat Israel zu vernichten.', a: ['Extremismus', 'Straftat'], e: 'Das ist Antisemitismus, den es in allen Formen des Extremismus gibt. Je nach genauem Wortlaut kann es auch strafbar sein.' },
+  { t: 'Eine Schülergruppe sammelt auf der Demo Unterschriften für mehr Schulpsychologen.', a: 'erlaubter Protest', e: 'Unterschriften sammeln ist ein friedliches, demokratisches Mittel.' },
+  { t: 'Eine Gruppe ruft dazu auf, die Demokratie abzuschaffen und eine „Herrschaft des Volkes ohne Parteien und Parlamente“ zu errichten.', a: 'Extremismus', e: 'Wer freie Wahlen, Parteien und Parlamente abschaffen will, lehnt die freiheitliche demokratische Grundordnung ab.' }
+], ['erlaubter Protest', 'Straftat', 'Extremismus']);
+
+karten('liste3', [
+  { w: '(1) Bundesinnenminister Dobrindt', t: 'Für die Gewalt seien „gewaltbereite linke Gruppen und Chaoten aus dem migrantischen Milieu“ verantwortlich.', a: 'Vermutung/Bewertung', e: 'Der Minister ordnet die Täter Gruppen zu und bewertet sie („Chaoten“). Ermittlungsergebnisse dazu lagen am 01.11.2026 noch nicht öffentlich vor.' },
+  { w: '(3) Polizei Berlin', t: 'Bei einer Kundgebung seien Antifa-Symbole und propalästinensische Symbole gezeigt worden.', a: 'Beobachtung', e: 'Die Polizei beschreibt, was sie gesehen hat. Was diese Beobachtung bedeutet, ist eine zweite Frage.' },
+  { w: '(4) Gewerkschaft der Polizei', t: 'Die Proteste seien „größtenteils sehr friedlich“ gewesen.', a: 'Beobachtung', e: 'Die Einschätzung beruht auf den Erfahrungen der eingesetzten Polizisten vor Ort.' },
+  { w: '(2) Innenminister Poseck', t: 'Es gebe eine „verheerende Verbindung von Linksextremisten und gewalttätigen jungen Menschen“.', a: 'Vermutung/Bewertung', e: 'Das Wort „verheerend“ bewertet; die „Verbindung“ ist eine Deutung, die erst durch Ermittlungen belegt werden muss.' },
+  { w: '(6) Protestforscher Staudt', t: 'Alle Demonstranten unter Generalverdacht zu stellen, wäre ein falsches Signal.', a: 'Vermutung/Bewertung', e: 'Das ist eine begründete Bewertung des Forschers, keine Beobachtung.' },
+  { w: '(5) Initiative „Gen Z regelt“', t: 'Auf das, was nach dem Ende der Kundgebungen geschah, habe man keinen Einfluss gehabt.', a: 'Vermutung/Bewertung', e: 'Das ist eine Selbstdarstellung der Initiative. Sie kann stimmen, ist aber nicht von außen überprüft.' }
+], ['Beobachtung', 'Vermutung/Bewertung']);
+</script>
+</body>
+</html>
