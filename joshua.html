@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Joshua stoppen</title>
+<style>
+:root{--ink:#17223b;--soft:#4b5567;--bg:#f5f3ee;--card:#fffdf9;--line:#dcd6c8;--acc:#1f4e79;--warm:#c8661b;--ok:#2e7d4f;--okbg:#e3f2e8;--no:#b23b2a;--nobg:#f8e3df;--afb1:#dedede;--afb2:#ffe082;--afb3:#c6dcee}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",Calibri,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:clamp(16px,1.15vw,20px);line-height:1.5}
+header{background:var(--ink);color:#fff;padding:.9em 1.3em}
+header h1{margin:0;font-size:1.35em}
+header p{margin:.2em 0 0;opacity:.85;font-size:.85em}
+nav{display:flex;flex-wrap:wrap;gap:.4em;padding:.7em 1.3em;background:#e9e4d8;position:sticky;top:0;z-index:5}
+nav button{font:inherit;font-size:.85em;border:2px solid var(--acc);background:#fff;color:var(--acc);border-radius:2em;padding:.25em .9em;cursor:pointer}
+nav button.on{background:var(--acc);color:#fff}
+main{max-width:1100px;margin:0 auto;padding:1.2em 1.3em 3em}
+section{display:none}section.on{display:block}
+h2{margin:.2em 0 .5em;font-size:1.4em}
+h3{margin:1em 0 .4em;font-size:1.1em}
+.card{background:var(--card);border-radius:.9em;box-shadow:0 3px 14px rgba(23,34,59,.07);padding:1.1em 1.3em;margin:.9em 0}
+.lead{font-size:1.1em;border-left:.35em solid var(--warm);padding-left:.8em}
+.task{border-radius:.7em;padding:.8em 1em;margin:.9em 0;border:2px solid #999}
+.task.a1{background:var(--afb1);border-color:#888}.task.a2{background:var(--afb2);border-color:#c80}.task.a3{background:var(--afb3);border-color:#3f7faa}
+.task b.n{margin-right:.4em}.task .afb{font-size:.8em;color:#555;font-style:italic;margin-left:.4em}
+.src{font-size:.75em;color:var(--soft);margin-top:.5em}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(18em,1fr));gap:.9em}
+.term{background:#fff;border:1px solid var(--line);border-radius:.7em;padding:.7em .9em}
+.term b{color:var(--acc)}
+.match{display:grid;gap:.5em}
+.match .row{display:grid;grid-template-columns:1fr minmax(12em,16em);gap:.6em;align-items:center;background:#fff;border:2px solid var(--line);border-radius:.6em;padding:.45em .7em}
+.match .row.right{border-color:var(--ok);background:var(--okbg)}.match .row.wrong{border-color:var(--no);background:var(--nobg)}
+select,input[type=number]{font:inherit;font-size:.9em;padding:.25em .4em;border-radius:.4em;border:1px solid #aaa;background:#fff;max-width:100%}
+.btn{font:inherit;cursor:pointer;background:var(--acc);color:#fff;border:none;border-radius:.5em;padding:.4em 1em;margin:.3em .3em 0 0}
+.btn.ghost{background:#fff;color:var(--acc);border:2px solid var(--acc)}
+.btn.warm{background:var(--warm)}
+svg text{font-family:inherit}
+.chart{width:100%;height:auto;display:block}
+.sliders{display:grid;grid-template-columns:repeat(auto-fit,minmax(15em,1fr));gap:.8em 1.2em}
+.sl label{display:flex;justify-content:space-between;font-weight:600}
+.sl input[type=range]{width:100%}
+.sl small{color:var(--soft)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(10em,1fr));gap:.7em;margin-top:.8em}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:.7em;padding:.6em .8em}
+.kpi .v{font-size:1.5em;font-weight:700}.kpi .l{font-size:.78em;color:var(--soft)}
+.verdict{margin-top:.8em;padding:.7em .9em;border-radius:.6em;font-weight:600}
+.verdict.good{background:var(--okbg);color:var(--ok)}.verdict.bad{background:var(--nobg);color:var(--no)}.verdict.mid{background:#fff4d6;color:#8a5a00}
+.experts{display:grid;grid-template-columns:repeat(auto-fit,minmax(11em,1fr));gap:.6em}
+.experts button{font:inherit;text-align:left;border:2px solid var(--line);background:#fff;border-radius:.7em;padding:.6em .8em;cursor:pointer}
+.experts button.on{border-color:var(--warm);background:#fff4ea}
+.experts .nr{display:block;font-size:.75em;color:var(--warm);font-weight:700;letter-spacing:.05em}
+.expert h3{margin-top:0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:.8em}
+.pc div{border-radius:.6em;padding:.6em .8em}
+.pc .pro{background:var(--okbg)}.pc .con{background:var(--nobg)}
+.pc ul{margin:.3em 0 0;padding-left:1.2em}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:.88em}
+th,td{border:1px solid var(--line);padding:.4em .5em;text-align:left;vertical-align:middle}
+th{background:var(--ink);color:#fff}
+td select{width:100%}
+td.sum{font-weight:700;text-align:center}
+.scale{display:flex;justify-content:space-between;font-size:.8em;color:var(--soft);margin-top:.2em}
+.pos input[type=range]{width:100%}
+@media (max-width:640px){.pc{grid-template-columns:1fr}.match .row{grid-template-columns:1fr}}
+details.card summary{cursor:pointer}
+.digits{display:flex;gap:.6em;flex-wrap:wrap;margin:.8em 0}
+.dg{width:5.5em;text-align:center;font-size:1.8em;font-weight:700;background:#fff;border:2px dashed var(--line);border-radius:.6em;padding:.2em 0}
+.dg small{display:block;font-size:.4em;font-weight:600;color:var(--soft)}
+.dg.ok{border:2px solid var(--ok);background:var(--okbg);color:var(--ok)}
+.ttt{display:grid;grid-template-columns:repeat(3,4.2em);gap:.35em;margin:.8em 0}
+.cell{width:4.2em;height:4.2em;font:inherit;font-size:1.6em;font-weight:700;background:#fff;border:2px solid var(--acc);border-radius:.4em;cursor:pointer;color:var(--ink)}
+.opt{display:block;width:100%;text-align:left;font:inherit;background:#fff;border:2px solid var(--line);border-radius:.6em;padding:.5em .8em;margin:.35em 0;cursor:pointer}
+.opt.right{border-color:var(--ok);background:var(--okbg)}.opt.wrong{border-color:var(--no);background:var(--nobg)}
+.alarm{background:#3a0d0d;color:#ffb4a8;font-weight:700;padding:.6em .9em;border-radius:.5em;font-family:Consolas,monospace}
+#story .btn{margin-top:.6em}
+</style>
+</head>
+<body>
+<header><h1>Joshua stoppen: Ein Escape Room zum Kalten Krieg</h1><p>Klasse 10 Geschichte · Vertretung · <span id="cd">Countdown 60:00</span></p></header>
+<nav id="nav"></nav>
+<main>
+
+<section id="start">
+<h2>Alarm im NORAD-Hauptquartier</h2>
+<div class="card lead">Der Computer „Joshua“ hat wieder ein Spiel gestartet – und hält es für Wirklichkeit. Nur ein vierstelliger Code kann ihn stoppen. Jede der vier Stationen verrät dir eine Ziffer. Löse alle Stationen und gib den Code im Kontrollraum ein.</div>
+<div class="card">
+<h3>So arbeitest du</h3>
+<ol>
+<li>Bearbeite die Stationen 1 bis 4 der Reihe nach. Notiere die Ziffern und deine Ergebnisse auf dem Arbeitsblatt.</li>
+<li>Gib im <b>Kontrollraum</b> den Code ein. Du erhältst ein Abschlusswort – auch das kommt auf dein Arbeitsblatt.</li>
+<li>Bearbeite dann die Schreibaufgabe auf dem Arbeitsblatt.</li>
+</ol>
+<div class="digits" id="digits"></div>
+<p class="src">Die Seite speichert keine Daten. Wenn du sie neu lädst, sind die Ziffern weg – notiere sie deshalb gleich auf dem Arbeitsblatt.</p>
+</div>
+</section>
+
+<section id="s1">
+<h2>Station 1: Tic-Tac-Toe gegen Joshua</h2>
+<div class="card"><p>Im Film lässt David den Computer am Ende gegen sich selbst Tic-Tac-Toe spielen. Jetzt spielst du: Du bist <b>X</b> und fängst an, Joshua ist <b>O</b>. Versuche zu gewinnen – oder wenigstens nicht zu verlieren.</p>
+<div class="ttt" id="ttt"></div>
+<p id="tmsg" class="verdict mid">Du bist am Zug.</p>
+<button class="btn ghost" id="treset">Neues Spiel</button>
+<div id="t1done" class="verdict good" style="display:none"></div>
+</div>
+</section>
+
+<section id="s2">
+<h2>Station 2: Petrows Nacht</h2>
+<div class="card" id="story"></div>
+</section>
+
+<section id="s3">
+<h2>Station 3: Das Wettrüsten-Spiel</h2>
+<div class="card">
+<p>Du führst eine Supermacht, der Computer die andere. In jeder Runde entscheidet ihr gleichzeitig: <b>aufrüsten</b> oder <b>abrüsten</b>. Die Punkte stehen für Sicherheit und Wohlstand – Geld, das nicht in Waffen fließt, kann in Schulen, Straßen und Krankenhäuser gehen.</p>
+<table><tr><th></th><th>Computer rüstet ab</th><th>Computer rüstet auf</th></tr>
+<tr><th>Du rüstest ab</th><td>du 3 · Computer 3</td><td>du 0 · Computer 5</td></tr>
+<tr><th>Du rüstest auf</th><td>du 5 · Computer 0</td><td>du 1 · Computer 1</td></tr></table>
+<p style="margin-top:.8em"><b>Runde <span id="rnd">1</span> von 10</b> &nbsp; Deine Punkte: <b id="pme">0</b> · Punkte des Computers: <b id="pcpu">0</b></p>
+<button class="btn" id="bAb">Abrüsten</button> <button class="btn warm" id="bAuf">Aufrüsten</button>
+<div id="log" class="src" style="font-size:.85em"></div>
+<div id="dil" style="display:none"></div>
+</div>
+</section>
+
+<section id="s4">
+<h2>Station 4: Das Kalter-Krieg-Quiz</h2>
+<div class="card"><p>Beantworte alle fünf Fragen richtig, dann erhältst du die letzte Ziffer. Fragen und Antworten werden bei jedem Laden neu gemischt.</p>
+<div id="quiz"></div>
+<button class="btn" id="qchk">Prüfen</button>
+<div id="qres" class="verdict mid" style="display:none"></div>
+</div>
+</section>
+
+<section id="ctrl">
+<h2>Kontrollraum: Code eingeben</h2>
+<div class="card">
+<div class="digits" id="digits2"></div>
+<p>Gib die vier Ziffern in der Reihenfolge der Stationen ein.</p>
+<input type="text" id="code" maxlength="4" inputmode="numeric" style="font-size:1.6em;width:6em;letter-spacing:.3em;text-align:center"> <button class="btn warm" id="cbtn">Joshua stoppen</button>
+<div id="cres" style="display:none"></div>
+</div>
+</section>
+</main>
+<script>
+(function(){
+var S=[["start","Start"],["s1","Station 1"],["s2","Station 2"],["s3","Station 3"],["s4","Station 4"],["ctrl","Kontrollraum"]],nav=document.getElementById("nav");
+S.forEach(function(s){var b=document.createElement("button");b.textContent=s[1];b.id="n_"+s[0];b.onclick=function(){show(s[0])};nav.appendChild(b);});
+function show(id){S.forEach(function(s){document.getElementById(s[0]).classList.toggle("on",s[0]===id);document.getElementById("n_"+s[0]).classList.toggle("on",s[0]===id);});window.scrollTo(0,0);}
+show("start");
+function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
+// Countdown
+var left=3600,cd=document.getElementById("cd");setInterval(function(){if(left>0){left--;var m=Math.floor(left/60),s=left%60;cd.textContent="Countdown "+(m<10?"0":"")+m+":"+(s<10?"0":"")+s;}else cd.textContent="Countdown abgelaufen – arbeite trotzdem weiter";},1000);
+// Ziffern
+var D=[null,null,null,null];
+function digits(){var h=D.map(function(d,i){return '<div class="dg'+(d!==null?' ok':'')+'"><small>Station '+(i+1)+'</small>'+(d!==null?d:'?')+'</div>';}).join("");document.getElementById("digits").innerHTML=h;document.getElementById("digits2").innerHTML=h;}
+digits();
+// Station 1
+var B,over,lost=0,L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+function win(b){for(var i=0;i<8;i++){var l=L[i];if(b[l[0]]&&b[l[0]]===b[l[1]]&&b[l[1]]===b[l[2]])return b[l[0]];}return b.indexOf("")<0?"draw":null;}
+function mm(b,pl){var w=win(b);if(w==="O")return {s:1};if(w==="X")return {s:-1};if(w==="draw")return {s:0};var best=null;
+  for(var i=0;i<9;i++)if(!b[i]){b[i]=pl;var r=mm(b,pl==="O"?"X":"O");b[i]="";var c={s:r.s,i:i};if(!best||(pl==="O"?c.s>best.s:c.s<best.s))best=c;}return best;}
+function tdraw(){var t=document.getElementById("ttt");t.innerHTML="";B.forEach(function(v,i){var c=document.createElement("button");c.textContent=v;c.className="cell";c.onclick=function(){move(i)};t.appendChild(c);});}
+function tnew(){B=["","","","","","","","",""];over=false;tdraw();document.getElementById("tmsg").textContent="Du bist am Zug.";document.getElementById("tmsg").className="verdict mid";}
+function move(i){if(over||B[i])return;B[i]="X";var w=win(B);if(!w){var m=mm(B,"O");B[m.i]="O";w=win(B);}tdraw();
+  var msg=document.getElementById("tmsg");
+  if(w==="draw"){over=true;msg.className="verdict good";msg.textContent="Unentschieden. Keiner kann gewinnen, wenn beide fehlerfrei spielen.";D[0]=1;digits();var d=document.getElementById("t1done");d.style.display="block";d.textContent="Ziffer für Station 1: 1. Im Film zieht Joshua aus diesem Spiel einen wichtigen Schluss. Welchen? Notiere ihn auf dem Arbeitsblatt.";}
+  else if(w==="O"){over=true;lost++;msg.className="verdict bad";msg.textContent="Joshua gewinnt. Starte ein neues Spiel."+(lost>=2?" Tipp: Setze dein erstes X in die Mitte oder in eine Ecke und blockiere jede Reihe, in der Joshua schon zwei O hat.":"");}
+  else if(w==="X"){over=true;msg.className="verdict good";msg.textContent="Du hast gewonnen?!";}}
+document.getElementById("treset").onclick=tnew;tnew();
+// Station 2: Petrows Nacht
+var SC={
+ s0:{t:"<p><b>26. September 1983, kurz nach Mitternacht.</b> Du bist Oberstleutnant Stanislaw Petrow, diensthabender Offizier im Bunker Serpuchow-15 bei Moskau. Deine Aufgabe: Die Daten des neuen Satelliten-Frühwarnsystems überwachen und melden, ob die USA Atomraketen abgefeuert haben. Die Lage ist angespannt: Erst vor drei Wochen hat die Sowjetunion ein südkoreanisches Passagierflugzeug abgeschossen, US-Präsident Reagan nennt die Sowjetunion ein „Reich des Bösen“.</p>",o:[["Dienst beginnen","s1"]]},
+ s1:{t:"<p class=\"alarm\">SIRENE! Auf dem großen Bildschirm leuchtet das Wort „START“.</p><p>Der Satellit meldet: Von einem Stützpunkt in den USA wurde eine Interkontinentalrakete abgefeuert. Alle Augen im Raum richten sich auf dich.</p>",o:[["Sofort Alarm an die Führung geben","s1a"],["Erst die Daten prüfen","s2"]]},
+ s1a:{t:"<p>Du greifst zum Telefon. Doch bevor du wählst, meldet das System weitere Starts …</p>",o:[["Weiter","s2"]]},
+ s2:{t:"<p class=\"alarm\">„RAKETENANGRIFF“ – das System meldet jetzt fünf Raketen. Zuverlässigkeit der Meldung: höchste Stufe.</p><p>Wenn du einen Angriff meldest, muss die Führung in wenigen Minuten entscheiden, ob sie einen Gegenschlag befiehlt. Das Bodenradar kann anfliegende Raketen erst nach einigen Minuten erfassen.</p>",o:[["Ich melde einen Raketenangriff","sA"],["Ich melde eine Fehlfunktion des Systems","sB"],["Ich brauche mehr Informationen","s3"]]},
+ s3:{t:"<p>Du denkst nach: Das Satellitensystem ist erst seit Kurzem im Einsatz. Würden die USA wirklich mit nur fünf Raketen angreifen – und damit einen vernichtenden Gegenschlag riskieren? Die Kollegen, die die Satellitenbilder direkt auswerten, sehen keine Raketen. Das Bodenradar meldet nichts. Die Sekunden verstreichen.</p>",o:[["Ich melde einen Raketenangriff","sA"],["Ich melde eine Fehlfunktion des Systems","sB"]]},
+ sA:{t:"<p>Deine Meldung geht an die Führung. Ob sie einen Gegenschlag befohlen hätte, weiß niemand. Fest steht: Die Zeit für eine Entscheidung wäre äußerst knapp gewesen – und die Daten waren falsch.</p>",o:[["Was wirklich geschah","sH"]]},
+ sB:{t:"<p>Du meldest eine Fehlfunktion. Die Minuten vergehen quälend langsam … Keine Rakete schlägt ein. Du hattest recht.</p>",o:[["Was wirklich geschah","sH"]]},
+ sH:{t:"<p><b>Was wirklich geschah:</b> Stanislaw Petrow meldete der Führung einen Fehlalarm. Er misstraute dem neuen System, und ein amerikanischer Erstschlag mit nur fünf Raketen erschien ihm unlogisch – die USA hätten Hunderte oder Tausende Raketen eingesetzt. Später stellte sich heraus: Der Satellit hatte Sonnenlicht, das von hohen Wolken reflektiert wurde, für Raketenstarts gehalten.</p><p>Petrow erhielt keine Auszeichnung. Er wurde verhört und gerügt, weil sein Dienstbuch unvollständig war; der Vorfall blieb geheim. Erst Ende der 1990er-Jahre wurde er bekannt. Petrow starb 2017. Heute wird er oft „der Mann, der die Welt rettete“ genannt.</p>",o:[],q:true}
+};
+var pq=[["Sonnenlicht, das von hohen Wolken reflektiert wurde",true],["ein Hackerangriff auf das Computersystem",false],["ein amerikanischer Atomtest",false],["ein Schwarm Zugvögel über dem Pazifik",false]];
+function scene(id){var s=SC[id],h=s.t;
+  s.o.forEach(function(o,i){h+='<button class="btn'+(i===1?' warm':'')+'" data-n="'+o[1]+'">'+o[0]+'</button> ';});
+  if(s.q){h+='<h3>Frage: Was löste den Fehlalarm aus?</h3><div id="pq">'+shuf(pq).map(function(a,i){return '<button class="opt" data-ok="'+a[1]+'">'+a[0]+'</button>';}).join("")+'</div><div id="pres"></div>';}
+  var st=document.getElementById("story");st.innerHTML=h;
+  st.querySelectorAll("button[data-n]").forEach(function(b){b.onclick=function(){scene(b.dataset.n)};});
+  st.querySelectorAll("button.opt").forEach(function(b){b.onclick=function(){var ok=b.dataset.ok==="true",r=document.getElementById("pres");b.classList.add(ok?"right":"wrong");
+    if(ok){r.className="verdict good";r.textContent="Richtig! Ziffer für Station 2: 9.";D[1]=9;digits();}else{r.className="verdict bad";r.textContent="Leider falsch. Lies den Text noch einmal genau.";}};});}
+scene("s0");
+// Station 3: Wettrüsten
+var rnd=1,me=0,cpu=0,last="ab",P={"ab-ab":[3,3],"ab-auf":[0,5],"auf-ab":[5,0],"auf-auf":[1,1]},hist=[];
+function play(x){if(rnd>10)return;var c=last,r=P[x+"-"+c];me+=r[0];cpu+=r[1];hist.push("Runde "+rnd+": du "+(x==="ab"?"rüstest ab":"rüstest auf")+", Computer "+(c==="ab"?"rüstet ab":"rüstet auf")+" → "+r[0]+" : "+r[1]);last=x;rnd++;
+  document.getElementById("rnd").textContent=Math.min(rnd,10);document.getElementById("pme").textContent=me;document.getElementById("pcpu").textContent=cpu;document.getElementById("log").innerHTML=hist.slice(-4).join("<br>");
+  if(rnd>10)finish();}
+document.getElementById("bAb").onclick=function(){play("ab")};document.getElementById("bAuf").onclick=function(){play("auf")};
+var dq=[["Jede Seite hat einen Anreiz aufzurüsten, weil sie dem anderen nicht trauen kann – rüsten beide auf, stehen beide schlechter da, als wenn beide abrüsten.",true],["Wer aufrüstet, gewinnt immer am meisten Punkte.",false],["Abrüsten lohnt sich nur, wenn man es allein tut.",false],["Das Spiel zeigt, dass Aufrüsten den Frieden am sichersten macht.",false]];
+function finish(){var d=document.getElementById("dil");d.style.display="block";
+  d.innerHTML='<div class="verdict mid">Ende! Du hast '+me+' Punkte, der Computer '+cpu+' Punkte. Gemeinsam: '+(me+cpu)+' von 60 möglichen. Tipp: Der Computer spielt immer das, was du in der Runde davor gespielt hast.</div><h3>Frage: Was zeigt das Spiel über das Wettrüsten?</h3><div>'+shuf(dq).map(function(a){return '<button class="opt" data-ok="'+a[1]+'">'+a[0]+'</button>';}).join("")+'</div><div id="dres"></div>';
+  d.querySelectorAll("button.opt").forEach(function(b){b.onclick=function(){var ok=b.dataset.ok==="true",r=document.getElementById("dres");b.classList.add(ok?"right":"wrong");
+    if(ok){r.className="verdict good";r.textContent="Richtig! Man nennt das ein Gefangenendilemma. Ziffer für Station 3: 8.";D[2]=8;digits();}else{r.className="verdict bad";r.textContent="Nicht ganz. Vergleiche die Punkte in der Tabelle.";}};});}
+// Station 4: Quiz
+var Q=[["Im August 1961 riegelte die DDR West-Berlin ab. Was entstand?",["die Berliner Mauer","die Luftbrücke","der Warschauer Pakt","die NATO"]],
+["Was löste 1962 die Kubakrise aus?",["Die Sowjetunion stationierte Atomraketen auf Kuba.","Die USA besetzten Kuba.","Kuba trat der NATO bei.","Die DDR baute eine Grenzanlage."]],
+["Was bedeutet „Gleichgewicht des Schreckens“?",["Beide Seiten können sich gegenseitig vernichten – deshalb greift keine an.","Beide Seiten haben gleich viele Soldaten.","Beide Seiten fürchten sich vor einem Erdbeben.","Eine Seite ist so stark, dass die andere aufgibt."]],
+["Was sah der NATO-Doppelbeschluss von 1979 vor?",["Verhandlungen über Abrüstung – sonst neue US-Raketen in Westeuropa","den sofortigen Abzug aller Atomwaffen aus Europa","die Aufnahme der Sowjetunion in die NATO","den Bau der Berliner Mauer"]],
+["Wie heißt im Film „WarGames“ das Computerprogramm, mit dem David spricht?",["Joshua","Falken","NORAD","Lightman"]]];
+function qbuild(){var h="";shuf(Q.map(function(q,i){return i;})).forEach(function(i,n){var q=Q[i];h+='<div class="term" style="margin:.6em 0" data-q="'+i+'"><b>'+(n+1)+'. '+q[0]+'</b><br>'+shuf(q[1].map(function(a,k){return k;})).map(function(k){return '<label style="display:block;margin:.2em 0"><input type="radio" name="q'+i+'" value="'+k+'"> '+q[1][k]+'</label>';}).join("")+'</div>';});document.getElementById("quiz").innerHTML=h;}
+qbuild();
+document.getElementById("qchk").onclick=function(){var n=0;Q.forEach(function(q,i){var s=document.querySelector('input[name=q'+i+']:checked'),box=document.querySelector('[data-q="'+i+'"]'),ok=s&&s.value==="0";box.style.borderColor=ok?"#2e7d4f":"#b23b2a";box.style.background=ok?"#e3f2e8":"#f8e3df";if(ok)n++;});
+  var r=document.getElementById("qres");r.style.display="block";if(n===5){r.className="verdict good";r.textContent="Alle richtig! Ziffer für Station 4: 3.";D[3]=3;digits();}else{r.className="verdict mid";r.textContent=n+" von 5 richtig. Korrigiere die rot markierten Fragen.";}};
+// Kontrollraum
+document.getElementById("cbtn").onclick=function(){var v=document.getElementById("code").value.trim(),r=document.getElementById("cres");r.style.display="block";
+  if(v==="1983"){r.innerHTML='<div class="verdict good" style="font-size:1.1em">Code akzeptiert. Joshua stoppt den Countdown.<br><br>„A strange game. The only winning move is not to play.“<br>(Ein seltsames Spiel. Der einzige Gewinnzug ist, nicht zu spielen.)</div><p>Dein Abschlusswort für das Arbeitsblatt: <b style="font-size:1.3em;letter-spacing:.1em">ENTSPANNUNG</b></p><p>Hast du bemerkt, welche Jahreszahl der Code ergibt? In diesem Jahr kam „WarGames“ ins Kino – und in diesem Jahr ereignete sich Petrows Fehlalarm.</p>';}
+  else{r.innerHTML='<div class="verdict bad">Falscher Code. Joshua rechnet weiter … Prüfe deine Ziffern.</div>';}};
+})();
+</script>
+</body>
+</html>
