@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Das Milliardenspiel</title>
+<style>
+:root{--ink:#17223b;--soft:#4b5567;--bg:#f5f3ee;--card:#fffdf9;--line:#dcd6c8;--acc:#1f4e79;--warm:#c8661b;--ok:#2e7d4f;--okbg:#e3f2e8;--no:#b23b2a;--nobg:#f8e3df;--afb1:#dedede;--afb2:#ffe082;--afb3:#c6dcee}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",Calibri,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:clamp(16px,1.15vw,20px);line-height:1.5}
+header{background:var(--ink);color:#fff;padding:.9em 1.3em}
+header h1{margin:0;font-size:1.35em}
+header p{margin:.2em 0 0;opacity:.85;font-size:.85em}
+nav{display:flex;flex-wrap:wrap;gap:.4em;padding:.7em 1.3em;background:#e9e4d8;position:sticky;top:0;z-index:5}
+nav button{font:inherit;font-size:.85em;border:2px solid var(--acc);background:#fff;color:var(--acc);border-radius:2em;padding:.25em .9em;cursor:pointer}
+nav button.on{background:var(--acc);color:#fff}
+main{max-width:1100px;margin:0 auto;padding:1.2em 1.3em 3em}
+section{display:none}section.on{display:block}
+h2{margin:.2em 0 .5em;font-size:1.4em}
+h3{margin:1em 0 .4em;font-size:1.1em}
+.card{background:var(--card);border-radius:.9em;box-shadow:0 3px 14px rgba(23,34,59,.07);padding:1.1em 1.3em;margin:.9em 0}
+.lead{font-size:1.1em;border-left:.35em solid var(--warm);padding-left:.8em}
+.task{border-radius:.7em;padding:.8em 1em;margin:.9em 0;border:2px solid #999}
+.task.a1{background:var(--afb1);border-color:#888}.task.a2{background:var(--afb2);border-color:#c80}.task.a3{background:var(--afb3);border-color:#3f7faa}
+.task b.n{margin-right:.4em}.task .afb{font-size:.8em;color:#555;font-style:italic;margin-left:.4em}
+.src{font-size:.75em;color:var(--soft);margin-top:.5em}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(18em,1fr));gap:.9em}
+.term{background:#fff;border:1px solid var(--line);border-radius:.7em;padding:.7em .9em}
+.term b{color:var(--acc)}
+.match{display:grid;gap:.5em}
+.match .row{display:grid;grid-template-columns:1fr minmax(12em,16em);gap:.6em;align-items:center;background:#fff;border:2px solid var(--line);border-radius:.6em;padding:.45em .7em}
+.match .row.right{border-color:var(--ok);background:var(--okbg)}.match .row.wrong{border-color:var(--no);background:var(--nobg)}
+select,input[type=number]{font:inherit;font-size:.9em;padding:.25em .4em;border-radius:.4em;border:1px solid #aaa;background:#fff;max-width:100%}
+.btn{font:inherit;cursor:pointer;background:var(--acc);color:#fff;border:none;border-radius:.5em;padding:.4em 1em;margin:.3em .3em 0 0}
+.btn.ghost{background:#fff;color:var(--acc);border:2px solid var(--acc)}
+.btn.warm{background:var(--warm)}
+svg text{font-family:inherit}
+.chart{width:100%;height:auto;display:block}
+.sliders{display:grid;grid-template-columns:repeat(auto-fit,minmax(15em,1fr));gap:.8em 1.2em}
+.sl label{display:flex;justify-content:space-between;font-weight:600}
+.sl input[type=range]{width:100%}
+.sl small{color:var(--soft)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(10em,1fr));gap:.7em;margin-top:.8em}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:.7em;padding:.6em .8em}
+.kpi .v{font-size:1.5em;font-weight:700}.kpi .l{font-size:.78em;color:var(--soft)}
+.verdict{margin-top:.8em;padding:.7em .9em;border-radius:.6em;font-weight:600}
+.verdict.good{background:var(--okbg);color:var(--ok)}.verdict.bad{background:var(--nobg);color:var(--no)}.verdict.mid{background:#fff4d6;color:#8a5a00}
+.experts{display:grid;grid-template-columns:repeat(auto-fit,minmax(11em,1fr));gap:.6em}
+.experts button{font:inherit;text-align:left;border:2px solid var(--line);background:#fff;border-radius:.7em;padding:.6em .8em;cursor:pointer}
+.experts button.on{border-color:var(--warm);background:#fff4ea}
+.experts .nr{display:block;font-size:.75em;color:var(--warm);font-weight:700;letter-spacing:.05em}
+.expert h3{margin-top:0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:.8em}
+.pc div{border-radius:.6em;padding:.6em .8em}
+.pc .pro{background:var(--okbg)}.pc .con{background:var(--nobg)}
+.pc ul{margin:.3em 0 0;padding-left:1.2em}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:.88em}
+th,td{border:1px solid var(--line);padding:.4em .5em;text-align:left;vertical-align:middle}
+th{background:var(--ink);color:#fff}
+td select{width:100%}
+td.sum{font-weight:700;text-align:center}
+.scale{display:flex;justify-content:space-between;font-size:.8em;color:var(--soft);margin-top:.2em}
+.pos input[type=range]{width:100%}
+@media (max-width:640px){.pc{grid-template-columns:1fr}.match .row{grid-template-columns:1fr}}
+details.card summary{cursor:pointer}
+</style>
+</head>
+<body>
+<header><h1>Das Milliardenspiel: GTA VI zwischen Popkultur und Wirtschaftsgut</h1><p>Q2 SoWi Zusatzkurs · EVA · Stand 18.11.2026</p></header>
+<nav id="nav"></nav>
+<main>
+
+<section id="start">
+<h2>Worum geht es?</h2>
+<div class="card lead">Am 19. November 2026 erscheint „Grand Theft Auto VI“. Schon vor dem Start ist das Spiel ein Ereignis der Popkultur – und ein Wirtschaftsgut, bei dem es um Milliarden geht. Hier untersuchst du, wie der Hype entstanden ist, wie der Preis gesetzt wird und welche Folgen ein solcher Mega-Release für andere hat.</div>
+<div class="card">
+<h3>So arbeitest du</h3>
+<ol>
+<li><b>Zeitleiste:</b> Bringe die Ereignisse in die richtige Reihenfolge (Aufgabe 1).</li>
+<li><b>Preis-Labor:</b> Setze selbst die Preise und beobachte, was passiert (Aufgabe 2).</li>
+<li><b>Release-Planer:</b> Du leitest ein kleines Studio und musst entscheiden, wann euer Spiel erscheint (Aufgabe 3).</li>
+</ol>
+<p class="src">Preis-Labor und Release-Planer sind stark vereinfachte Modelle und keine Prognosen. Wie sie rechnen, steht jeweils darunter. Die Seite speichert keine Daten. Hinweis: GTA VI ist ab 18 Jahren freigegeben; hier geht es nur um das Spiel als Wirtschaftsgut.</p>
+</div>
+</section>
+
+<section id="zeit">
+<h2>Zeitleiste: Wie entstand der Hype?</h2>
+<div class="card"><p>Bringe die Ereignisse in die richtige Reihenfolge: Wähle für jedes Ereignis eine Nummer von 1 (am frühesten) bis 10 (am spätesten). Die Karten werden bei jedem Laden neu gemischt.</p>
+<div class="match" id="tl"></div>
+<button class="btn" id="tlchk">Prüfen</button> <button class="btn ghost" id="tlmix">Neu mischen</button> <button class="btn ghost" id="tlsol" style="display:none">Richtige Reihenfolge zeigen</button>
+<div id="tlres" class="verdict mid" style="display:none"></div>
+<div id="tlok" style="display:none"></div>
+<p class="src">Quellen: Rockstar Games; Reuters (24.06.2026); PC Games Hardware (17.06.2026); Newzoo; Wikipedia, „Grand Theft Auto VI“ (abgerufen 18.11.2026). Aufrufzahlen nach Angaben von Rockstar bzw. Medienberichten.</p>
+</div>
+</section>
+
+<section id="preis">
+<h2>Preis-Labor: Was ist dir GTA VI wert?</h2>
+<div class="card">
+<p>Stell dir 1.000 Spieler vor, die sich für GTA VI interessieren. Jeder hat eine andere <b>Zahlungsbereitschaft</b> – den Höchstpreis, den er gerade noch zahlen würde (zwischen 20 und 150 €). Fans mit hoher Zahlungsbereitschaft legen zusätzlich Wert auf die Extras der Ultimate Edition. Jeder kauft die Edition, bei der ihm am meisten „übrig bleibt“ – oder gar nicht.</p>
+<div class="sl" style="margin:.5em 0"><label>Deine eigene Zahlungsbereitschaft <span id="vW"></span></label><input type="range" id="sW" min="0" max="150" step="5" value="60"><small>Wie viel wärst du höchstens bereit, für ein Spiel wie GTA VI zu zahlen? (geht nicht in die Rechnung ein)</small></div>
+<div id="me" class="verdict mid"></div>
+</div>
+<div class="card">
+<p><label><input type="radio" name="mode" value="1" checked> eine Edition</label> &nbsp; <label><input type="radio" name="mode" value="2"> zwei Editionen (Standard und Ultimate)</label></p>
+<div class="sliders">
+<div class="sl"><label>Preis Standard Edition <span id="vS"></span></label><input type="range" id="sS" min="30" max="130" step="5" value="80"><small>tatsächlicher Preis: 79,99 €</small></div>
+<div class="sl" id="ulbox" style="opacity:.4"><label>Aufpreis Ultimate Edition <span id="vU"></span></label><input type="range" id="sU" min="5" max="60" step="5" value="20" disabled><small>tatsächlich: 20 € (99,99 €)</small></div>
+</div>
+<div class="kpis">
+<div class="kpi"><div class="v" id="pBuy">–</div><div class="l">Käufer (von 1.000)</div></div>
+<div class="kpi"><div class="v" id="pUlt">–</div><div class="l">davon Ultimate Edition</div></div>
+<div class="kpi"><div class="v" id="pRev">–</div><div class="l">Umsatz</div></div>
+<div class="kpi"><div class="v" id="pKR">–</div><div class="l">Konsumentenrente (Summe aller „Ersparnisse“)</div></div>
+</div>
+<svg class="chart" id="pch" viewBox="0 0 720 320" role="img" aria-label="Nachfragekurve mit Preislinien"></svg>
+<details><summary><b>So rechnet das Modell</b></summary><ul>
+<li>Die Zahlungsbereitschaften der 1.000 Spieler sind gleichmäßig zwischen 20 und 150 € verteilt. Die blaue Linie zeigt sie der Größe nach geordnet: Das ist die Nachfragekurve.</li>
+<li>Die Extras der Ultimate Edition sind jedem Spieler 45 % seiner Zahlungsbereitschaft über 20 € zusätzlich wert – echte Fans schätzen sie also besonders.</li>
+<li><b>Konsumentenrente:</b> Zahlungsbereitschaft minus gezahlter Preis, summiert über alle Käufer.</li>
+<li>Herstellungskosten, Plattformgebühren und Steuern sind nicht berücksichtigt.</li>
+</ul></details>
+</div>
+</section>
+
+<section id="release">
+<h2>Release-Planer: Wann erscheint euer Spiel?</h2>
+<div class="card lead">Du leitest das kleine Studio „Pixelwerk“. Euer Rennspiel „Neon Drift“ sollte eigentlich am 19. November 2026 erscheinen – am selben Tag wie GTA VI. Ein Studiochef sagte über GTA VI: Das Spiel sei wie ein riesiger Meteorit, und man halte sich von der Einschlagszone fern.</div>
+<div class="card">
+<div class="sl"><label>Veröffentlichung <span id="vD"></span></label><input type="range" id="sD" min="-4" max="16" step="1" value="0"><small>Wochen vor (−) oder nach (+) dem 19.11.2026</small></div>
+<p><label><input type="checkbox" id="cC" checked> Andere Studios weichen ebenfalls aus und drängen sich etwa fünf Wochen vor und nach GTA VI.</label></p>
+<div class="kpis">
+<div class="kpi"><div class="v" id="rSales">–</div><div class="l">verkaufte Exemplare</div></div>
+<div class="kpi"><div class="v" id="rRev">–</div><div class="l">Einnahmen (28 € je Exemplar)</div></div>
+<div class="kpi"><div class="v" id="rCost">–</div><div class="l">Zusatzkosten durch Verschieben</div></div>
+<div class="kpi"><div class="v" id="rRes">–</div><div class="l">Ergebnis</div></div>
+</div>
+<div id="rv" class="verdict mid"></div>
+<svg class="chart" id="rch" viewBox="0 0 720 300" role="img" aria-label="Ergebnis je Veröffentlichungswoche"></svg>
+<details><summary><b>So rechnet das Modell</b></summary><ul>
+<li>Ohne Konkurrenz würde „Neon Drift“ 250.000 Exemplare verkaufen; je Exemplar bleiben dem Studio 28 € (Preis 40 € minus 30 % Plattformgebühr).</li>
+<li><b>GTA-Effekt:</b> Je näher am 19.11., desto weniger Aufmerksamkeit bleibt für andere Spiele (bis zu −60 %).</li>
+<li><b>Gedränge:</b> Wenn andere Studios ebenfalls ausweichen, wird es etwa fünf Wochen vor und nach GTA VI eng (bis zu −30 %).</li>
+<li><b>Jahreszeit:</b> Vor Weihnachten wird mehr gekauft (bis zu +30 %), im Januar weniger.</li>
+<li><b>Kosten:</b> Jede Woche später kostet 120.000 € (Gehälter, Werbung). Ein früherer Start erzwingt Überstunden (80.000 € pro Woche) und kostet Qualität (−4 % Verkäufe pro Woche).</li>
+</ul></details>
+</div>
+</section>
+</main>
+<script>
+(function(){
+var S=[["start","Start"],["zeit","Zeitleiste"],["preis","Preis-Labor"],["release","Release-Planer"]],nav=document.getElementById("nav");
+S.forEach(function(s){var b=document.createElement("button");b.textContent=s[1];b.id="n_"+s[0];b.onclick=function(){show(s[0])};nav.appendChild(b);});
+function show(id){S.forEach(function(s){document.getElementById(s[0]).classList.toggle("on",s[0]===id);document.getElementById("n_"+s[0]).classList.toggle("on",s[0]===id);});window.scrollTo(0,0);}
+show("start");
+function num(x){return Math.round(x).toLocaleString("de-DE");}
+function eur(x){return Math.round(x).toLocaleString("de-DE")+" €";}
+function meur(x){return (x/1e6).toLocaleString("de-DE",{minimumFractionDigits:1,maximumFractionDigits:1})+" Mio. €";}
+function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
+// Zeitleiste
+var EV=[["17.09.2013","GTA V erscheint und verkauft sich am ersten Tag rund 11 Millionen Mal."],
+["04.02.2022","Rockstar Games bestätigt offiziell, dass ein neues GTA entwickelt wird."],
+["18.09.2022","Ein Hacker veröffentlicht rund 90 Videos aus der Entwicklung. Rockstar beziffert den Schaden später auf 5 Millionen Dollar."],
+["04.12.2023","Der erste Trailer erscheint – nach einem Leak einen Tag früher als geplant – und wird in 24 Stunden rund 93 Millionen Mal auf YouTube abgerufen."],
+["02.05.2025","Erste Verschiebung: Der Start wird vom Herbst 2025 auf den 26.05.2026 verlegt."],
+["06.05.2025","Der zweite Trailer erreicht in 24 Stunden rund 475 Millionen Aufrufe auf allen Plattformen."],
+["06.11.2025","Zweite Verschiebung auf den 19.11.2026 – kurz nachdem Rockstar 34 Mitarbeitern gekündigt hat."],
+["25.06.2026","Vorbestellstart: 79,99 € für die Standard, 99,99 € für die Ultimate Edition. Schätzung: 260 Mio. Dollar Vorbestellungen in der ersten Woche."],
+["08/2026","Ein anonymer Account veröffentlicht die Spielkarte und fordert Änderungen an den Sondereditionen."],
+["19.11.2026","GTA VI erscheint für PlayStation 5 und Xbox Series X/S – eine PC-Version gibt es zunächst nicht."]];
+function tlBuild(){var m=document.getElementById("tl");m.innerHTML="";shuf(EV.map(function(e,i){return i;})).forEach(function(i){
+  var r=document.createElement("div");r.className="row";r.dataset.ok=String(i+1);var d=document.createElement("div");d.textContent=EV[i][1];
+  var s=document.createElement("select");var o='<option value="">–</option>';for(var k=1;k<=EV.length;k++)o+='<option>'+k+'</option>';s.innerHTML=o;r.appendChild(d);r.appendChild(s);m.appendChild(r);});
+  document.getElementById("tlres").style.display="none";document.getElementById("tlok").style.display="none";document.getElementById("tlsol").style.display="none";}
+tlBuild();document.getElementById("tlmix").onclick=tlBuild;
+document.getElementById("tlchk").onclick=function(){var n=0,rows=document.querySelectorAll("#tl .row");rows.forEach(function(r){var ok=r.querySelector("select").value===r.dataset.ok;r.classList.toggle("right",ok);r.classList.toggle("wrong",!ok);if(ok)n++;});
+  var v=document.getElementById("tlres");v.style.display="block";v.className="verdict "+(n===rows.length?"good":"mid");v.textContent=n+" von "+rows.length+" richtig."+(n<rows.length?" Versuche es noch einmal.":" Sehr gut!");
+  document.getElementById("tlsol").style.display="inline-block";};
+document.getElementById("tlsol").onclick=function(){var o=document.getElementById("tlok");o.innerHTML='<table><tr><th>Datum</th><th>Ereignis</th></tr>'+EV.map(function(e){return '<tr><td>'+e[0]+'</td><td>'+e[1]+'</td></tr>';}).join("")+'</table>';o.style.display="block";};
+// Preis-Labor
+var N=1000,W=[];for(var i=0;i<N;i++){W.push(20+130*(1-(i+0.5)/N));}
+function market(ps,pu,two){var buy=0,ult=0,rev=0,kr=0;W.forEach(function(w){var u=w+0.45*(w-20),ss=w-ps,su=two?u-pu:-1;
+  if(ss<0&&su<0)return;buy++;if(two&&su>ss){ult++;rev+=pu;kr+=su;}else{rev+=ps;kr+=ss;}});return {buy:buy,ult:ult,rev:rev,kr:kr};}
+var sS=document.getElementById("sS"),sU=document.getElementById("sU"),sW=document.getElementById("sW");
+function two(){return document.querySelector('input[name=mode]:checked').value==="2";}
+function pupd(){var t=two(),ps=+sS.value,pu=ps+(+sU.value);sU.disabled=!t;document.getElementById("ulbox").style.opacity=t?1:.4;
+  document.getElementById("vS").textContent=ps+" €";document.getElementById("vU").textContent="+"+sU.value+" € (= "+pu+" €)";
+  var r=market(ps,pu,t);document.getElementById("pBuy").textContent=num(r.buy);document.getElementById("pUlt").textContent=t?num(r.ult):"–";
+  document.getElementById("pRev").textContent=eur(r.rev);document.getElementById("pKR").textContent=eur(r.kr);
+  var w=+sW.value;document.getElementById("vW").textContent=w+" €";var me=document.getElementById("me");
+  me.textContent=w>=ps?("Bei "+ps+" € würdest du kaufen. Deine Konsumentenrente: "+(w-ps)+" €."):("Bei "+ps+" € würdest du nicht kaufen – der Preis liegt "+(ps-w)+" € über deiner Zahlungsbereitschaft.");
+  me.className="verdict "+(w>=ps?"good":"bad");
+  var Wd=720,H=320,m={l:52,r:20,t:44,b:36},pw=Wd-m.l-m.r,ph=H-m.t-m.b,ymax=240;function X(k){return m.l+pw*k/N;}function Y(v){return H-m.b-ph*v/ymax;}
+  var g='<line x1="'+m.l+'" y1="'+(H-m.b)+'" x2="'+(Wd-m.r)+'" y2="'+(H-m.b)+'" stroke="#999"/><line x1="'+m.l+'" y1="'+m.t+'" x2="'+m.l+'" y2="'+(H-m.b)+'" stroke="#999"/>';
+  for(var k=0;k<=4;k++){var y=Y(ymax*k/4);g+='<line x1="'+m.l+'" x2="'+(Wd-m.r)+'" y1="'+y+'" y2="'+y+'" stroke="#eee"/><text x="'+(m.l-6)+'" y="'+(y+4)+'" font-size="11" text-anchor="end" fill="#555">'+(ymax*k/4)+' €</text>';}
+  for(k=0;k<=10;k+=2){g+='<text x="'+X(k*100)+'" y="'+(H-m.b+15)+'" font-size="11" text-anchor="middle" fill="#555">'+(k*100)+'</text>';}
+  g+='<text x="'+(Wd/2)+'" y="'+(H-4)+'" font-size="12" text-anchor="middle" fill="#333">Spieler, geordnet nach Zahlungsbereitschaft</text>';
+  var nS=W.filter(function(v){return v>=ps;}).length;
+  var poly=[X(0)+","+Y(ps)];for(var j=0;j<nS;j+=10)poly.push(X(j)+","+Y(W[j]));poly.push(X(nS)+","+Y(ps));
+  g+='<polygon points="'+poly.join(" ")+'" fill="#e3f2e8"/>';
+  g+='<rect x="'+X(0)+'" y="'+Y(ps)+'" width="'+(X(nS)-X(0))+'" height="'+(Y(0)-Y(ps))+'" fill="#dbe6f2"/>';
+  var pts=[];for(j=0;j<N;j+=10)pts.push(X(j)+","+Y(W[j]));g+='<polyline fill="none" stroke="#1f4e79" stroke-width="3" points="'+pts.join(" ")+'"/>';
+  if(t){pts=[];for(j=0;j<N;j+=10)pts.push(X(j)+","+Y(W[j]+0.45*(W[j]-20)));g+='<polyline fill="none" stroke="#7a4fa3" stroke-width="2" stroke-dasharray="6 4" points="'+pts.join(" ")+'"/>';
+    g+='<line x1="'+m.l+'" x2="'+(Wd-m.r)+'" y1="'+Y(pu)+'" y2="'+Y(pu)+'" stroke="#7a4fa3" stroke-width="2"/><text x="'+(Wd-m.r-4)+'" y="'+(Y(pu)-5)+'" font-size="12" text-anchor="end" fill="#7a4fa3">Ultimate '+pu+' €</text>';}
+  g+='<line x1="'+m.l+'" x2="'+(Wd-m.r)+'" y1="'+Y(ps)+'" y2="'+Y(ps)+'" stroke="#c8661b" stroke-width="2"/><text x="'+(Wd-m.r-4)+'" y="'+(Y(ps)+15)+'" font-size="12" text-anchor="end" fill="#c8661b">Standard '+ps+' €</text>';
+  g+='<rect x="'+(m.l+10)+'" y="6" width="12" height="10" fill="#dbe6f2"/><text x="'+(m.l+26)+'" y="15" font-size="11" fill="#333">Umsatz zum Standardpreis</text><rect x="'+(m.l+175)+'" y="6" width="12" height="10" fill="#e3f2e8"/><text x="'+(m.l+191)+'" y="15" font-size="11" fill="#333">Konsumentenrente</text>'+(t?'<line x1="'+(m.l+315)+'" x2="'+(m.l+335)+'" y1="11" y2="11" stroke="#7a4fa3" stroke-dasharray="6 4" stroke-width="2"/><text x="'+(m.l+340)+'" y="15" font-size="11" fill="#333">Wert der Ultimate Edition</text>':'');
+  document.getElementById("pch").innerHTML=g;}
+[sS,sU,sW].forEach(function(e){e.oninput=pupd;});document.querySelectorAll('input[name=mode]').forEach(function(e){e.onchange=pupd;});pupd();
+// Release-Planer
+var sD=document.getElementById("sD"),cC=document.getElementById("cC");
+function rel(d,crowd){var g=1-0.6*Math.exp(-Math.pow(d/4,2)),c=crowd?1-0.3*Math.exp(-Math.pow((Math.abs(d)-5)/1.5,2)):1,
+  s=1+0.3*Math.exp(-Math.pow((d-3)/2.5,2))-0.15*Math.exp(-Math.pow((d-8)/2,2)),q=d<0?1-0.04*(-d):1,sales=250000*g*c*s*q,cost=d>0?120000*d:(d<0?80000*(-d):0);
+  return {sales:sales,rev:sales*28,cost:cost,res:sales*28-cost};}
+function ddate(d){var t=new Date(2026,10,19);t.setDate(t.getDate()+7*d);return t.toLocaleDateString("de-DE");}
+function rupd(){var d=+sD.value,cr=cC.checked,r=rel(d,cr);document.getElementById("vD").textContent=(d>0?"+":"")+d+" Wochen ("+ddate(d)+")";
+  document.getElementById("rSales").textContent=num(r.sales);document.getElementById("rRev").textContent=meur(r.rev);document.getElementById("rCost").textContent=meur(r.cost);document.getElementById("rRes").textContent=meur(r.res);
+  var all=[];for(var k=-4;k<=16;k++)all.push(rel(k,cr).res);var best=Math.max.apply(null,all),rv=document.getElementById("rv");
+  rv.className="verdict "+(r.res>=best*0.97?"good":(r.res>=best*0.8?"mid":"bad"));
+  rv.textContent=r.res>=best*0.97?"Sehr gute Wahl – nah am besten Ergebnis.":(d===0?"Gleichzeitig mit GTA VI? Euer Spiel geht in der Aufmerksamkeit unter.":"Es gibt bessere Termine. Probiere weitere Wochen aus und achte auf die Kurve.");
+  var Wd=720,H=300,m={l:62,r:20,t:24,b:36},pw=Wd-m.l-m.r,ph=H-m.t-m.b,ymax=8e6;function X(k){return m.l+pw*(k+4)/20;}function Y(v){return H-m.b-ph*v/ymax;}
+  var g='<line x1="'+m.l+'" y1="'+(H-m.b)+'" x2="'+(Wd-m.r)+'" y2="'+(H-m.b)+'" stroke="#999"/><line x1="'+m.l+'" y1="'+m.t+'" x2="'+m.l+'" y2="'+(H-m.b)+'" stroke="#999"/>';
+  for(k=0;k<=4;k++){var y=Y(ymax*k/4);g+='<line x1="'+m.l+'" x2="'+(Wd-m.r)+'" y1="'+y+'" y2="'+y+'" stroke="#eee"/><text x="'+(m.l-6)+'" y="'+(y+4)+'" font-size="11" text-anchor="end" fill="#555">'+(2*k)+' Mio. €</text>';}
+  for(k=-4;k<=16;k+=2)g+='<text x="'+X(k)+'" y="'+(H-m.b+15)+'" font-size="11" text-anchor="middle" fill="#555">'+(k>0?"+":"")+k+'</text>';
+  g+='<line x1="'+X(0)+'" x2="'+X(0)+'" y1="'+m.t+'" y2="'+(H-m.b)+'" stroke="#b23b2a" stroke-dasharray="4 4"/><text x="'+(X(0)+4)+'" y="'+(m.t+12)+'" font-size="11" fill="#b23b2a">GTA VI</text>';
+  g+='<text x="'+(Wd/2)+'" y="'+(H-4)+'" font-size="12" text-anchor="middle" fill="#333">Wochen vor (−) / nach (+) dem 19.11.2026</text>';
+  var pts=[];for(k=-4;k<=16;k++)pts.push(X(k)+","+Y(Math.max(0,all[k+4])));g+='<polyline fill="none" stroke="#1f4e79" stroke-width="3" points="'+pts.join(" ")+'"/>';
+  g+='<circle cx="'+X(d)+'" cy="'+Y(Math.max(0,r.res))+'" r="7" fill="#c8661b"/>';document.getElementById("rch").innerHTML=g;}
+sD.oninput=rupd;cC.onchange=rupd;rupd();
+})();
+</script>
+</body>
+</html>

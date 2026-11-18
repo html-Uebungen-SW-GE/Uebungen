@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Die Schulhof-Börse</title>
+<style>
+:root{--ink:#17223b;--soft:#4b5567;--bg:#f5f3ee;--card:#fffdf9;--line:#dcd6c8;--acc:#1f4e79;--warm:#c8661b;--ok:#2e7d4f;--okbg:#e3f2e8;--no:#b23b2a;--nobg:#f8e3df;--afb1:#dedede;--afb2:#ffe082;--afb3:#c6dcee}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",Calibri,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:clamp(16px,1.15vw,20px);line-height:1.5}
+header{background:var(--ink);color:#fff;padding:.9em 1.3em}
+header h1{margin:0;font-size:1.35em}
+header p{margin:.2em 0 0;opacity:.85;font-size:.85em}
+nav{display:flex;flex-wrap:wrap;gap:.4em;padding:.7em 1.3em;background:#e9e4d8;position:sticky;top:0;z-index:5}
+nav button{font:inherit;font-size:.85em;border:2px solid var(--acc);background:#fff;color:var(--acc);border-radius:2em;padding:.25em .9em;cursor:pointer}
+nav button.on{background:var(--acc);color:#fff}
+main{max-width:1100px;margin:0 auto;padding:1.2em 1.3em 3em}
+section{display:none}section.on{display:block}
+h2{margin:.2em 0 .5em;font-size:1.4em}
+h3{margin:1em 0 .4em;font-size:1.1em}
+.card{background:var(--card);border-radius:.9em;box-shadow:0 3px 14px rgba(23,34,59,.07);padding:1.1em 1.3em;margin:.9em 0}
+.lead{font-size:1.1em;border-left:.35em solid var(--warm);padding-left:.8em}
+.task{border-radius:.7em;padding:.8em 1em;margin:.9em 0;border:2px solid #999}
+.task.a1{background:var(--afb1);border-color:#888}.task.a2{background:var(--afb2);border-color:#c80}.task.a3{background:var(--afb3);border-color:#3f7faa}
+.task b.n{margin-right:.4em}.task .afb{font-size:.8em;color:#555;font-style:italic;margin-left:.4em}
+.src{font-size:.75em;color:var(--soft);margin-top:.5em}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(18em,1fr));gap:.9em}
+.term{background:#fff;border:1px solid var(--line);border-radius:.7em;padding:.7em .9em}
+.term b{color:var(--acc)}
+.match{display:grid;gap:.5em}
+.match .row{display:grid;grid-template-columns:1fr minmax(12em,16em);gap:.6em;align-items:center;background:#fff;border:2px solid var(--line);border-radius:.6em;padding:.45em .7em}
+.match .row.right{border-color:var(--ok);background:var(--okbg)}.match .row.wrong{border-color:var(--no);background:var(--nobg)}
+select,input[type=number]{font:inherit;font-size:.9em;padding:.25em .4em;border-radius:.4em;border:1px solid #aaa;background:#fff;max-width:100%}
+.btn{font:inherit;cursor:pointer;background:var(--acc);color:#fff;border:none;border-radius:.5em;padding:.4em 1em;margin:.3em .3em 0 0}
+.btn.ghost{background:#fff;color:var(--acc);border:2px solid var(--acc)}
+.btn.warm{background:var(--warm)}
+svg text{font-family:inherit}
+.chart{width:100%;height:auto;display:block}
+.sliders{display:grid;grid-template-columns:repeat(auto-fit,minmax(15em,1fr));gap:.8em 1.2em}
+.sl label{display:flex;justify-content:space-between;font-weight:600}
+.sl input[type=range]{width:100%}
+.sl small{color:var(--soft)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(10em,1fr));gap:.7em;margin-top:.8em}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:.7em;padding:.6em .8em}
+.kpi .v{font-size:1.5em;font-weight:700}.kpi .l{font-size:.78em;color:var(--soft)}
+.verdict{margin-top:.8em;padding:.7em .9em;border-radius:.6em;font-weight:600}
+.verdict.good{background:var(--okbg);color:var(--ok)}.verdict.bad{background:var(--nobg);color:var(--no)}.verdict.mid{background:#fff4d6;color:#8a5a00}
+.experts{display:grid;grid-template-columns:repeat(auto-fit,minmax(11em,1fr));gap:.6em}
+.experts button{font:inherit;text-align:left;border:2px solid var(--line);background:#fff;border-radius:.7em;padding:.6em .8em;cursor:pointer}
+.experts button.on{border-color:var(--warm);background:#fff4ea}
+.experts .nr{display:block;font-size:.75em;color:var(--warm);font-weight:700;letter-spacing:.05em}
+.expert h3{margin-top:0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:.8em}
+.pc div{border-radius:.6em;padding:.6em .8em}
+.pc .pro{background:var(--okbg)}.pc .con{background:var(--nobg)}
+.pc ul{margin:.3em 0 0;padding-left:1.2em}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:.88em}
+th,td{border:1px solid var(--line);padding:.4em .5em;text-align:left;vertical-align:middle}
+th{background:var(--ink);color:#fff}
+td select{width:100%}
+td.sum{font-weight:700;text-align:center}
+.scale{display:flex;justify-content:space-between;font-size:.8em;color:var(--soft);margin-top:.2em}
+.pos input[type=range]{width:100%}
+@media (max-width:640px){.pc{grid-template-columns:1fr}.match .row{grid-template-columns:1fr}}
+details.card summary{cursor:pointer}
+</style>
+</head>
+<body>
+<header><h1>Die Schulhof-Börse: Lehrerkarten zwischen Abikasse und Hype</h1><p>Q2 SoWi Zusatzkurs · EVA · Stand 18.11.2026</p></header>
+<nav id="nav"></nav>
+<main>
+
+<section id="start">
+<h2>Worum geht es?</h2>
+<div class="card lead">Auch an unserer Schule werden Lehrerkarten gesammelt und getauscht. Hinter dem Spaß steckt ein kleiner Markt mit Angebot und Nachfrage, mit Preisen, Gewinnen, Hype und Spekulation. In dieser Simulation leitest du das Abi-Komitee und entscheidest, wie die Karten verkauft werden.</div>
+<div class="card">
+<h3>So arbeitest du</h3>
+<ol>
+<li>Lies auf dem Arbeitsblatt M1 (das Geschäftsmodell).</li>
+<li>Öffne hier die <b>Simulation</b> und spiele die Szenarien aus Aufgabe 2 durch. Trage die Ergebnisse auf dem Arbeitsblatt ein.</li>
+<li>Prüfe dein Wissen unter <b>Begriffe</b>.</li>
+</ol>
+<p class="src">Die Simulation ist ein stark vereinfachtes Modell und keine Prognose. Wie sie rechnet, steht unter der Simulation. Die Seite speichert keine Daten.</p>
+</div>
+</section>
+
+<section id="sim">
+<h2>Simulation: Du bist das Abi-Komitee</h2>
+<div class="card">
+<p>Eure Schule hat rund <b>800 Schüler</b> und <b>60 Lehrkräfte</b>. Ein Pack enthält 5 Karten und kostet in der Herstellung <b>0,90 €</b>. In manchen Packs steckt eine seltene <b>Holo-Karte</b>. Der Verkauf läuft 20 Schultage.</p>
+<div class="sliders">
+<div class="sl"><label>Preis pro Pack <span id="vP"></span></label><input type="range" id="sP" min="1.5" max="4" step="0.5" value="2.5"><small>Empfehlung des Anbieters: 2 bis 3 €</small></div>
+<div class="sl"><label>Auflage <span id="vA"></span></label><input type="range" id="sA" min="1000" max="3000" step="250" value="2000"><small>gedruckte Packs</small></div>
+<div class="sl"><label>Seltenheit der Holo-Karte <span id="vR"></span></label><input type="range" id="sR" min="3" max="40" step="1" value="10"><small>eine Holo-Karte pro … Packs</small></div>
+<div class="sl"><label><span><input type="checkbox" id="cN"> Nachdruck bei Ausverkauf</span></label><small>+500 Packs, Lieferung 3 Tage nach dem Ausverkauf, 1,10 € pro Pack</small></div>
+</div>
+<button class="btn warm" id="run">Verkauf starten</button>
+<div class="kpis">
+<div class="kpi"><div class="v" id="kSold">–</div><div class="l">verkaufte Packs</div></div>
+<div class="kpi"><div class="v" id="kDay">–</div><div class="l">ausverkauft am Tag</div></div>
+<div class="kpi"><div class="v" id="kRev">–</div><div class="l">Erlös</div></div>
+<div class="kpi"><div class="v" id="kCost">–</div><div class="l">Druckkosten</div></div>
+<div class="kpi"><div class="v" id="kProfit">–</div><div class="l">Gewinn für die Abikasse</div></div>
+<div class="kpi"><div class="v" id="kHolo">–</div><div class="l">höchster Tauschwert einer Holo-Karte (in normalen Karten)</div></div>
+<div class="kpi"><div class="v" id="kHolo20">–</div><div class="l">Tauschwert einer Holo-Karte am Tag 20</div></div>
+</div>
+<div id="verdict" class="verdict mid" style="display:none"></div>
+</div>
+<div class="card">
+<h3>Verkauf und Hype je Schultag</h3>
+<svg class="chart" id="ch1" viewBox="0 0 720 300" role="img" aria-label="Verkaufte Packs und Hype je Tag"></svg>
+<h3>Zweitmarkt: Tauschwert einer Holo-Karte</h3>
+<svg class="chart" id="ch2" viewBox="0 0 720 240" role="img" aria-label="Tauschwert einer Holo-Karte je Tag"></svg>
+</div>
+<details class="card"><summary><b>So rechnet das Modell</b></summary>
+<ul>
+<li><b>Nachfrage:</b> Je höher der Preis, desto weniger Packs wollen die 860 möglichen Käufer insgesamt kaufen (bei 1,50 € gut 4 Packs pro Person, bei 4 € gut 1 Pack).</li>
+<li><b>Sammeltrieb:</b> Je seltener die Holo-Karte, desto mehr Packs werden gekauft, weil viele die seltene Karte haben wollen.</li>
+<li><b>Hype:</b> Der Verkauf folgt einer Hype-Kurve: Er steigt in den ersten Tagen stark an, weil immer mehr mitmachen (Mitläufereffekt), und flaut danach ab.</li>
+<li><b>Zweitmarkt:</b> Der Tauschwert einer Holo-Karte steigt mit ihrer Seltenheit, mit dem Hype und wenn Packs ausverkauft sind (Knappheit). Ein Nachdruck bringt mehr Holo-Karten in Umlauf und senkt ihren Wert.</li>
+<li><b>Gewinn:</b> Erlös (Preis × verkaufte Packs) minus Druckkosten für alle gedruckten Packs. Steuern, Rücknahmegarantie des Anbieters und Werbekosten sind nicht berücksichtigt.</li>
+</ul></details>
+</section>
+
+<section id="begriffe">
+<h2>Begriffe: Ordne richtig zu</h2>
+<div class="card"><p>Wähle zu jeder Beschreibung den passenden Fachbegriff. Die Reihenfolge wird bei jedem Laden neu gemischt.</p>
+<div class="match" id="match"></div>
+<button class="btn" id="chk">Prüfen</button> <button class="btn ghost" id="mix">Neu mischen</button>
+<div id="mres" class="verdict mid" style="display:none"></div>
+</div>
+</section>
+</main>
+<script>
+(function(){
+var S=[["start","Start"],["sim","Simulation"],["begriffe","Begriffe"]],nav=document.getElementById("nav");
+S.forEach(function(s,i){var b=document.createElement("button");b.textContent=s[1];b.onclick=function(){show(s[0])};b.id="n_"+s[0];nav.appendChild(b);});
+function show(id){S.forEach(function(s){document.getElementById(s[0]).classList.toggle("on",s[0]===id);document.getElementById("n_"+s[0]).classList.toggle("on",s[0]===id);});window.scrollTo(0,0);}
+show("start");
+function eur(x){return x.toLocaleString("de-DE",{minimumFractionDigits:0,maximumFractionDigits:0})+" €";}
+function num(x){return Math.round(x).toLocaleString("de-DE");}
+var sP=document.getElementById("sP"),sA=document.getElementById("sA"),sR=document.getElementById("sR"),cN=document.getElementById("cN");
+function lab(){document.getElementById("vP").textContent=(+sP.value).toLocaleString("de-DE",{minimumFractionDigits:2})+" €";document.getElementById("vA").textContent=num(+sA.value)+" Packs";document.getElementById("vR").textContent="1 pro "+sR.value+" Packs";}
+[sP,sA,sR].forEach(function(e){e.oninput=lab;});lab();
+var T=20,BUY=860;
+function model(p,A,r,nach){
+  var q=BUY*4.2*Math.exp(-0.55*(p-1.5))*(1+0.12*Math.log(r/3));
+  var h=[],sum=0,i;for(i=1;i<=T;i++){var v=Math.exp(-Math.pow((i-3.5)/2.3,2))+0.06;h.push(v);sum+=v;}
+  var hmax=Math.max.apply(null,h),stock=A,cost=0.9*A,sold=[],val=[],unmet=0,outDay=null,reDay=null,reprinted=false,pending=0,v0=3*Math.pow(r/5,0.6),dil=1;
+  for(i=0;i<T;i++){
+    var want=q*h[i]/sum;
+    if(reprinted&&reDay===i){stock+=500;cost+=500*1.1;want+=pending*0.5;pending=0;dil=0.75;}
+    var s=Math.min(want,stock);stock-=s;sold.push(s);
+    if(want>s){unmet+=want-s;pending+=want-s;}
+    if(stock<=0.5&&outDay===null){outDay=i+1;if(nach&&!reprinted){reprinted=true;reDay=i+3;}}
+    var exc=Math.max(0,(q-A)/A),scar=(outDay!==null&&i>=outDay-1)?1+Math.min(1.5,1.5*exc):1;
+    if(reprinted&&i>=reDay)scar=1+Math.min(1.5,1.5*Math.max(0,(q-A-500)/(A+500)));
+    val.push(v0*scar*dil*(0.35+0.65*h[i]/hmax));
+  }
+  var total=sold.reduce(function(a,b){return a+b;},0);
+  return {sold:sold,val:val,h:h.map(function(x){return 100*x/hmax;}),total:total,rev:p*total,cost:cost,profit:p*total-cost,outDay:outDay,unmet:unmet,left:Math.max(0,stock),printed:A+(reprinted&&reDay<T?500:0)};
+}
+function axes(svg,W,H,m,ymax,ylab,y2lab){
+  var g='<line x1="'+m.l+'" y1="'+(H-m.b)+'" x2="'+(W-m.r)+'" y2="'+(H-m.b)+'" stroke="#999"/><line x1="'+m.l+'" y1="'+m.t+'" x2="'+m.l+'" y2="'+(H-m.b)+'" stroke="#999"/>';
+  for(var k=0;k<=4;k++){var y=H-m.b-(H-m.t-m.b)*k/4;g+='<line x1="'+m.l+'" x2="'+(W-m.r)+'" y1="'+y+'" y2="'+y+'" stroke="#eee"/><text x="'+(m.l-6)+'" y="'+(y+4)+'" font-size="11" text-anchor="end" fill="#555">'+(ymax<20?(ymax*k/4).toLocaleString("de-DE",{maximumFractionDigits:2}):num(ymax*k/4))+'</text>';}
+  for(var d=1;d<=T;d++){var x=m.l+(W-m.l-m.r)*(d-0.5)/T;if(d%2===1||d===T)g+='<text x="'+x+'" y="'+(H-m.b+15)+'" font-size="11" text-anchor="middle" fill="#555">'+d+'</text>';}
+  g+='<text x="'+((W)/2)+'" y="'+(H-4)+'" font-size="12" text-anchor="middle" fill="#333">Schultag</text><text x="12" y="'+(m.t-6)+'" font-size="12" fill="#333">'+ylab+'</text>';
+  if(y2lab)g+='<text x="'+(W-m.r)+'" y="'+(m.t-6)+'" font-size="12" text-anchor="end" fill="#c8661b">'+y2lab+'</text>';
+  return g;
+}
+function draw(res,upto){
+  var W=720,H=300,m={l:52,r:46,t:26,b:34},ch=document.getElementById("ch1");
+  var ymax=Math.max(100,Math.ceil(Math.max.apply(null,res.sold)/100)*100),pw=W-m.l-m.r,ph=H-m.t-m.b,g=axes(ch,W,H,m,ymax,"verkaufte Packs","Hype (0–100)");
+  for(var i=0;i<upto;i++){var x=m.l+pw*i/T+3,bw=pw/T-6,bh=ph*res.sold[i]/ymax;g+='<rect x="'+x+'" y="'+(H-m.b-bh)+'" width="'+bw+'" height="'+bh+'" fill="#1f4e79"/>';}
+  var pts=[];for(i=0;i<upto;i++){pts.push((m.l+pw*(i+0.5)/T)+","+(H-m.b-ph*res.h[i]/100));}
+  if(pts.length)g+='<polyline fill="none" stroke="#c8661b" stroke-width="3" points="'+pts.join(" ")+'"/>';
+  ch.innerHTML=g;
+  var H2=240,c2=document.getElementById("ch2"),vmax=Math.max(5,Math.ceil(Math.max.apply(null,res.val)/5)*5),ph2=H2-m.t-m.b,g2=axes(c2,W,H2,m,vmax,"Holo-Karte = … normale Karten");
+  pts=[];for(i=0;i<upto;i++){pts.push((m.l+pw*(i+0.5)/T)+","+(H2-m.b-ph2*res.val[i]/vmax));}
+  if(pts.length)g2+='<polyline fill="none" stroke="#2e7d4f" stroke-width="3" points="'+pts.join(" ")+'"/>';
+  c2.innerHTML=g2;
+}
+var timer=null;
+document.getElementById("run").onclick=function(){
+  if(timer)clearInterval(timer);
+  var res=model(+sP.value,+sA.value,+sR.value,cN.checked),d=0;
+  ["kSold","kDay","kRev","kCost","kProfit","kHolo","kHolo20"].forEach(function(k){document.getElementById(k).textContent="…";});
+  document.getElementById("verdict").style.display="none";
+  timer=setInterval(function(){d++;draw(res,d);if(d>=T){clearInterval(timer);timer=null;fin(res);}},110);
+};
+function fin(r){
+  document.getElementById("kSold").textContent=num(r.total);
+  document.getElementById("kDay").textContent=r.outDay?("Tag "+r.outDay):"nicht ausverkauft";
+  document.getElementById("kRev").textContent=eur(r.rev);
+  document.getElementById("kCost").textContent=eur(r.cost);
+  document.getElementById("kProfit").textContent=eur(r.profit);
+  document.getElementById("kHolo").textContent=Math.max.apply(null,r.val).toLocaleString("de-DE",{maximumFractionDigits:1});
+  document.getElementById("kHolo20").textContent=r.val[T-1].toLocaleString("de-DE",{maximumFractionDigits:1});
+  var v=document.getElementById("verdict"),t;
+  if(r.profit<0){v.className="verdict bad";t="Verlust! Die Einnahmen decken die Druckkosten nicht. ";}
+  else if(r.left>50){v.className="verdict mid";t="Ladenhüter: "+num(r.left)+" Packs bleiben übrig – sie wurden gedruckt und bezahlt, bringen aber nichts ein. ";}
+  else {v.className="verdict good";t="Ausverkauft! ";}
+  if(r.unmet>50&&!cN.checked)t+="Etwa "+num(r.unmet)+" Packs hätten zusätzlich verkauft werden können. Die Knappheit treibt die Tauschwerte auf dem Schulhof nach oben – und vielleicht hättet ihr einen höheren Preis verlangen können.";
+  else if(cN.checked&&r.outDay)t+="Der Nachdruck bringt zusätzliche Einnahmen, kommt aber erst, wenn der Hype schon nachlässt – und senkt den Wert der Holo-Karten.";
+  v.textContent=t;v.style.display="block";
+}
+draw(model(2.5,2000,10,false),0);
+// Begriffe
+var B=[["Knappheit","Ein Gut ist begehrt, aber nur in begrenzter Menge vorhanden – zum Beispiel eine Holo-Karte, die nur in jedem zehnten Pack steckt."],
+["Mitläufereffekt","Je mehr Mitschüler Karten kaufen und sammeln, desto mehr wollen auch selbst mitmachen."],
+["Snob-Effekt","Eine Karte ist für manche gerade deshalb attraktiv, weil nur wenige sie besitzen können."],
+["Spekulation","Jemand kauft Packs oder tauscht Karten vor allem, weil er hofft, sie später gegen mehr eintauschen oder teurer verkaufen zu können."],
+["Hype-Zyklus","Typischer Verlauf: schneller Anstieg der Begeisterung, Höhepunkt, dann Abflauen des Interesses."],
+["Zweitmarkt","Handel unter den Käufern selbst, nachdem die Ware verkauft wurde – zum Beispiel das Tauschen auf dem Schulhof."]];
+function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function build(){var m=document.getElementById("match");m.innerHTML="";var opts=shuf(B.map(function(b){return b[0];}));
+  shuf(B).forEach(function(b){var row=document.createElement("div");row.className="row";row.dataset.ok=b[0];var d=document.createElement("div");d.textContent=b[1];
+  var s=document.createElement("select");s.innerHTML='<option value="">– bitte wählen –</option>'+opts.map(function(o){return '<option>'+o+'</option>';}).join("");row.appendChild(d);row.appendChild(s);m.appendChild(row);});
+  document.getElementById("mres").style.display="none";}
+build();document.getElementById("mix").onclick=build;
+document.getElementById("chk").onclick=function(){var n=0,rows=document.querySelectorAll("#match .row");rows.forEach(function(r){var ok=r.querySelector("select").value===r.dataset.ok;r.classList.toggle("right",ok);r.classList.toggle("wrong",!ok);if(ok)n++;});
+  var v=document.getElementById("mres");v.style.display="block";v.className="verdict "+(n===rows.length?"good":"mid");v.textContent=n+" von "+rows.length+" richtig."+(n<rows.length?" Korrigiere die rot markierten Zeilen.":" Sehr gut!");};
+})();
+</script>
+</body>
+</html>
