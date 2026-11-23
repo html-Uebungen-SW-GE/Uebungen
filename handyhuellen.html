@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Planspiel Handyhüllen</title><style>
+:root{--ink:#17223b;--soft:#4b5567;--bg:#f5f3ee;--card:#fffdf9;--line:#dcd6c8;--acc:#1f4e79;--warm:#c8661b;--ok:#2e7d4f;--okbg:#e3f2e8;--no:#b23b2a;--nobg:#f8e3df;--afb1:#dedede;--afb2:#ffe082;--afb3:#c6dcee}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",Calibri,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:clamp(16px,1.15vw,20px);line-height:1.5}
+header{background:var(--ink);color:#fff;padding:.9em 1.3em}
+header h1{margin:0;font-size:1.35em}
+header p{margin:.2em 0 0;opacity:.85;font-size:.85em}
+nav{display:flex;flex-wrap:wrap;gap:.4em;padding:.7em 1.3em;background:#e9e4d8;position:sticky;top:0;z-index:5}
+nav button{font:inherit;font-size:.85em;border:2px solid var(--acc);background:#fff;color:var(--acc);border-radius:2em;padding:.25em .9em;cursor:pointer}
+nav button.on{background:var(--acc);color:#fff}
+main{max-width:1100px;margin:0 auto;padding:1.2em 1.3em 3em}
+section{display:none}section.on{display:block}
+h2{margin:.2em 0 .5em;font-size:1.4em}
+h3{margin:1em 0 .4em;font-size:1.1em}
+.card{background:var(--card);border-radius:.9em;box-shadow:0 3px 14px rgba(23,34,59,.07);padding:1.1em 1.3em;margin:.9em 0}
+.lead{font-size:1.1em;border-left:.35em solid var(--warm);padding-left:.8em}
+.task{border-radius:.7em;padding:.8em 1em;margin:.9em 0;border:2px solid #999}
+.task.a1{background:var(--afb1);border-color:#888}.task.a2{background:var(--afb2);border-color:#c80}.task.a3{background:var(--afb3);border-color:#3f7faa}
+.task b.n{margin-right:.4em}.task .afb{font-size:.8em;color:#555;font-style:italic;margin-left:.4em}
+.src{font-size:.75em;color:var(--soft);margin-top:.5em}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(18em,1fr));gap:.9em}
+.term{background:#fff;border:1px solid var(--line);border-radius:.7em;padding:.7em .9em}
+.term b{color:var(--acc)}
+.match{display:grid;gap:.5em}
+.match .row{display:grid;grid-template-columns:1fr minmax(12em,16em);gap:.6em;align-items:center;background:#fff;border:2px solid var(--line);border-radius:.6em;padding:.45em .7em}
+.match .row.right{border-color:var(--ok);background:var(--okbg)}.match .row.wrong{border-color:var(--no);background:var(--nobg)}
+select,input[type=number]{font:inherit;font-size:.9em;padding:.25em .4em;border-radius:.4em;border:1px solid #aaa;background:#fff;max-width:100%}
+.btn{font:inherit;cursor:pointer;background:var(--acc);color:#fff;border:none;border-radius:.5em;padding:.4em 1em;margin:.3em .3em 0 0}
+.btn.ghost{background:#fff;color:var(--acc);border:2px solid var(--acc)}
+.btn.warm{background:var(--warm)}
+svg text{font-family:inherit}
+.chart{width:100%;height:auto;display:block}
+.sliders{display:grid;grid-template-columns:repeat(auto-fit,minmax(15em,1fr));gap:.8em 1.2em}
+.sl label{display:flex;justify-content:space-between;font-weight:600}
+.sl input[type=range]{width:100%}
+.sl small{color:var(--soft)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(10em,1fr));gap:.7em;margin-top:.8em}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:.7em;padding:.6em .8em}
+.kpi .v{font-size:1.5em;font-weight:700}.kpi .l{font-size:.78em;color:var(--soft)}
+.verdict{margin-top:.8em;padding:.7em .9em;border-radius:.6em;font-weight:600}
+.verdict.good{background:var(--okbg);color:var(--ok)}.verdict.bad{background:var(--nobg);color:var(--no)}.verdict.mid{background:#fff4d6;color:#8a5a00}
+.experts{display:grid;grid-template-columns:repeat(auto-fit,minmax(11em,1fr));gap:.6em}
+.experts button{font:inherit;text-align:left;border:2px solid var(--line);background:#fff;border-radius:.7em;padding:.6em .8em;cursor:pointer}
+.experts button.on{border-color:var(--warm);background:#fff4ea}
+.experts .nr{display:block;font-size:.75em;color:var(--warm);font-weight:700;letter-spacing:.05em}
+.expert h3{margin-top:0}
+.pc{display:grid;grid-template-columns:1fr 1fr;gap:.8em}
+.pc div{border-radius:.6em;padding:.6em .8em}
+.pc .pro{background:var(--okbg)}.pc .con{background:var(--nobg)}
+.pc ul{margin:.3em 0 0;padding-left:1.2em}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:.88em}
+th,td{border:1px solid var(--line);padding:.4em .5em;text-align:left;vertical-align:middle}
+th{background:var(--ink);color:#fff}
+td select{width:100%}
+td.sum{font-weight:700;text-align:center}
+.scale{display:flex;justify-content:space-between;font-size:.8em;color:var(--soft);margin-top:.2em}
+.pos input[type=range]{width:100%}
+@media (max-width:640px){.pc{grid-template-columns:1fr}.match .row{grid-template-columns:1fr}}
+details.card summary{cursor:pointer}
+
+.experts button:disabled{cursor:default;color:inherit}
+.expl{margin-top:.6em}
+#r_text{margin:.6em 0}
+.card{overflow-x:auto}
+</style></head><body>
+<header><h1>Planspiel Handyhüllen: Fit für den Markt</h1><p>Klasse 7 Politik · Übung zum Planspiel · <span id="pkt">Punkte: 0</span></p></header>
+<nav id="nav"></nav>
+<main>
+
+<section id="start">
+<h2>Worum geht es?</h2>
+<div class="card lead">Im Planspiel führt ihr ein Unternehmen, das Handyhüllen herstellt. Hier kannst du die wichtigsten Begriffe, das Rechnen mit dem Spielblatt und gute Entscheidungen üben.</div>
+<div class="card">
+<h3>So arbeitest du</h3>
+<ol>
+<li><b>Station 1:</b> Ordne die Fachbegriffe ihren Erklärungen zu.</li>
+<li><b>Station 2:</b> Rechne Umsatz, Kosten und Gewinn wie auf dem Spielblatt aus. Du bekommst immer neue Aufgaben.</li>
+<li><b>Station 3:</b> Finde heraus, wie viele Hüllen jedes Unternehmen verkauft.</li>
+<li><b>Station 4:</b> Entscheide in kniffligen Situationen – mit Erklärung.</li>
+</ol>
+<p>Für jede richtige Lösung bekommst du Punkte. Oben siehst du deinen Punktestand.</p>
+<p class="src">Die Seite speichert keine Daten. Wenn du sie neu lädst, beginnt alles von vorn – mit neuen Aufgaben in neuer Reihenfolge.</p>
+</div>
+<div class="card">
+<h3>Die Regeln kurz</h3>
+<div class="grid2">
+<div class="term"><b>Preis:</b> 5 bis 30 € (ganze Euro) · höchstens 40 Hüllen pro Periode</div>
+<div class="term"><b>Kosten:</b> Fixkosten 140 € (ab 3. Periode 40 € plus Löhne) · Material 4 € pro produzierter Hülle · Lager 1 € pro Hülle aus der Vorperiode</div>
+<div class="term"><b>Werbung (ab 2. Periode):</b> 20 / 40 / 80 € → Preis wirkt 1 / 2 / 3 € günstiger</div>
+<div class="term"><b>Löhne (ab 3. Periode):</b> 20 € → 8 Hüllen · 25 € → 10 Hüllen · 30 € → 12 Hüllen und Preis wirkt 1 € günstiger · einstellen 5 €, entlassen 10 €</div>
+</div>
+</div>
+</section>
+
+<section id="s1">
+<h2>Station 1: Fachbegriffe</h2>
+<div class="card"><p>Wähle zu jeder Erklärung den passenden Begriff aus.</p>
+<div class="match" id="match"></div>
+<button class="btn" id="m_check">Prüfen</button>
+<div id="m_msg"></div>
+</div>
+</section>
+
+<section id="s2">
+<h2>Station 2: Rechentrainer</h2>
+<div class="card">
+<p>Schwierigkeit:
+<select id="lvl"><option value="1">Stufe 1: Grundregeln (1. Periode)</option><option value="2">Stufe 2: mit Lager und Werbung (2. Periode)</option><option value="3">Stufe 3: mit Mitarbeitern und Löhnen (3. Periode)</option></select>
+<button class="btn ghost" id="r_neu">Neue Aufgabe</button></p>
+<div class="lead" id="r_text"></div>
+<table>
+<tr><th>Was?</th><th>Deine Lösung</th><th></th></tr>
+<tr><td>Umsatz (€)</td><td><input type="number" id="r_u"></td><td id="f_u"></td></tr>
+<tr><td>Gesamtkosten (€)</td><td><input type="number" id="r_k"></td><td id="f_k"></td></tr>
+<tr><td>Gewinn oder Verlust (€) – Verlust mit Minus</td><td><input type="number" id="r_g"></td><td id="f_g"></td></tr>
+<tr><td>Neues Lager (Hüllen)</td><td><input type="number" id="r_l"></td><td id="f_l"></td></tr>
+</table>
+<button class="btn" id="r_check">Prüfen</button> <button class="btn ghost" id="r_hilfe">Lösungsweg zeigen</button>
+<div id="r_msg"></div>
+<div id="r_weg"></div>
+<p class="src">Geschafft: <span id="r_cnt">0</span> Aufgaben ohne Lösungsweg richtig gelöst.</p>
+</div>
+</section>
+
+<section id="s3">
+<h2>Station 3: Wer verkauft wie viel?</h2>
+<div class="card">
+<p>Die Käufer kaufen zuerst beim Unternehmen mit dem <b>günstigsten gefühlten Preis</b> (Preis minus Werbewirkung). Je höher der gefühlte Preis, desto weniger Hüllen nehmen die Käufer <b>insgesamt</b>. Trage ein, wie viele Hüllen jedes Unternehmen verkauft.</p>
+<p class="src">Ausgedachter Übungsmarkt – die Käufer im echten Spiel verhalten sich anders.</p>
+<div class="grid2">
+<div><h3>So viele Hüllen nehmen die Käufer höchstens</h3><table id="v_kaeufer"></table></div>
+<div><h3>Die Unternehmen</h3><table id="v_firmen"></table></div>
+</div>
+<button class="btn" id="v_check">Prüfen</button> <button class="btn ghost" id="v_hilfe">Lösungsweg zeigen</button> <button class="btn ghost" id="v_neu">Neuer Markt</button>
+<div id="v_msg"></div><div id="v_weg"></div>
+</div>
+</section>
+
+<section id="s4">
+<h2>Station 4: Was ist klug?</h2>
+<div id="quiz"></div>
+<div id="q_msg"></div>
+</section>
+
+<section id="ende">
+<h2>Abschluss</h2>
+<div class="card">
+<div class="kpis">
+<div class="kpi"><div class="v" id="e1">–</div><div class="l">Station 1: Begriffe</div></div>
+<div class="kpi"><div class="v" id="e2">–</div><div class="l">Station 2: Aufgaben gelöst</div></div>
+<div class="kpi"><div class="v" id="e3">–</div><div class="l">Station 3: Märkte gelöst</div></div>
+<div class="kpi"><div class="v" id="e4">–</div><div class="l">Station 4: Situationen</div></div>
+</div>
+<div class="verdict mid" id="e_txt"></div>
+</div>
+<div class="task a2"><b class="n">Zum Nachdenken:</b> Welche Entscheidung hat in eurem Planspiel am meisten über Gewinn oder Verlust entschieden – die Menge, der Preis, die Werbung oder die Löhne? Begründe in zwei bis drei Sätzen in deinem Heft.<span class="afb">[AFB II]</span></div>
+</section>
+
+</main>
+<script>
+function mix(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function rnd(a,b){return a+Math.floor(Math.random()*(b-a+1));}
+function $(id){return document.getElementById(id);}
+function eu(x){return (x<0?"−":"")+Math.abs(x)+" €";}
+var P={s1:0,s2:0,s3:0,s4:0};
+function punkte(){$("pkt").textContent="Punkte: "+(P.s1+P.s2*2+P.s3*3+P.s4);}
+
+// Navigation
+var SEC=[["start","Start"],["s1","1 Begriffe"],["s2","2 Rechnen"],["s3","3 Verkaufen"],["s4","4 Was ist klug?"],["ende","Abschluss"]];
+function zeige(id){SEC.forEach(function(s){$(s[0]).classList.toggle("on",s[0]===id);});Array.prototype.forEach.call($("nav").children,function(b){b.classList.toggle("on",b.dataset.id===id);});if(id==="ende")ende();window.scrollTo(0,0);}
+SEC.forEach(function(s){var b=document.createElement("button");b.textContent=s[1];b.dataset.id=s[0];b.onclick=function(){zeige(s[0]);};$("nav").appendChild(b);});
+
+// Station 1
+var BEG=[["Umsatz","Geld, das ein Unternehmen für die verkauften Hüllen einnimmt: verkaufte Menge × Preis."],
+["Fixkosten","Kosten, die jede Periode gleich hoch sind – egal, wie viele Hüllen hergestellt werden (z. B. Miete)."],
+["variable Kosten","Kosten, die mit jeder hergestellten Hülle steigen, zum Beispiel das Material."],
+["Gesamtkosten","Alle Kosten einer Periode zusammengezählt."],
+["Gewinn","Der Umsatz ist größer als die Gesamtkosten."],
+["Verlust","Die Gesamtkosten sind größer als der Umsatz."],
+["Lager","Hergestellte Hüllen, die nicht verkauft wurden und für später aufbewahrt werden."],
+["Angebot","Alle Hüllen, die ein Unternehmen in einer Periode verkaufen möchte: neu produzierte plus Hüllen aus dem Lager."],
+["Nachfrage","Die Menge an Hüllen, die die Käufer zu einem bestimmten Preis kaufen möchten."],
+["Wettbewerb","Mehrere Unternehmen bieten ähnliche Waren an und kämpfen um dieselben Käufer."]];
+var m1done=false;
+function baueS1(){var h="",opts=mix(BEG.map(function(b){return b[0];}));
+mix(BEG).forEach(function(b){h+='<div class="row" data-a="'+b[0]+'"><span>'+b[1]+'</span><select><option value="">– wählen –</option>'+opts.map(function(o){return'<option>'+o+'</option>';}).join("")+'</select></div>';});
+$("match").innerHTML=h;}
+$("m_check").onclick=function(){var r=0,rows=$("match").querySelectorAll(".row");
+Array.prototype.forEach.call(rows,function(x){var ok=x.querySelector("select").value===x.dataset.a;x.classList.toggle("right",ok);x.classList.toggle("wrong",!ok);if(ok)r++;});
+P.s1=Math.max(P.s1,r);punkte();
+$("m_msg").innerHTML='<div class="verdict '+(r===rows.length?"good":r>=6?"mid":"bad")+'">'+r+' von '+rows.length+' richtig.'+(r<rows.length?' Ändere die rot markierten Zeilen und prüfe noch einmal.':' Super – alle Begriffe sitzen!')+'</div>';};
+
+// Station 2
+var R2=null,r2hilfe=false,r2cnt=0,r2geloest=false;
+function neueR(){var L=Number($("lvl").value),s={L:L},t="";
+s.lagerAlt=L>=2?rnd(0,8):0;s.werb=L>=2?[0,20,40,80][rnd(0,3)]:0;
+if(L===3){s.ma=rnd(3,5);s.lohnStufe=mix([[20,8],[25,10],[30,12]])[0];s.maStart=mix([s.ma,s.ma,s.ma-1,Math.min(5,s.ma+1)])[0];
+ if(s.maStart<3)s.maStart=s.ma;s.menge=Math.min(40,s.ma*s.lohnStufe[1])-rnd(0,6);s.fix=40;}
+else{s.menge=rnd(4,8)*5;s.fix=140;}
+s.preis=rnd(8,20);s.angebot=s.menge+s.lagerAlt;s.verkauft=Math.max(0,s.angebot-rnd(0,12));
+s.umsatz=s.verkauft*s.preis;s.mat=s.menge*4;s.lag=s.lagerAlt;
+s.loehne=L===3?s.ma*s.lohnStufe[0]:0;s.wechsel=L===3?Math.max(0,s.ma-s.maStart)*5+Math.max(0,s.maStart-s.ma)*10:0;
+s.kosten=s.fix+s.mat+s.lag+s.werb+s.loehne+s.wechsel;s.gewinn=s.umsatz-s.kosten;s.lagerNeu=s.angebot-s.verkauft;
+var n=mix(["Lena","Tim","Jonas","Paul","Emma","Lukas","Mia","Finn","Hannah","Ben"]).slice(0,2);
+t="Das Unternehmen von "+n[0]+" und "+n[1]+" ";
+if(L===3){t+="startet die Periode mit "+s.maStart+" Mitarbeitern und hat danach "+s.ma+(s.ma>s.maStart?" (eine Person wurde eingestellt)":s.ma<s.maStart?" (eine Person wurde entlassen)":" (keine Änderung)")+". Jeder bekommt "+s.lohnStufe[0]+" € Lohn und schafft "+s.lohnStufe[1]+" Hüllen. ";}
+t+="Es produziert <b>"+s.menge+" Hüllen</b>";
+t+=s.lagerAlt?" und hat noch <b>"+s.lagerAlt+(s.lagerAlt===1?" Hülle":" Hüllen")+" im Lager</b> aus der Vorperiode":"";
+t+=". Der Preis beträgt <b>"+s.preis+" €</b>";
+if(L>=2)t+=s.werb?", für Werbung gibt es <b>"+s.werb+" €</b> aus":", Werbung macht es nicht";
+t+=". Verkauft werden <b>"+s.verkauft+" Hüllen</b>.";
+t+=' <br><small>Fixkosten in dieser Periode: '+s.fix+' €'+(L===3?" (Löhne kommen extra dazu)":"")+'.</small>';
+R2=s;r2hilfe=false;r2geloest=false;$("r_text").innerHTML=t;["u","k","g","l"].forEach(function(k){$("r_"+k).value="";$("f_"+k).textContent="";});$("r_msg").innerHTML="";$("r_weg").innerHTML="";}
+$("lvl").onchange=neueR;$("r_neu").onclick=neueR;
+$("r_check").onclick=function(){var s=R2,ok=0,w=[["u",s.umsatz],["k",s.kosten],["g",s.gewinn],["l",s.lagerNeu]];
+w.forEach(function(x){var v=$("r_"+x[0]).value,r=v!==""&&Number(v)===x[1];$("f_"+x[0]).innerHTML=v===""?"":(r?"✅":"❌");if(r)ok++;});
+if(ok===4){if(!r2hilfe&&!r2geloest){r2cnt++;P.s2=r2cnt;punkte();$("r_cnt").textContent=r2cnt;}r2geloest=true;
+$("r_msg").innerHTML='<div class="verdict good">Alles richtig! '+(r2hilfe?"(Mit Lösungsweg – versuche die nächste allein.)":"")+' Klicke auf „Neue Aufgabe“.</div>';}
+else $("r_msg").innerHTML='<div class="verdict bad">'+ok+' von 4 richtig. Tipp: Rechne zuerst alle Kosten einzeln aus und zähle sie dann zusammen.</div>';};
+$("r_hilfe").onclick=function(){var s=R2;r2hilfe=true;var h='<table><tr><th>Schritt</th><th>Rechnung</th><th>Ergebnis</th></tr>';
+h+='<tr><td>Umsatz</td><td>'+s.verkauft+' × '+s.preis+' €</td><td>'+eu(s.umsatz)+'</td></tr>';
+h+='<tr><td>Fixkosten</td><td></td><td>'+eu(s.fix)+'</td></tr>';
+h+='<tr><td>Material</td><td>'+s.menge+' × 4 €</td><td>'+eu(s.mat)+'</td></tr>';
+if(s.L>=2){h+='<tr><td>Lagergebühr</td><td>'+s.lagerAlt+' × 1 €</td><td>'+eu(s.lag)+'</td></tr><tr><td>Werbung</td><td></td><td>'+eu(s.werb)+'</td></tr>';}
+if(s.L===3){h+='<tr><td>Löhne</td><td>'+s.ma+' × '+s.lohnStufe[0]+' €</td><td>'+eu(s.loehne)+'</td></tr><tr><td>Einstellen/Entlassen</td><td>'+(s.ma>s.maStart?"1 × 5 €":s.ma<s.maStart?"1 × 10 €":"–")+'</td><td>'+eu(s.wechsel)+'</td></tr>';}
+h+='<tr><td><b>Gesamtkosten</b></td><td>alle Kosten zusammen</td><td><b>'+eu(s.kosten)+'</b></td></tr>';
+h+='<tr><td><b>Gewinn/Verlust</b></td><td>'+s.umsatz+' € − '+s.kosten+' €</td><td><b>'+eu(s.gewinn)+'</b></td></tr>';
+h+='<tr><td>Neues Lager</td><td>('+s.menge+(s.lagerAlt?' + '+s.lagerAlt:'')+') − '+s.verkauft+'</td><td>'+s.lagerNeu+' Hüllen</td></tr></table>';
+$("r_weg").innerHTML='<div class="card">'+h+'</div>';};
+
+// Station 3
+var V=null,v3hilfe=false,v3cnt=0,v3geloest=false;
+function neuerMarktV(){var grenzen=[],y=rnd(8,11)*10,x=rnd(7,9);
+for(var i=0;i<5;i++){grenzen.push([x,y]);x+=rnd(3,4);y=Math.max(i<3?10:0,y-rnd(1,3)*10);}grenzen[4][0]=30;
+var namen=["Case & Co","HüllenHeld","PhoneStyle","CoverKing"],gp=[],f=[];
+while(f.length<4){var p=rnd(grenzen[0][0]-2,grenzen[3][0]+1),w=rnd(0,3);if(gp.indexOf(p-w)>=0)continue;gp.push(p-w);f.push({n:namen[f.length],p:p,w:w,a:rnd(4,8)*5});}
+var reihe=f.slice().sort(function(a,b){return(a.p-a.w)-(b.p-b.w);}),schon=0,weg=[];
+reihe.forEach(function(u){var g=u.p-u.w,max=0;for(var i=0;i<grenzen.length;i++)if(g<=grenzen[i][0]){max=grenzen[i][1];break;}
+var rest=Math.max(0,max-schon);u.v=Math.min(u.a,rest);weg.push(u.n+': gefühlter Preis '+g+' € → Käufer nehmen höchstens '+max+' Hüllen, schon verkauft '+schon+' → noch '+rest+' möglich → verkauft <b>'+u.v+'</b> von '+u.a+'.');schon+=u.v;});
+V={g:grenzen,f:f,weg:weg};v3hilfe=false;v3geloest=false;
+var h='<tr><th>Gefühlter Preis</th><th>höchstens</th></tr>',von=0;grenzen.forEach(function(s){h+='<tr><td>'+(von?von+" – "+s[0]:"bis "+s[0])+' €</td><td>'+s[1]+' Hüllen</td></tr>';von=s[0]+1;});$("v_kaeufer").innerHTML=h;
+h='<tr><th>Unternehmen</th><th>Preis</th><th>Werbung</th><th>Angebot</th><th>verkauft?</th></tr>';
+f.forEach(function(u,i){h+='<tr><td>'+u.n+'</td><td>'+u.p+' €</td><td>'+["keine","20 € (−1 €)","40 € (−2 €)","80 € (−3 €)"][u.w]+'</td><td>'+u.a+'</td><td><input type="number" id="v'+i+'" style="width:5em"> <span id="vf'+i+'"></span></td></tr>';});
+$("v_firmen").innerHTML=h;$("v_msg").innerHTML="";$("v_weg").innerHTML="";}
+$("v_neu").onclick=neuerMarktV;
+$("v_check").onclick=function(){var ok=0;V.f.forEach(function(u,i){var v=$("v"+i).value,r=v!==""&&Number(v)===u.v;$("vf"+i).textContent=v===""?"":(r?"✅":"❌");if(r)ok++;});
+if(ok===4){if(!v3hilfe&&!v3geloest){v3cnt++;P.s3=v3cnt;punkte();}v3geloest=true;$("v_msg").innerHTML='<div class="verdict good">Richtig! Klicke auf „Neuer Markt“ für eine weitere Runde.</div>';}
+else $("v_msg").innerHTML='<div class="verdict bad">'+ok+' von 4 richtig. Tipp: Rechne für jedes Unternehmen zuerst den gefühlten Preis aus und ordne sie vom günstigsten zum teuersten.</div>';};
+$("v_hilfe").onclick=function(){v3hilfe=true;$("v_weg").innerHTML='<div class="card"><ol><li>'+V.weg.join("</li><li>")+'</li></ol></div>';};
+
+// Station 4
+var QZ=[
+["In der 2. Periode werben alle vier Unternehmen eures Marktes für 80 €. Was passiert?",
+ ["Alle Preise wirken 3 € günstiger – die Reihenfolge bleibt gleich, aber alle haben 80 € mehr Kosten.","Alle verkaufen deutlich mehr, weil Werbung immer wirkt.","Das Unternehmen mit dem höchsten Preis gewinnt, weil es am meisten von der Werbung profitiert."],
+ "Werbung hilft nur, wenn man damit an anderen vorbeikommt. Werben alle gleich viel, bleibt die Reihenfolge gleich – übrig bleiben nur die höheren Kosten."],
+["Ein Unternehmen zahlt den niedrigen Lohn von 20 €. Warum ist das nicht automatisch die beste Wahl?",
+ ["Die Mitarbeiter schaffen weniger Hüllen und einer kündigt zur nächsten Periode.","Der niedrige Lohn ist verboten.","Bei niedrigem Lohn dürfen keine Hüllen verkauft werden."],
+ "Mit 20 € schafft jeder Mitarbeiter nur 8 statt 10 Hüllen, und ein Mitarbeiter geht. Gespartes Geld beim Lohn kann so verlorenen Umsatz kosten."],
+["Vor der 4. Periode habt ihr 15 Hüllen im Lager. Was ist eine kluge Entscheidung?",
+ ["Weniger neu produzieren und das Lager möglichst ganz verkaufen, notfalls zu einem etwas niedrigeren Preis.","Möglichst viele neue Hüllen produzieren, damit das Lager voll bleibt.","Die Lagerhüllen behalten – sie werden nach dem Spiel ausgezahlt."],
+ "Nach der 4. Periode ist das Lager nichts mehr wert. Jede übrige Hülle hat Material gekostet, bringt aber kein Geld mehr."],
+["Euer Unternehmen hat den niedrigsten Preis auf dem Markt. Was gilt dann sicher?",
+ ["Ihr seid bei den Käufern zuerst an der Reihe.","Ihr macht auf jeden Fall Gewinn.","Ihr verkauft auf jeden Fall alle 40 Hüllen."],
+ "Der günstigste Anbieter verkauft zuerst. Ist der Preis aber zu niedrig, reicht der Umsatz vielleicht nicht für die Kosten – Gewinn ist also nicht sicher."],
+["Warum zahlt ihr Material auch für Hüllen, die ihr nicht verkauft?",
+ ["Weil das Material schon beim Herstellen verbraucht und bezahlt wird.","Weil die Käufer das so verlangen.","Das stimmt nicht – Material zahlt man nur für verkaufte Hüllen."],
+ "Material sind variable Kosten der Produktion. Wer zu viele Hüllen herstellt, hat diese Kosten, auch wenn die Hüllen im Lager landen."],
+["Zwei Unternehmen verlangen beide 12 € ohne Werbung. Die Käufer nehmen nur noch 20 Hüllen. Was passiert?",
+ ["Beide teilen sich die Käufer: Jedes verkauft 10 Hüllen.","Das Unternehmen, das zuerst abgegeben hat, verkauft alle 20.","Keines der beiden verkauft etwas."],
+ "Bei gleichem gefühltem Preis wird die Restmenge gleichmäßig geteilt."],
+["Was bedeutet ein hoher Lohn von 30 € für euer Unternehmen?",
+ ["Höhere Kosten, aber die Mitarbeiter schaffen mehr und euer Preis wirkt auf die Käufer 1 € günstiger.","Nur höhere Kosten, sonst ändert sich nichts.","Ihr dürft dann mehr als 40 Hüllen herstellen."],
+ "Mit 30 € schafft jeder Mitarbeiter 12 Hüllen, und die Käufer finden das Unternehmen sympathischer. Ob sich das lohnt, hängt davon ab, ob ihr dadurch mehr verkauft."],
+["Auf beiden Märkten gab es dieselben Käufer, aber ganz verschiedene Ergebnisse. Woran liegt das?",
+ ["An den unterschiedlichen Entscheidungen der Unternehmen über Preise, Mengen und Werbung.","Am Zufall – die Entscheidungen spielen keine Rolle.","Daran, dass Herr Bracht die Märkte unterschiedlich bewertet."],
+ "Die Käufer verhalten sich auf beiden Märkten gleich. Unterschiede entstehen durch den Wettbewerb: Wie die Unternehmen sich gegenseitig unterbieten oder Preise hoch halten."]];
+var qdone=0,qok=0;
+function baueQuiz(){var h="";mix(QZ).forEach(function(q,i){var opts=mix(q[1].map(function(t,j){return{t:t,r:j===0};}));
+h+='<div class="card" data-i="'+i+'"><h3>'+(i+1)+'. '+q[0]+'</h3><div class="experts">'+opts.map(function(o){return'<button data-r="'+(o.r?1:0)+'">'+o.t+'</button>';}).join("")+'</div><div class="expl" style="display:none"></div></div>';});
+$("quiz").innerHTML=h;
+Array.prototype.forEach.call($("quiz").querySelectorAll(".card"),function(c,ci){var q=null;
+ var txt=c.querySelector("h3").textContent.replace(/^\d+\. /,"");QZ.forEach(function(x){if(x[0]===txt)q=x;});
+ Array.prototype.forEach.call(c.querySelectorAll("button"),function(b){b.onclick=function(){if(c.dataset.fertig)return;c.dataset.fertig=1;qdone++;
+  var r=b.dataset.r==="1";if(r){qok++;P.s4=qok;punkte();}
+  Array.prototype.forEach.call(c.querySelectorAll("button"),function(x){x.disabled=true;if(x.dataset.r==="1"){x.style.borderColor="var(--ok)";x.style.background="var(--okbg)";}});
+  if(!r){b.style.borderColor="var(--no)";b.style.background="var(--nobg)";}
+  var e=c.querySelector(".expl");e.style.display="block";e.className="verdict "+(r?"good":"bad");e.innerHTML=(r?"Richtig! ":"Nicht ganz. ")+'<span style="font-weight:400">'+q[2]+'</span>';
+  if(qdone===QZ.length)$("q_msg").innerHTML='<div class="verdict '+(qok>=6?"good":"mid")+'">'+qok+' von '+QZ.length+' Situationen richtig eingeschätzt.</div>';};});});}
+
+function ende(){$("e1").textContent=P.s1+" / "+BEG.length;$("e2").textContent=P.s2;$("e3").textContent=P.s3;$("e4").textContent=P.s4+" / "+QZ.length;
+var t=P.s1+P.s2*2+P.s3*3+P.s4;$("e_txt").textContent="Gesamt: "+t+" Punkte. "+(P.s2>=3&&P.s3>=2&&P.s1===BEG.length?"Du bist bestens vorbereitet – als Unternehmer und als Rechenprofi!":"Tipp: Löse in Station 2 mindestens drei und in Station 3 mindestens zwei Aufgaben ohne Lösungsweg.");}
+
+baueS1();neueR();neuerMarktV();baueQuiz();zeige("start");punkte();
+</script>
+
+</body></html>
