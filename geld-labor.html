@@ -215,4 +215,68 @@ var Q3=[["Was verlangte die Schweizer Vollgeld-Initiative (Abstimmung am 10. Jun
 reset();quiz($("q1"),Q1);bil();quiz($("q2"),Q2);quiz($("q3"),Q3,function(ok,n){$("q3m").innerHTML='<div class="verdict '+(ok>=4?"good":"mid")+'">'+ok+' von '+n+' richtig. Gesamt: '+punkte+' Punkte.</div>';});zeige("start");
 </script>
 
+<!-- ===== Ergebnis speichern (Download für IServ, keine Datenübertragung) ===== -->
+<style>
+.esv{max-width:980px;margin:28px auto 40px;padding:16px 20px;border:2px dashed #1f4e79;border-radius:14px;background:#f4f8fc;font-family:Calibri,Arial,sans-serif;color:#17223b}
+.esv h3{margin:0 0 6px;font-size:1.15em}
+.esv p{margin:4px 0}
+.esv .row2{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0}
+.esv input{font:inherit;padding:7px 10px;border:1px solid #9db8d2;border-radius:8px;min-width:12em}
+.esv button{font:inherit;font-weight:700;background:#1f4e79;color:#fff;border:0;border-radius:10px;padding:9px 16px;cursor:pointer}
+.esv small{color:#555}
+.esv .esv-msg{font-weight:700;color:#2e7d4f}
+@media (max-width:600px){.esv{margin:20px 12px}.esv input{min-width:0;width:100%}}
+</style>
+<div class="esv" id="esv">
+<h3>Ergebnis speichern</h3>
+<p>Wenn du fertig bist: Trage deinen Namen ein und speichere dein Ergebnis. Lade die Datei anschließend in IServ bei der Aufgabe hoch.</p>
+<div class="row2">
+<input type="text" id="esv-name" placeholder="Vorname Nachname" aria-label="Name">
+<input type="text" id="esv-kurs" placeholder="Klasse / Kurs" aria-label="Klasse oder Kurs">
+<button type="button" id="esv-btn">Ergebnis speichern</button>
+</div>
+<p class="esv-msg" id="esv-msg"></p>
+<small>Die Datei wird nur auf deinem Gerät gespeichert. Es werden keine Daten verschickt.</small>
+</div>
+<script>
+(function(){
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function clean(s){return String(s||"").replace(/\s+/g," ").trim();}
+function ctxText(el){var c=el.closest(".karte,.qq,.card,.szene,.ampel,.sort,.row,.station,.panel,.task,section,li");if(!c)return"";var q=c.querySelector(".text,b,h3,h4,.sz,p,span");return q?clean(q.textContent).slice(0,220):"";}
+function labelFor(el){if(el.id){var l=document.querySelector('label[for="'+el.id+'"]');if(l)return clean(l.textContent);}var p=el.closest("label,.sl,.slider,.panel,div");if(p){var lb=p.querySelector("label");if(lb)return clean(lb.textContent);return clean(p.textContent).slice(0,120);}return el.id||"Eingabe";}
+function sammeln(){
+ var teile=[],roots=document.querySelectorAll("main section, .station, .panel");
+ if(!roots.length)roots=[document.body];
+ var gesehen=new Set();
+ Array.prototype.forEach.call(roots,function(sec){
+  if(sec.closest("#esv")||gesehen.has(sec))return;gesehen.add(sec);if(Array.prototype.some.call(roots,function(r){return r!==sec&&r.contains(sec);}))return;
+  var h=sec.querySelector("h2,h3"),eintr=[];
+  sec.querySelectorAll('input[type="range"],input[type="number"],input[type="text"],textarea').forEach(function(i){if(i.closest("#esv")||!clean(i.value))return;eintr.push(["Eingabe",labelFor(i),clean(i.value)]);});
+  sec.querySelectorAll("select").forEach(function(s){if(!s.value)return;var r=s.closest(".row");var st=r&&r.classList.contains("right")?" ✔":r&&r.classList.contains("wrong")?" ✘":"";eintr.push(["Zuordnung",ctxText(s),clean(s.value)+st]);});
+  sec.querySelectorAll("button.sel,button.ok,button.no,button.mi,button.gewaehlt,button.gewaehlt-richtig,button.gewaehlt-falsch").forEach(function(b){if(b.closest("#esv,nav"))return;var st=(b.classList.contains("ok")||b.classList.contains("gewaehlt-richtig"))?" ✔":(b.classList.contains("no")||b.classList.contains("gewaehlt-falsch"))?" ✘":"";eintr.push(["Auswahl",ctxText(b),clean(b.textContent)+st]);});
+  sec.querySelectorAll(".verdict,.fb,.erklaerung,.kpi,.ziel,.kz").forEach(function(v){var t=clean(v.textContent);if(t&&!v.closest("#esv"))eintr.push(["Rückmeldung",v.classList.contains("verdict")||v.classList.contains("kpi")?"":ctxText(v),t.slice(0,400)]);});
+  if(eintr.length)teile.push({titel:h?clean(h.textContent):"Abschnitt",e:eintr});
+ });
+ return teile;}
+document.getElementById("esv-btn").addEventListener("click",function(){
+ var name=clean(document.getElementById("esv-name").value),kurs=clean(document.getElementById("esv-kurs").value),msg=document.getElementById("esv-msg");
+ if(!name){msg.style.color="#b23b2a";msg.textContent="Bitte trage zuerst deinen Namen ein.";return;}
+ var titel=clean((document.querySelector("h1")||{}).textContent||document.title),d=new Date();
+ var pk=document.getElementById("pkt")||document.getElementById("punkte");
+ var datum=d.toLocaleDateString("de-DE")+", "+d.toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"});
+ var t=sammeln(),body="";
+ t.forEach(function(s){body+='<h2>'+esc(s.titel)+'</h2><table><tr><th>Art</th><th>Aufgabe / Bezug</th><th>Meine Eintragung bzw. Rückmeldung</th></tr>';
+  s.e.forEach(function(e){body+='<tr><td>'+esc(e[0])+'</td><td>'+esc(e[1])+'</td><td>'+esc(e[2])+'</td></tr>';});body+='</table>';});
+ if(!body)body='<p>Es wurden noch keine Eintragungen gefunden.</p>';
+ var html='<!DOCTYPE html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ergebnis – '+esc(titel)+'</title><style>body{font-family:Calibri,Arial,sans-serif;max-width:900px;margin:24px auto;padding:0 16px;color:#17223b}h1{font-size:1.4em;margin-bottom:4px}h2{font-size:1.1em;margin:22px 0 6px;color:#1f4e79}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccd;padding:6px 8px;text-align:left;vertical-align:top;font-size:.95em}th{background:#e7f1fb}.kopf{background:#f4f8fc;border:1px solid #9db8d2;border-radius:10px;padding:10px 14px}@media print{body{margin:0}}</style></head><body>'
+  +'<h1>Ergebnis: '+esc(titel)+'</h1><div class="kopf"><b>Name:</b> '+esc(name)+(kurs?' &nbsp;·&nbsp; <b>Klasse/Kurs:</b> '+esc(kurs):'')+'<br><b>Gespeichert am:</b> '+esc(datum)+(pk&&clean(pk.textContent)?'<br><b>Punktestand:</b> '+esc(clean(pk.textContent)):'')+'</div>'+body
+  +'<p style="color:#777;font-size:.85em;margin-top:24px">Automatisch erstellt aus der digitalen Übung. Zum Drucken oder als PDF: Datei öffnen → Drucken.</p></body></html>';
+ var fn=("Ergebnis_"+titel.split(/:| – | — /)[0].slice(0,40)+"_"+name+"_"+d.toISOString().slice(0,10)).replace(/[äÄ]/g,"ae").replace(/[öÖ]/g,"oe").replace(/[üÜ]/g,"ue").replace(/ß/g,"ss").replace(/[^A-Za-z0-9_\-]+/g,"_").replace(/_+/g,"_")+".html";
+ var blob=new Blob([html],{type:"text/html"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=fn;document.body.appendChild(a);a.click();
+ setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},1500);
+ msg.style.color="#2e7d4f";msg.textContent="Gespeichert als „"+fn+"“. Jetzt in IServ hochladen.";});
+})();
+</script>
+<!-- ===== Ende Ergebnis speichern ===== -->
+
 </body></html>
